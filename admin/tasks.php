@@ -3,11 +3,13 @@ include_once (__DIR__ . "../../classes/Db.php");
 include_once (__DIR__ . "../../classes/User.php");
 include_once (__DIR__ . "../../classes/Manager.php");
 include_once (__DIR__ . "../../classes/Task.php");
-session_start();
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('error_log', 'error.log');
+
+session_start();
+
 
 $current_page = 'tasks';
 
@@ -60,8 +62,11 @@ $allTasks =  Task::getAllTasks($pdo);
 
 <body>
     <?php include_once ('../inc/nav.inc.php'); ?>
-    <div id="usersAdmin">
-        <h1>Tasks</h1>
+    <div id="hubLocationsAdmin">
+        <div class="row">
+            <h1>Tasks</h1>
+            <a href="addTask.php" class="btn">+ Toevoegen</a>
+        </div>
         <form action="" method="post" id="taskSelector">
             <select name="task_select" onchange=submitTaskForm()>
                 <?php foreach ($allTasks as $task): ?>
@@ -72,7 +77,7 @@ $allTasks =  Task::getAllTasks($pdo);
             </select>
         </form>
 
-        <div class="tasks"></div>
+        <div class="tasks">
             <form action="" method="post" id="removetask">
                 <button type="submit" class="btn"><i class="fa fa-trash"></i> delete</button>
                 <input hidden type="text" name="delete" value="<?php echo $selectedTask["id"] ?>">
