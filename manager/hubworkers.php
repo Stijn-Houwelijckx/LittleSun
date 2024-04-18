@@ -25,7 +25,7 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
     exit();
 }
 
-$hubworkers = Manager::getHubWorkers($pdo, $manager["location_id"]);
+$employees = Employee::getAllEmployees($pdo, $manager["location_id"]);
 ?>
 
 <!DOCTYPE html>
@@ -43,14 +43,14 @@ $hubworkers = Manager::getHubWorkers($pdo, $manager["location_id"]);
 <body>
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="hubworkers">
-        <h1>Hubworkers at <?php echo $hubworkers[0]["name"] ?></h1>
+        <h1>Employees at <?php echo $employees[0]["name"] ?></h1>
         <div class="hubs">
-            <?php foreach ($hubworkers As $hubworker) : ?>
+            <?php foreach ($employees As $employee) : ?>
                 <div class="hub">
-                <p><?php echo $hubworker["firstname"]?></p>
-                <p><?php echo $hubworker["lastname"]?></p>
-                <p><?php echo $hubworker["email"]?></p>
-                <p><?php echo $hubworker["name"]?></p>
+                <p><?php echo $employee["firstname"]?></p>
+                <p><?php echo $employee["lastname"]?></p>
+                <p><?php echo $employee["email"]?></p>
+                <p><?php echo $employee["name"]?></p>
                 </div>
             <?php endforeach ?>
         </div>

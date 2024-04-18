@@ -112,17 +112,5 @@ class Manager extends User
             error_log('Database error: ' . $e->getMessage());
             return null;
         }
-    }
-
-    public static function getHubWorkers(PDO $pdo, $manager_location){
-        try {
-            $stmt = $pdo->prepare("SELECT users.*, locations.* FROM users, locations, user_locations WHERE users.id = user_locations.user_id AND locations.id = :location");
-            $stmt->bindParam(':location', $manager_location, PDO::PARAM_INT);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log('Database error: ' . $e->getMessage());
-            return null;
-        }
-    }  
+    } 
 }

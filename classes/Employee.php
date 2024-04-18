@@ -1,16 +1,28 @@
 <?php
 class Employee extends User
 {
-    public static function getAllEmployees(PDO $pdo)
+    public static function getAllEmployees(PDO $pdo, $location_id)
     {
         try {
-            $stmt = $pdo->prepare("SELECT * FROM users WHERE typeOfUser = 'employee' AND status = 1");
+            $stmt = $pdo->prepare("SELECT users.* FROM users, user_locations WHERE user_locations.user_id = users.id AND user_locations.location_id = :location_id");
+            $stmt->bindParam(':location_id', $location_id, PDO::PARAM_INT);
             $stmt->execute();
-            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $users ?: [];
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log('Database error in getAllUsers(): ' . $e->getMessage());
-            throw new Exception('Database error: Unable to retrieve users', 0, $e);
+            error_log('Database error: ' . $e->getMessage());
+            return null;
         }
     }
+
+    // public static function getHubWorkers(PDO $pdo, $manager_location){
+    //     try {
+    //         $stmt = $pdo->prepare("SELECT users.*, locations.* FROM users, locations, user_locations WHERE users.id = user_locations.user_id AND locations.id = :location");
+    //         $stmt->bindParam(':location', $manager_location, PDO::PARAM_INT);
+    //         $stmt->execute();
+    //         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //     } catch (PDOException $e) {
+    //         error_log('Database error: ' . $e->getMessage());
+    //         return null;
+    //     }
+    // } 
 }
