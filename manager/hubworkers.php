@@ -30,12 +30,18 @@ $hubworkers = Manager::getHubWorkers($pdo, $_SESSION["user_id"], $manager["locat
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LittleSun</title>
+    <link rel="stylesheet" href="../css/style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.png">
 </head>
+
 <body>
+    <?php include_once ('../inc/nav.inc.php'); ?>
     <div class="hubs">
         <?php foreach ($hubworkers As $hubworker) : ?>
             <div class="hub">
@@ -44,4 +50,5 @@ $hubworkers = Manager::getHubWorkers($pdo, $_SESSION["user_id"], $manager["locat
         <?php endforeach ?>
     </div>
 </body>
+
 </html>

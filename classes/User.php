@@ -209,8 +209,8 @@ class User
     public static function getUserById(PDO $pdo, $id)
     {
         try {
-            $stmt = $pdo->prepare("SELECT users.*, user_locations.*, locations.*
-            FROM users, user_locations, locations
+            $stmt = $pdo->prepare("SELECT users.*, locations.*
+            FROM users, user_locations, locations, us
             WHERE users.id = :id
               AND users.status = 1
               AND users.id = user_locations.user_id
