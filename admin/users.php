@@ -55,10 +55,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $user->setLastname($_POST['lastname']);
             $user->settypeOfUser($_POST['typeOfUser']);
             $user->setEmail($_POST['email']);
-            $user->setStreet($_POST['street']);
-            $user->setHouseNumber($_POST['houseNumber']);
-            $user->setZipCode($_POST['zipCode']);
-            $user->setCity($_POST['city']);
             $user->updateUser($pdo, $_POST["user_id"]);
 
             unset($_SESSION["firstname"]);
