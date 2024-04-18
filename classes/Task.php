@@ -30,16 +30,16 @@ class Task {
         try {
             $stmt = $pdo->prepare("INSERT INTO taskTypes (task) VALUES (:task)");
             $stmt->bindParam(':task', $this->task);
-            
+
             $stmt->execute();
-            
+
             return true;
         } catch (PDOException $e) {
             error_log('Database error: ' . $e->getMessage());
             return false;
         }
-    }   
-    
+    }
+
     public static function deleteTask(PDO $pdo, $id)
     {
         try {
