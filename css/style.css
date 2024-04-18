@@ -41,7 +41,7 @@ h1 {
 h2 {
   font-family: "Outfit", sans-serif;
   font-size: 20px;
-  color: var(--yellow);
+  color: var(--darkYellow);
   margin: 0;
   padding: 0;
 }
@@ -49,7 +49,7 @@ h2 {
 h3 {
   font-family: "Outfit", sans-serif;
   font-size: 16px;
-  color: var(--yellow);
+  color: var(--darkYellow);
   margin: 0;
   padding: 0;
 }
@@ -467,9 +467,8 @@ button {
 }
 
 #hubworkers .hubs .hub {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   background-color: rgba(255, 255, 255, 0.6);
   padding: 8px;
 }
