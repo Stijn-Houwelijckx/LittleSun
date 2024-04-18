@@ -7,6 +7,12 @@
     $user = User::getUserById($pdo, $_SESSION["user_id"]);
 
     $role = $user["typeOfUser"];
+    
+    if ($role == "admin" || $role == "manager") {
+        $payhExtention = "../";
+    } else {
+        $payhExtention = "";
+    }
 ?> 
 
 <nav class="desktopNav">
@@ -19,14 +25,14 @@
             </div>
         </div>
         <div class="menu">
-            <a href="dashboard.php">
-            <div>
-                <img class="<?php echo ($current_page == 'home') ? 'homeItem active' : 'homeItem'; ?>"
-                    src="../assets/icons/Home.svg" alt="home">
-                <p>Home</p>
-            </div>
-            </a>
-            <?php if ($user["typeOfUser"] == "admin") : ?>
+            <?php if ($role == "admin") : ?>
+                <a href="dashboard.php">
+                    <div>
+                        <img class="<?php echo ($current_page == 'home') ? 'homeItem active' : 'homeItem'; ?>"
+                            src="../assets/icons/Home.svg" alt="home">
+                        <p>Home</p>
+                    </div>
+                </a>
                 <a href="hubLocations.php">
                 <div>
                     <img class="<?php echo ($current_page == 'locations') ? 'locationsItem active' : 'locationsItem'; ?>"
@@ -34,14 +40,31 @@
                     <p>Home</p>
                 </div>
             </a>
-            <?php endif ?>
             <a href="users.php">
-                <div>
-                    <img class="<?php echo ($current_page == 'users') ? 'usersItem active' : 'usersItem'; ?>"
-                        src="../assets/icons/Users.svg" alt="users">
-                    <p>Home</p>
-                </div>
+                    <div>
+                        <img class="<?php echo ($current_page == 'users') ? 'usersItem active' : 'usersItem'; ?>"
+                            src="../assets/icons/Users.svg" alt="users">
+                        <p>Home</p>
+                    </div>
+                </a>
+            <?php endif ?>
+
+            <?php if ($role == "manager") : ?>
+                <a href="dashboard.php">
+            <div>
+                <img class="<?php echo ($current_page == 'home') ? 'homeItem active' : 'homeItem'; ?>"
+                    src="../assets/icons/Home.svg" alt="home">
+                <p>Home</p>
+            </div>
             </a>
+                <a href="employees.php">
+                    <div>
+                        <img class="<?php echo ($current_page == 'users') ? 'usersItem active' : 'usersItem'; ?>"
+                            src="../assets/icons/Users.svg" alt="users">
+                        <p>Home</p>
+                    </div>
+                </a>
+            <?php endif ?>
         </div>
         <div class="settings">
             <a href="../logout.php">
