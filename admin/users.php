@@ -50,14 +50,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["firstname"])) {
         try {
             $user = new User();
+
             $user->setFirstname($_POST['firstname']);
             $user->setLastname($_POST['lastname']);
-            $user->settypeOfUser($_POST['typeOfUser']);
             $user->setEmail($_POST['email']);
-            $user->updateUser($pdo, $_POST["user_id"]);
-            unset($_SESSION["firstname"]);
-            unset($_SESSION["lastname"]);
-            unset($_SESSION["email"]);
+
+            $user->updateUser($pdo, $_POST["user_id"], $_POST['typeOfUser']);
+
             $selectedUser = User::getUserById($pdo, $_POST["user_id"]);
         } catch (Exception $e) {
             error_log('Database error: ' . $e->getMessage());
