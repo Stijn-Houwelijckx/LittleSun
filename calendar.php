@@ -22,34 +22,24 @@ if (isset($_SESSION["user_id"])) {
 }
 
 function generateDaysForMonth($year, $month) {
-    // get the number of days in a month (e.g. 31, 30, 28, 29)
     $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
- 
-    // create an empty array
     $days = [];
- 
-    // loop through all days in the month
+
     for ($day = 1; $day <= $daysInMonth; $day++) {
-        // add the day to the array in the format "YYYY-MM-DD"
         $days[] = sprintf('%04d-%02d-%02d', $year, $month, $day);
     }
-    // return the array
+
     return $days;
 }
- 
-// Example usage:
+
 $currentYear = date('Y');
-$currentMonth = date('m');
+$currentMonth = isset($_GET['month']) ? $_GET['month'] : date('m'); // Haal de maandwaarde op uit de URL of gebruik de huidige maand
 $allDaysThisMonth = generateDaysForMonth($currentYear, $currentMonth);
- 
-// what day of the week is the first of the month?
+
 $date = new DateTime($allDaysThisMonth[0]);
-$dayOfWeek = $date->format('N'); // 1 = Monday, 7 = Sunday
- 
-// if it's not a Monday, let's add some empty days in front of the array
+$dayOfWeek = $date->format('N');
+
 $emptyDays = array_fill(0, $dayOfWeek - 1, '');
- 
-// add empty strings in front of the array if necessary
 array_unshift($allDaysThisMonth, ...$emptyDays);
 ?>
 
@@ -88,6 +78,11 @@ array_unshift($allDaysThisMonth, ...$emptyDays);
 <body>
     <?php include_once ('inc/nav.inc.php'); ?>
     <div id="calendar">
+        <div id="top">
+            <i class="fa fa-angle-left" id="prevMonth"></i>
+            <h2><?php echo date('F', strtotime('2000-' . $currentMonth . '-01')); ?></h2>
+            <i class="fa fa-angle-right" id="nextMonth"></i>
+        </div>
         <div id="days">
             <h3>Mon</h3>
             <h3>Tue</h3>
@@ -104,5 +99,24 @@ array_unshift($allDaysThisMonth, ...$emptyDays);
             <?php endforeach; ?>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentMonth = <?php echo $currentMonth; ?>;
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+
+        prevMonthBtn.addEventListener('click', function () {
+            const newMonth = currentMonth <= 1 ? 12 : currentMonth - 1;
+            window.location.href = `?month=${newMonth}`;
+        });
+
+        nextMonthBtn.addEventListener('click', function () {
+            const newMonth = currentMonth >= 12 ? 1 : currentMonth + 1;
+            window.location.href = `?month=${newMonth}`;
+        });
+    });
+</script>
 </body>
 </html>
+

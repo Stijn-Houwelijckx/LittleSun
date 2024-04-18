@@ -487,6 +487,22 @@ button {
   gap: 24px;
 }
 
+#calendar #top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#calendar #top .fa {
+  font-size: 24px;
+}
+
+#calendar h2,
+#calendar h3 {
+  color: var(--darkYellow);
+}
+
 @media (min-width: 800px) {
   .desktopNav {
     display: flex;
