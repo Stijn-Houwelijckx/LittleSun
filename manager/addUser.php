@@ -53,6 +53,11 @@ $pdo = Db::getInstance();
                             <label for="password">password:</label>
                             <input type="text" name="password" id="password" >
                             </div>
+                            </div>
+                            <div class="column">
+                            <label for="location">location:</label>
+                            <input type="text" name="location" id="location" >
+                            </div>
                     </div>
                     <div class="buttons">
                         <button type="submit" class="btn">Opslaan</button>
