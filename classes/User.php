@@ -172,13 +172,13 @@ class User
         return $this;
     }
 
-    public function addUser(PDO $pdo): bool
+    public function addUser(PDO $pdo, $typeOfUser): bool
     {
         try {
             $stmt = $pdo->prepare("INSERT INTO users (firstname, lastname, typeOfUser, email, location, password) VALUES (:firstname, :lastname, :typeOfUser, :email, :location, :password)");
             $stmt->bindParam(':firstname', $this->firstname);
             $stmt->bindParam(':lastname', $this->lastname);
-            $stmt->bindParam(':typeOfUser', $this->typeOfUser);
+            $stmt->bindParam(':typeOfUser', $typeOfUser);
             $stmt->bindParam(':email', $this->email);
             $stmt->bindParam(':location', $this->location);
             $stmt->bindParam(':password', $this->password);
