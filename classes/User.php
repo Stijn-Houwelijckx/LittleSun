@@ -5,7 +5,7 @@ class User
     private $lastname;
     private $typeOfUser;
     private $email;
-    private $location;
+    private $location_id;
     private string $password;
 
 
@@ -120,21 +120,21 @@ class User
         return $this;
     }
         /**
-     * Get the value of location
+     * Get the value of location_id
      */ 
-    public function getLocation()
+    public function getLocation_id()
     {
-        return $this->location;
+        return $this->location_id;
     }
 
     /**
-     * Set the value of location
+     * Set the value of location_id
      *
      * @return  self
      */ 
-    public function setLocation($location)
+    public function setLocation_id($location_id)
     {
-        $this->location = $location;
+        $this->location_id = $location_id;
 
         return $this;
     }
@@ -172,25 +172,38 @@ class User
         return $this;
     }
 
-    public function addUser(PDO $pdo, $typeOfUser): bool
+    public function addUser(PDO $pdo, $typeOfUser): int|bool
     {
         try {
-            $stmt = $pdo->prepare("INSERT INTO users (firstname, lastname, typeOfUser, email, location, password) VALUES (:firstname, :lastname, :typeOfUser, :email, :location, :password)");
+            $stmt = $pdo->prepare("INSERT INTO users (firstname, lastname, typeOfUser, email, password) VALUES (:firstname, :lastname, :typeOfUser, :email, :password)");
             $stmt->bindParam(':firstname', $this->firstname);
             $stmt->bindParam(':lastname', $this->lastname);
             $stmt->bindParam(':typeOfUser', $typeOfUser);
             $stmt->bindParam(':email', $this->email);
-            $stmt->bindParam(':location', $this->location);
             $stmt->bindParam(':password', $this->password);
-            // Controleer of de SQL-instructie met succes is uitgevoerd
+
+            // Execute and return id of the new user
             if ($stmt->execute()) {
-                return true;
+                return $pdo->lastInsertId();
             } else {
                 return false;
             }
         } catch (PDOException $e) {
             error_log('Database error: ' . $e->getMessage());
             return false;
+        }
+    }
+
+    public function addToLocation(PDO $pdo, $user_id)
+    {
+        try {
+            $stmt = $pdo->prepare("INSERT INTO user_locations (user_id, location_id) VALUES (:user_id, :location_id)");
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':location_id', $this->location_id);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            error_log('Database error in addToLocation(): ' . $e->getMessage());
+            throw new Exception('Database error: Unable to add user to location', 0, $e);
         }
     }
 
