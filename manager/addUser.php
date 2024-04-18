@@ -2,32 +2,41 @@
 include_once (__DIR__ . "../../classes/Db.php");
 include_once (__DIR__ . "../../classes/User.php");
 include_once (__DIR__ . "../../classes/Manager.php");
+
 session_start();
+
 $pdo = Db::getInstance();
 $manager = User::getUserById($pdo, $_SESSION["user_id"]);
+
+if (!isset($_SESSION["user_id"]) && $manager["typeOfUser"] != "manager") {
+    header("Location: login.php?notLoggedIn=true");
+    exit();
+}
+
  if (isset($_POST['firstname']) && isset($_POST['lastname']) && isset($_POST['email']) && isset($_POST['password'])){
     $user = new User;
+
     $firstname = $_POST['firstname'];
     $lastname = $_POST['lastname'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $location = $_POST['location'];
+
     $user->setFirstname($firstname);
     $user->setLastname($lastname);
+    $user->setTypeOfUser("employee");
     $user->setEmail($email);
     $user->setPassword($password);
     $user->setLocation($manager["location"]);
+
     $user->addUser($pdo);
+
     header("Location: users.php");
     exit();
-
-
  }
+?>
 
-
-
-
-?><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
