@@ -1,21 +1,28 @@
 <?php 
     include_once (__DIR__ . "../../classes/User.php");
     include_once (__DIR__ . "../../classes/Db.php");
+
+
     $pdo = Db::getInstance();
     $user = User::getUserById($pdo, $_SESSION["user_id"]);
-?>
+
+    $role = $user["typeOfUser"];
+?> 
 
 <nav class="desktopNav">
     <div class="column">
         <div class="top">
             <div class="logo"></div>
             <p class="border"></p>
+            <div class="role">
+                <p><?php echo $role ?></p>
+            </div>
         </div>
         <div class="menu">
             <a href="dashboard.php">
             <div>
                 <img class="<?php echo ($current_page == 'home') ? 'homeItem active' : 'homeItem'; ?>"
-                    src="../assets/icons/Home.svg" alt="homeIcon">
+                    src="../assets/icons/Home.svg" alt="home">
                 <p>Home</p>
             </div>
             </a>
@@ -23,18 +30,26 @@
                 <a href="hubLocations.php">
                 <div>
                     <img class="<?php echo ($current_page == 'locations') ? 'locationsItem active' : 'locationsItem'; ?>"
-                        src="../assets/icons/location.svg" alt="locationsIcon">
+                        src="../assets/icons/location.svg" alt="locations">
                     <p>Home</p>
                 </div>
             </a>
             <a href="users.php">
                 <div>
                     <img class="<?php echo ($current_page == 'users') ? 'usersItem active' : 'usersItem'; ?>"
-                        src="../assets/icons/Users.svg" alt="usersIcon">
+                        src="../assets/icons/Users.svg" alt="users">
                     <p>Home</p>
                 </div>
             </a>
             <?php endif ?>
+        </div>
+        <div class="settings">
+            <a href="../logout.php">
+                <div>
+                    <img class="logoutItem" src="../assets/icons/logout.svg" alt="logout">
+                    <p>Logout</p>
+                </div>
+            </a>
         </div>
     </div>
     <div class="column center">
