@@ -42,12 +42,17 @@ $hubworkers = Manager::getHubWorkers($pdo, $_SESSION["user_id"], $manager["locat
 
 <body>
     <?php include_once ('../inc/nav.inc.php'); ?>
-    <div class="hubs">
-        <?php foreach ($hubworkers As $hubworker) : ?>
-            <div class="hub">
+    <div id="hubworkers">
+        <div class="hubs">
+            <?php foreach ($hubworkers As $hubworker) : ?>
+                <div class="hub">
                 <p><?php echo $hubworker["firstname"]?></p>
-            </div>
-        <?php endforeach ?>
+                <p><?php echo $hubworker["lastname"]?></p>
+                <p><?php echo $hubworker["email"]?></p>
+                <p><?php echo $hubworker["name"]?></p>
+                </div>
+            <?php endforeach ?>
+        </div>
     </div>
 </body>
 
