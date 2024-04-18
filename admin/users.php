@@ -56,7 +56,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $user->settypeOfUser($_POST['typeOfUser']);
             $user->setEmail($_POST['email']);
             $user->updateUser($pdo, $_POST["user_id"]);
-
             unset($_SESSION["firstname"]);
             unset($_SESSION["lastname"]);
             unset($_SESSION["email"]);
