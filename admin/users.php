@@ -12,11 +12,12 @@ $current_page = 'users';
 
 $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
+$selectedUser = User::getUserById($pdo, 0);
 
 if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
     try {
         $pdo = Db::getInstance();
-        $user = User::getUserById($pdo, $_SESSION["user_id"]);
+        $user = User::getAll($pdo);
 
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
@@ -25,8 +26,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
     header("Location: ../login.php?error=notLoggedIn");
     exit();
 }
-
-$selectedUser = Manager::getUserById($pdo, 0);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["id"])) {
@@ -66,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$users = Manager::getAllUsers($pdo);
+$users = User::getAll($pdo);
 ?>
 <!DOCTYPE html>
 <html lang="en">

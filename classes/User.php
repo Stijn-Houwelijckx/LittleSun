@@ -209,14 +209,22 @@ class User
     public static function getUserById(PDO $pdo, $id)
     {
         try {
-            $stmt = $pdo->prepare("SELECT users.*, user_locations.*, locations.*
-            FROM users, user_locations, locations
-            WHERE users.id = :id
-              AND users.status = 1
-              AND users.id = user_locations.user_id
-              AND locations.id = user_locations.location_id;
-            ");
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            if ($id == 0) {
+                $stmt = $pdo->prepare("SELECT users.*, user_locations.location_id
+                FROM users, user_locations
+                WHERE users.id = 1
+                  AND users.status = 1
+                  AND users.id = user_locations.user_id;
+                ");
+            } else {
+                $stmt = $pdo->prepare("SELECT users.*, user_locations.location_id
+                FROM users, user_locations
+                WHERE users.id = :id
+                  AND users.status = 1
+                  AND users.id = user_locations.user_id;
+                ");
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            }
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {

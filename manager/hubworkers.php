@@ -25,23 +25,36 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
     exit();
 }
 
-$hubworkers = Manager::getHubWorkers($pdo, $_SESSION["user_id"], $manager["location_id"]);
+$hubworkers = Manager::getHubWorkers($pdo, $manager["location_id"]);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LittleSun</title>
+    <link rel="stylesheet" href="../css/style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.png">
 </head>
+
 <body>
-    <div class="hubs">
-        <?php foreach ($hubworkers As $hubworker) : ?>
-            <div class="hub">
+    <?php include_once ('../inc/nav.inc.php'); ?>
+    <div id="hubworkers">
+        <h1>Hubworkers at <?php echo $hubworkers[0]["name"] ?></h1>
+        <div class="hubs">
+            <?php foreach ($hubworkers As $hubworker) : ?>
+                <div class="hub">
                 <p><?php echo $hubworker["firstname"]?></p>
-            </div>
-        <?php endforeach ?>
+                <p><?php echo $hubworker["lastname"]?></p>
+                <p><?php echo $hubworker["email"]?></p>
+                <p><?php echo $hubworker["name"]?></p>
+                </div>
+            <?php endforeach ?>
+        </div>
     </div>
 </body>
+
 </html>
