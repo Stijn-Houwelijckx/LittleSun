@@ -15,7 +15,7 @@
             <a href="dashboard.php">
             <div>
                 <img class="<?php echo ($current_page == 'home') ? 'homeItem active' : 'homeItem'; ?>"
-                    src="../assets/images/Home.svg" alt="homeIcon">
+                    src="../assets/icons/Home.svg" alt="homeIcon">
                 <p>Home</p>
             </div>
             </a>
@@ -23,14 +23,14 @@
                 <a href="hubLocations.php">
                 <div>
                     <img class="<?php echo ($current_page == 'locations') ? 'locationsItem active' : 'locationsItem'; ?>"
-                        src="../assets/images/location.svg" alt="locationsIcon">
+                        src="../assets/icons/location.svg" alt="locationsIcon">
                     <p>Home</p>
                 </div>
             </a>
             <a href="users.php">
                 <div>
                     <img class="<?php echo ($current_page == 'users') ? 'usersItem active' : 'usersItem'; ?>"
-                        src="../assets/images/Users.svg" alt="usersIcon">
+                        src="../assets/icons/Users.svg" alt="usersIcon">
                     <p>Home</p>
                 </div>
             </a>
