@@ -101,26 +101,6 @@ class Manager extends User
         }
     }  
     
-    public function addUser(PDO $pdo): bool
-    {
-        try {
-            $stmt = $pdo->prepare("INSERT INTO users (firstname, lastname, email, password) VALUES (:firstname, :lastname, :email, :password)");
-            $stmt->bindParam(':firstname', $this->firstname);
-            $stmt->bindParam(':lastname', $this->lastname);
-            $stmt->bindParam(':email', $this->email);
-            $stmt->bindParam(':password', $this->password);
-
-            // Controleer of de SQL-instructie met succes is uitgevoerd
-            if ($stmt->execute()) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (PDOException $e) {
-            error_log('Database error: ' . $e->getMessage());
-            return false;
-        }
-    }
     public static function getManagerLocation(PDO $pdo, $manager_id)
     {
         try {
