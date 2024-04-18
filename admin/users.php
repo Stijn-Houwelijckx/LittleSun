@@ -59,7 +59,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             unset($_SESSION["firstname"]);
             unset($_SESSION["lastname"]);
             unset($_SESSION["email"]);
-
             $selectedUser = User::getUserById($pdo, $_POST["user_id"]);
         } catch (Exception $e) {
             error_log('Database error: ' . $e->getMessage());
