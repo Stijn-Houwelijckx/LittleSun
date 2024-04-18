@@ -5,6 +5,10 @@ session_unset();
 include_once (__DIR__ . "/classes/User.php");
 include_once (__DIR__ . "/classes/Db.php");
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('error_log', 'error.log');
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
     $password = filter_input(INPUT_POST, 'password');

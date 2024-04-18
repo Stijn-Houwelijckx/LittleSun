@@ -8,16 +8,14 @@ $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
 
 if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
-    $pdo = Db::getInstance();
-    $user = User::getUserById($pdo, $_SESSION["user_id"]);
-
     try {
-
+        $pdo = Db::getInstance();
+        $user = User::getUserById($pdo, $_SESSION["user_id"]);
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
     }
 } else {
-    header("Location: ../login.php?error=notLoggedIn");
+    header("Location: ../login.php?error=notLoggedManager");
     exit();
 }
 ?>
