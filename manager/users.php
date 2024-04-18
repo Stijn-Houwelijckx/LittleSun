@@ -14,7 +14,7 @@ $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
 $userLocation = Manager::getManagerLocation($pdo, $_SESSION["user_id"]);
 $_SESSION["location"] = $userLocation;
-var_dump($userLocation);
+
 if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
     try {
         $pdo = Db::getInstance();

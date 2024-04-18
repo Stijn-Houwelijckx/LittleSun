@@ -101,23 +101,6 @@ class Manager extends User
         }
     }  
     
-    
-    public static function getUserById(PDO $pdo, $id)
-    {
-        try {
-            if ($id == 0) {
-                $stmt = $pdo->prepare("SELECT * FROM users WHERE typeOfUser = 'user' AND status = 1 LIMIT 1");
-            } else {
-                $stmt = $pdo->prepare("SELECT * FROM users WHERE typeOfUser = 'user' AND id = :id AND status = 1");
-                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            }
-            $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log('Database error: ' . $e->getMessage());
-            return null;
-        }
-    }
     public function addUser(PDO $pdo): bool
     {
         try {
@@ -150,6 +133,17 @@ class Manager extends User
             return null;
         }
     }
-    
 
+    public static function getHubWorkers(PDO $pdo, $manager_id, $manager_location){
+        try {
+            $stmt = $pdo->prepare("SELECT users.*, locations.* FROM users, locations, user_locations WHERE users.id = :id AND users.id = user_locations.user_id AND locations.id = :location");
+            $stmt->bindParam(':location', $manager_location, PDO::PARAM_INT);
+            $stmt->bindParam(':id', $manager_id, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            return null;
+        }
+    }  
 }

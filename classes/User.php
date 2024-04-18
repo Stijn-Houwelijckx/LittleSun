@@ -209,12 +209,14 @@ class User
     public static function getUserById(PDO $pdo, $id)
     {
         try {
-            if ($id == 0) {
-                $stmt = $pdo->prepare("SELECT * FROM users WHERE status = 1 LIMIT 1");
-            } else {
-                $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :id AND status = 1");
-                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            }
+            $stmt = $pdo->prepare("SELECT users.*, user_locations.*, locations.*
+            FROM users, user_locations, locations
+            WHERE users.id = :id
+              AND users.status = 1
+              AND users.id = user_locations.user_id
+              AND locations.id = user_locations.location_id;
+            ");
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
