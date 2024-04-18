@@ -480,6 +480,13 @@ button {
   color: var(--black);
 }
 
+/* ---- calendar ---- */
+#calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 @media (min-width: 800px) {
   .desktopNav {
     display: flex;
@@ -502,7 +509,8 @@ button {
   #hubLocationsAdmin,
   #addHubLocation,
   #usersAdmin,
-  #hubworkers {
+  #hubworkers,
+  #calendar {
     padding: 24px;
     padding-left: 144px;
   }
