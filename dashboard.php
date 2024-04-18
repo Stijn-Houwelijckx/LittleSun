@@ -2,16 +2,17 @@
 include_once (__DIR__ . "/classes/Db.php");
 include_once (__DIR__ . "/classes/User.php");
 
-if (isset($_SESSION["user_id"])) {
-    $pdo = Db::getInstance();
-    $user = User::getUserById($pdo, $_SESSION["user_id"]);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('error_log', 'error.log');
 
-    try {
-    } catch (Exception $e) {
-        error_log('Database error: ' . $e->getMessage());
-    }
-} else {
-    header("Location: login.php?error=notLoggedIn");
+session_start();
+
+$pdo = Db::getInstance();
+$user = User::getUserById($pdo, $_SESSION["user_id"]);
+
+if (!isset($_SESSION["user_id"]) || $user["typeOfUser"] != "employee") {
+    header("Location: login.php?notLoggedIn=true");
     exit();
 }
 ?>
