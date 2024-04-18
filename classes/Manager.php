@@ -86,8 +86,6 @@ class Manager extends User
         return $this;
     }
 
-
-
     public static function getAllUsers(PDO $pdo)
     {
         try {
@@ -100,17 +98,4 @@ class Manager extends User
             throw new Exception('Database error: Unable to retrieve users', 0, $e);
         }
     }  
-    
-    public static function getManagerLocation(PDO $pdo, $manager_id)
-    {
-        try {
-            $stmt = $pdo->prepare("SELECT location FROM users WHERE id = :id");
-            $stmt->bindParam(':id', $manager_id, PDO::PARAM_INT);
-            $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log('Database error: ' . $e->getMessage());
-            return null;
-        }
-    } 
 }
