@@ -20,16 +20,14 @@ if (!isset($_SESSION["user_id"]) && $manager["typeOfUser"] != "manager") {
     $lastname = $_POST['lastname'];
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $location = $_POST['location'];
 
     $user->setFirstname($firstname);
     $user->setLastname($lastname);
-    $user->setTypeOfUser("employee");
     $user->setEmail($email);
     $user->setPassword($password);
     $user->setLocation($manager["location"]);
 
-    $user->addUser($pdo);
+    $user->addUser($pdo, "employee");
 
     header("Location: users.php");
     exit();
