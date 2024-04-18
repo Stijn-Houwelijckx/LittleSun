@@ -86,6 +86,8 @@ class Manager extends User
         return $this;
     }
 
+
+
     public static function getAllUsers(PDO $pdo)
     {
         try {
@@ -142,7 +144,7 @@ class Manager extends User
             $stmt = $pdo->prepare("SELECT location FROM users WHERE id = :id");
             $stmt->bindParam(':id', $manager_id, PDO::PARAM_INT);
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log('Database error: ' . $e->getMessage());
             return null;

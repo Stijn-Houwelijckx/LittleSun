@@ -5,12 +5,9 @@ class User
     private $lastname;
     private $typeOfUser;
     private $email;
-    private $street;
-    private $houseNumber;
-    private $zipCode;
-    private $city;
-    private $phoneNumber;
+    private $location;
     private string $password;
+
 
     /**
      * Get the value of firstname
@@ -122,148 +119,23 @@ class User
 
         return $this;
     }
-
-    /**
-     * Get the value of street
-     */
-    public function getStreet()
+        /**
+     * Get the value of location
+     */ 
+    public function getLocation()
     {
-        return $this->street;
+        return $this->location;
     }
 
     /**
-     * Set the value of street
+     * Set the value of location
      *
      * @return  self
-     */
-    public function setStreet($street)
+     */ 
+    public function setLocation($location)
     {
-        if (empty(trim($street))) {
-            throw new Exception("Straat is verplicht.");
-        }
+        $this->location = $location;
 
-        $reValid = '/^(?!.*\s\s)[A-Za-z]+([-\' ][A-Za-z]+)*$/';
-
-        if (!preg_match($reValid, $street)) {
-            throw new Exception("Straat is niet geldig.");
-        }
-
-        $_SESSION["street"] = $street;
-        $this->street = $street;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of houseNumber
-     */
-    public function getHouseNumber()
-    {
-        return $this->houseNumber;
-    }
-
-    /**
-     * Set the value of houseNumber
-     *
-     * @return  self
-     */
-    public function setHouseNumber($houseNumber)
-    {
-        if (empty(trim($houseNumber))) {
-            throw new Exception("Huisnummer is verplicht.");
-        }
-
-        $reValid = '/^[0-9]+[a-zA-Z]*$/';
-        if (!preg_match($reValid, $houseNumber)) {
-            throw new Exception("Huisnummer is niet geldig.");
-        }
-
-        $_SESSION["houseNumber"] = $houseNumber;
-        $this->houseNumber = $houseNumber;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of zipCode
-     */
-    public function getZipCode()
-    {
-        return $this->zipCode;
-    }
-
-    /**
-     * Set the value of zipCode
-     *
-     * @return  self
-     */
-    public function setZipCode($zipCode)
-    {
-        if (empty(trim($zipCode))) {
-            throw new Exception("Postcode is verplicht.");
-        }
-
-        $reValid = '/^[1-9][0-9]{3}$/';
-        if (!preg_match($reValid, $zipCode)) {
-            throw new Exception("Postcode is niet geldig.");
-        }
-
-        $_SESSION["zipCode"] = $zipCode;
-        $this->zipCode = $zipCode;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of city
-     */
-    public function getCity()
-    {
-        return $this->city;
-    }
-
-    /**
-     * Set the value of city
-     *
-     * @return  self
-     */
-    public function setCity($city)
-    {
-        if (empty(trim($city))) {
-            throw new Exception("Gemeente is verplicht.");
-        }
-
-        $reValid = '/^(?!.*\s\s)[A-Za-z]+([- ][A-Za-z]+)*$/';
-        if (!preg_match($reValid, $city)) {
-            throw new Exception("Gemeente is niet geldig.");
-        }
-
-        $_SESSION["city"] = $city;
-        $this->city = $city;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of phoneNumber
-     */
-    public function getPhoneNumber()
-    {
-        return $this->phoneNumber;
-    }
-
-    /**
-     * Set the value of phoneNumber
-     *
-     * @return  self
-     */
-    public function setPhoneNumber($phoneNumber)
-    {
-        if (empty(trim($phoneNumber))) {
-            $phoneNumber = NULL;
-        }
-
-        $this->phoneNumber = $phoneNumber;
         return $this;
     }
 
@@ -303,12 +175,12 @@ class User
     public function addUser(PDO $pdo): bool
     {
         try {
-            $stmt = $pdo->prepare("INSERT INTO users (firstname, lastname, email, password) VALUES (:firstname, :lastname, :email, :password)");
+            $stmt = $pdo->prepare("INSERT INTO users (firstname, lastname, email, location, password) VALUES (:firstname, :lastname, :email, :location, :password)");
             $stmt->bindParam(':firstname', $this->firstname);
             $stmt->bindParam(':lastname', $this->lastname);
             $stmt->bindParam(':email', $this->email);
+            $stmt->bindParam(':location', $this->location);
             $stmt->bindParam(':password', $this->password);
-
             // Controleer of de SQL-instructie met succes is uitgevoerd
             if ($stmt->execute()) {
                 return true;
@@ -354,16 +226,12 @@ class User
     public function updateUser(PDO $pdo, $user_id): bool
     {
         try {
-            $stmt = $pdo->prepare("UPDATE users SET firstname = :firstname, lastname = :lastname, typeOfUser = :typeOfUser, street = :street, houseNumber = :houseNumber, zipCode = :zipCode, city = :city, phoneNumber = :phoneNumber WHERE id = :user_id");
+            $stmt = $pdo->prepare("UPDATE users SET firstname = :firstname, lastname = :lastname, typeOfUser = :typeOfUser WHERE id = :user_id");
             $stmt->bindParam(':firstname', $this->firstname);
             $stmt->bindParam(':lastname', $this->lastname);
             $stmt->bindParam(':typeOfUser', $this->typeOfUser);
-            $stmt->bindParam(':phoneNumber', $this->phoneNumber);
-            $stmt->bindParam(':street', $this->street);
-            $stmt->bindParam(':houseNumber', $this->houseNumber);
-            $stmt->bindParam(':zipCode', $this->zipCode);
-            $stmt->bindParam(':city', $this->city);
             $stmt->bindParam(':user_id', $user_id);
+
 
             // Controleer of de SQL-instructie met succes is uitgevoerd
             if ($stmt->execute()) {

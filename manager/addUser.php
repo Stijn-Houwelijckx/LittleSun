@@ -4,21 +4,25 @@ include_once (__DIR__ . "../../classes/User.php");
 include_once (__DIR__ . "../../classes/Manager.php");
 session_start();
 $pdo = Db::getInstance();
+$manager = User::getUserById($pdo, $_SESSION["user_id"]);
  if (isset($_POST['firstname']) && isset($_POST['lastname']) && isset($_POST['email']) && isset($_POST['password'])){
     $user = new User;
     $firstname = $_POST['firstname'];
     $lastname = $_POST['lastname'];
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $location = $_POST['location'];
     $user->setFirstname($firstname);
     $user->setLastname($lastname);
     $user->setEmail($email);
     $user->setPassword($password);
+    $user->setLocation($manager["location"]);
     $user->addUser($pdo);
     header("Location: users.php");
     exit();
 
-}
+
+ }
 
 
 
@@ -53,10 +57,6 @@ $pdo = Db::getInstance();
                             <label for="password">password:</label>
                             <input type="text" name="password" id="password" >
                             </div>
-                            </div>
-                            <div class="column">
-                            <label for="location">location:</label>
-                            <input type="text" name="location" id="location" >
                             </div>
                     </div>
                     <div class="buttons">
