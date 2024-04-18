@@ -2,13 +2,14 @@
 include_once (__DIR__ . "../../classes/Db.php");
 include_once (__DIR__ . "../../classes/User.php");
 include_once (__DIR__ . "../../classes/Manager.php");
+include_once (__DIR__ . "../../classes/Employee.php");
 session_start();
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('error_log', 'error.log');
 
-$current_page = 'users';
+$current_page = 'hubworkers';
 
 $pdo = Db::getInstance();
 $manager = User::getUserById($pdo, $_SESSION["user_id"]);
@@ -49,8 +50,7 @@ $employees = Employee::getAllEmployees($pdo, $manager["location_id"]);
                 <div class="hub">
                 <p><?php echo $employee["firstname"]?></p>
                 <p><?php echo $employee["lastname"]?></p>
-                <p><?php echo $employee["email"]?></p>
-                <p><?php echo $employee["name"]?></p>
+                <p>Milking cows, cleaning</p>
                 </div>
             <?php endforeach ?>
         </div>

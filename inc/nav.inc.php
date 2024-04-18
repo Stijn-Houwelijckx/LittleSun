@@ -34,44 +34,69 @@
                     </div>
                 </a>
                 <a href="hubLocations.php">
-                <div>
-                    <img class="<?php echo ($current_page == 'locations') ? 'locationsItem active' : 'locationsItem'; ?>"
-                        src="../assets/icons/location.svg" alt="locations">
-                    <p>Home</p>
-                </div>
-            </a>
-            <a href="users.php">
-                <div>
-                    <img class="<?php echo ($current_page == 'users') ? 'usersItem active' : 'usersItem'; ?>"
-                        src="../assets/icons/users.svg" alt="users">
-                    <p>Home</p>
-                </div>
-            </a>
-            <a href="tasks.php">
-                <div>
-                    <img class="<?php echo ($current_page == 'tasks') ? 'usersItem active' : 'usersItem'; ?>"
-                        src="../assets/icons/task.svg" alt="tasks">
-                    <p>Home</p>
-                </div>
-            </a>
+                    <div>
+                        <img class="<?php echo ($current_page == 'locations') ? 'locationsItem active' : 'locationsItem'; ?>"
+                            src="../assets/icons/location.svg" alt="locations">
+                        <p>Hublocations</p>
+                    </div>
+                </a>
+                <a href="users.php">
+                    <div>
+                        <img class="<?php echo ($current_page == 'users') ? 'usersItem active' : 'usersItem'; ?>"
+                            src="../assets/icons/users.svg" alt="users">
+                        <p>Users</p>
+                    </div>
+                </a>
+                <a href="tasks.php">
+                    <div>
+                        <img class="<?php echo ($current_page == 'tasks') ? 'usersItem active' : 'usersItem'; ?>"
+                            src="../assets/icons/task.svg" alt="tasks">
+                        <p>Tasks</p>
+                    </div>
+                </a>
             <?php endif ?>
 
             <?php if ($role == "manager") : ?>
                 <a href="dashboard.php">
-            <div>
-                <img class="<?php echo ($current_page == 'home') ? 'homeItem active' : 'homeItem'; ?>"
-                    src="../assets/icons/Home.svg" alt="home">
-                <p>Home</p>
-            </div>
-            </a>
-                <a href="employees.php">
                     <div>
-                        <img class="<?php echo ($current_page == 'users') ? 'usersItem active' : 'usersItem'; ?>"
-                            src="../assets/icons/users.svg" alt="users">
+                        <img class="<?php echo ($current_page == 'home') ? 'homeItem active' : 'homeItem'; ?>"
+                            src="../assets/icons/Home.svg" alt="home">
                         <p>Home</p>
                     </div>
                 </a>
+                <a href="employees.php">
+                    <div>
+                        <img class="<?php echo ($current_page == 'employees') ? 'usersItem active' : 'usersItem'; ?>"
+                            src="../assets/icons/users.svg" alt="users">
+                        <p>Employees</p>
+                    </div>
+                </a>
+                <a href="hubworkers.php">
+                    <div>
+                        <img class="<?php echo ($current_page == 'hubworkers') ? 'usersItem active' : 'usersItem'; ?>"
+                            src="../assets/icons/employee.svg" alt="Employees">
+                        <p>Employees</p>
+                    </div>
+                </a>
+                <a href="calendar.php">
+                    <div>
+                        <img class="<?php echo ($current_page == 'calendar') ? 'usersItem active' : 'usersItem'; ?>"
+                            src="../assets/icons/calendar.svg" alt="Calendar">
+                        <p>Calendar</p>
+                    </div>
+                </a>
             <?php endif ?>
+
+            <?php if ($role == "employee") : ?>
+                <a href="calendar.php">
+                    <div>
+                        <img class="<?php echo ($current_page == 'calendar') ? 'usersItem active' : 'usersItem'; ?>"
+                            src="assets/icons/calendar.svg" alt="Calendar">
+                        <p>Calendar</p>
+                    </div>
+                </a>
+            <?php endif; ?>
+                        
         </div>
         <div class="settings">
             <a href="<?php echo $pathExtention ?>logout.php">
