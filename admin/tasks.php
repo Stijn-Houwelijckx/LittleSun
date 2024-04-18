@@ -13,18 +13,34 @@ $current_page = 'tasks';
 
 $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
+$selectedTask = Task::getTaskById($pdo, 1);
 
 if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
     try {
         $pdo = Db::getInstance();
         $user = User::getUserById($pdo, $_SESSION["user_id"]);
-
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
     }
 } else {
     header("Location: ../login.php?error=notLoggedIn");
     exit();
+}
+
+if (isset($_POST["task_select"])) {
+    try {
+        $selectedTask = Task::getTaskById($pdo, $_POST["task_select"]);
+    } catch (Exception $e) {
+        error_log('Database error: ' . $e->getMessage());
+    }
+}
+
+if (isset($_POST["delete"])) {
+    try {
+        Task::deleteTask($pdo, $_POST["delete"]);
+    } catch (Exception $e) {
+        error_log('Database error: ' . $e->getMessage());
+    }
 }
 
 $allTasks =  Task::getAllTasks($pdo);
@@ -45,35 +61,27 @@ $allTasks =  Task::getAllTasks($pdo);
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="usersAdmin">
         <h1>Tasks</h1>
-        <select>
-            <?php foreach ($allTasks as $task): ?>
-                <option value="<?php echo $task["id"] ?>">
-                    <?php echo htmlspecialchars($task["task"]) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <div class="users"></div>
-            <?php if (!empty($users)): ?>
-                <form action="" method="post" id="taskForm">
-                    <div class="user">
-                        <div class="text">
-                            <div class="column">
-                            <label for="task">Task:</label>
-                            <input type="text" name="task" id="task" value="">
-                            </div>
-                            
-                            
-                        </div>
-                    </div>
-                    <div class="buttons">
-                        <button type="submit" class="btn">Opslaan</button>
-                    </div>
-                </form>
+        <form action="" method="post" id="taskSelector">
+            <select name="task_select" onchange=submitTaskForm()>
+                <?php foreach ($allTasks as $task): ?>
+                    <option value="<?php echo $task["id"]; ?> <?php if ($task["id"] == $selectedTask["id"]) echo "selected"; ?>">
+                        <?php echo htmlspecialchars($task["task"]); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </form>
 
-                
-            <?php endif; ?>
-            <form action="" method="post" id="removetask"><button class="btn">Verwijderen</button></form>
+        <div class="tasks"></div>
+            <form action="" method="post" id="removetask">
+                <button type="submit" class="btn"><i class="fa fa-trash"></i> delete</button>
+                <input hidden type="text" name="delete" value="<?php echo $selectedTask["id"] ?>">
+            </form>
         </div>
     </div>
 
+    <script>
+        function submitTaskForm() {
+            document.getElementById("taskSelector").submit();
+        }
+    </script>
 </body>
