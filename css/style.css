@@ -484,6 +484,7 @@ button {
 #calendar {
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   gap: 24px;
 }
 
@@ -494,6 +495,12 @@ button {
   align-items: center;
 }
 
+#calendar #top,
+#calendar #days,
+#calendar #month {
+  width: 100%;
+}
+
 #calendar #top .fa {
   font-size: 24px;
 }
@@ -501,6 +508,10 @@ button {
 #calendar h2,
 #calendar h3 {
   color: var(--darkYellow);
+}
+
+#calendar .btn {
+  width: 132px;
 }
 
 @media (min-width: 800px) {
