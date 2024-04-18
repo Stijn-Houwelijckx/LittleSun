@@ -39,4 +39,17 @@ class Task {
         }
     }
 
+    public static function getAllTasks(PDO $pdo)
+    {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM taskTypes WHERE status = 1");
+            $stmt->execute();
+            $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $tasks ?: [];
+        } catch (PDOException $e) {
+            error_log('Database error in getAllTasks(): ' . $e->getMessage());
+            throw new Exception('Database error: Unable to retrieve tasks', 0, $e);
+        }
+    }
+
 }
