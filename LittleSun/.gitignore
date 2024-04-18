@@ -1,7 +1,0 @@
-/classes/Db.php
-error.log
-
-*.sql
-*.sql.gz
-*.sql.gzip
-*.sql.zip
