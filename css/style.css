@@ -4,7 +4,8 @@
   --offBlack: #595959;
   --black: #1a1a1a;
   --lightBlue: #cfd9e1;
-  --blue: #ffdd00;
+  --yellow: #ffdd00;
+  --darkYellow: #8d7a00;
   --gray: #dadada;
 
   /* ---- 2de kleurenpalet ---- */
@@ -32,7 +33,7 @@ body {
 h1 {
   font-family: "Outfit", sans-serif;
   font-size: 24px;
-  color: var(--blue);
+  color: var(--darkYellow);
   margin: 0;
   padding: 0;
 }
@@ -40,7 +41,7 @@ h1 {
 h2 {
   font-family: "Outfit", sans-serif;
   font-size: 20px;
-  color: var(--blue);
+  color: var(--darkYellow);
   margin: 0;
   padding: 0;
 }
@@ -48,7 +49,7 @@ h2 {
 h3 {
   font-family: "Outfit", sans-serif;
   font-size: 16px;
-  color: var(--blue);
+  color: var(--darkYellow);
   margin: 0;
   padding: 0;
 }
@@ -73,7 +74,7 @@ button {
 
 .btn {
   padding: 8px 16px;
-  background-color: var(--blue);
+  background-color: var(--yellow);
   color: var(--black);
   border: none;
   border-radius: 8px;
@@ -85,7 +86,7 @@ button {
   flex-direction: row;
   align-items: center;
   gap: 8px;
-  background-color: var(--blue);
+  background-color: var(--yellow);
   width: 120px;
   height: 100vh;
   overflow: hidden;
@@ -130,7 +131,6 @@ button {
 }
 
 .desktopNav .column .top .logo {
-  background-image: url("../assets/images/favicon.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -142,6 +142,17 @@ button {
 .desktopNav .column .top .border {
   width: 100%;
   border: 1px solid var(--black);
+}
+
+.desktopNav .column .top .role {
+  background-color: var(--darkYellow);
+  padding: 8px 16px;
+  border-radius: 360px;
+}
+
+.desktopNav .column .top .role p {
+  color: white;
+  text-transform: capitalize;
 }
 
 .desktopNav .column .menu,
@@ -443,6 +454,64 @@ button {
   align-items: center;
 }
 
+/* ---- hubworkers ---- */
+#hubworkers {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+#hubworkers .hubs {
+  display: flex;
+  flex-direction: column;
+}
+
+#hubworkers .hubs .hub {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 8px;
+}
+
+#hubworkers .hubs .hub:nth-child(even) {
+  background-color: var(--yellow);
+  color: var(--black);
+}
+
+/* ---- calendar ---- */
+#calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 24px;
+}
+
+#calendar #top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#calendar #top,
+#calendar #days,
+#calendar #month {
+  width: 100%;
+}
+
+#calendar #top .fa {
+  font-size: 24px;
+}
+
+#calendar h2,
+#calendar h3 {
+  color: var(--darkYellow);
+}
+
+#calendar .btn {
+  width: 132px;
+}
+
 @media (min-width: 800px) {
   .desktopNav {
     display: flex;
@@ -464,7 +533,9 @@ button {
 
   #hubLocationsAdmin,
   #addHubLocation,
-  #usersAdmin {
+  #usersAdmin,
+  #hubworkers,
+  #calendar {
     padding: 24px;
     padding-left: 144px;
   }

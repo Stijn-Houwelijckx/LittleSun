@@ -2,30 +2,26 @@
 include_once (__DIR__ . "../../classes/Db.php");
 include_once (__DIR__ . "../../classes/User.php");
 include_once (__DIR__ . "../../classes/Manager.php");
+include_once (__DIR__ . "../../classes/Employee.php");
 session_start();
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('error_log', 'error.log');
 
-$current_page = 'users';
+$current_page = 'employees';
 
 $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
-$selectedUser = User::getUserById($pdo, 0);
+$manager = User::getUserById($pdo, $_SESSION["user_id"]);
 
-if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
-    try {
-        $pdo = Db::getInstance();
-        $user = User::getAll($pdo);
-
-    } catch (Exception $e) {
-        error_log('Database error: ' . $e->getMessage());
-    }
-} else {
-    header("Location: ../login.php?error=notLoggedIn");
+if (!isset($_SESSION["user_id"]) || $manager["typeOfUser"] != "manager") {
+    header("Location: ../login.php?notLoggedIn=true");
     exit();
 }
+
+$users = Employee::getAllEmployees($pdo, $manager["location_id"]);
+$selectedUser = $users[0];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["id"])) {
@@ -50,12 +46,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["firstname"])) {
         try {
             $user = new User();
-
             $user->setFirstname($_POST['firstname']);
             $user->setLastname($_POST['lastname']);
             $user->setEmail($_POST['email']);
+            $user->updateUser($pdo, $_POST["user_id"], "employee");
 
-            $user->updateUser($pdo, $_POST["user_id"], $_POST['typeOfUser']);
+            unset($_SESSION["firstname"]);
+            unset($_SESSION["lastname"]);
+            unset($_SESSION["email"]);
 
             $selectedUser = User::getUserById($pdo, $_POST["user_id"]);
         } catch (Exception $e) {
@@ -63,8 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
-
-$users = User::getAll($pdo);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -82,6 +78,7 @@ $users = User::getAll($pdo);
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="usersAdmin">
         <h1>Users</h1>
+        <a href="addEmployee.php" class="btn">add user</a>
         <form action="" id="userSelector" onchange="submitUserForm()" method="post">
         <select name="user_id">
             <?php foreach ($users as $user): ?>
@@ -110,39 +107,12 @@ $users = User::getAll($pdo);
                             </div>
                             <div class="column">
                             <input type="hidden" name="user_id" id="user_id" value="<?php echo htmlspecialchars($selectedUser["id"]); ?>">
-                            
-                            <div class="row">
-                                <input type="hidden" name="typeOfUser" value="user">
-                                <label for="checkboxTypeOfUser">Manager:</label>
-                                <input type="checkbox" name="typeOfUser" id="checkboxTypeOfUser" value="manager" <?php if ($selectedUser["typeOfUser"] == "manager") echo "checked"; ?>>
-                            </div>
                         </div>
                     </div>
                     <div class="buttons">
                         <button type="submit" class="btn">Opslaan</button>
                     </div>
                 </form>
-                <!-- <div class="popup">
-                    <p>Weet je zeker dat je deze gebruiker wilt verwijderen?</p>
-                    <div class="btns">
-                        <a href="#" class="close">Nee</a>
-                        <form action="" method="POST">
-                            <input type="text" name="id" hidden value="<?php echo $selectedUser["id"] ?>>">
-                            <button type="submit" class="btn">Ja</button>
-                        </form>
-                    </div>
-                </div> -->
-                <div class="popupIsManager">
-                    <p>Weet je zeker dat je deze gebruiker manager wilt maken?</p>
-                    <div class="btns">
-                        <a href="#" class="close">Nee</a>
-                        <form action="" method="POST">
-                            <input type="text" name="user_admin_id" hidden value="<?php echo $selectedUser["id"] ?>>">
-                            <button type="button" class="btn confirm-admin">Ja</button>
-                        </form>
-                    </div>
-                </div>
-                <!-- <button class="btn remove">Verwijderen</button> -->
             <?php endif; ?>
         </div>
     </div>
@@ -152,30 +122,6 @@ $users = User::getAll($pdo);
         function submitUserForm() {
             document.getElementById("userSelector").submit();
         }
-
-        // document.querySelector(".users .remove").addEventListener("click", function (e) {
-        //     document.querySelector(".popup").style.display = "flex";
-        //     document.querySelector(".popup .close").addEventListener("click", function (e) {
-        //         document.querySelector(".popup").style.display = "none";
-        //     });
-        // });
-
-        document.querySelector("#checkboxTypeOfUser").addEventListener("change", function (e) {
-            if (this.checked) {
-                document.querySelector(".popupIsManager").style.display = "flex";
-                document.querySelector(".popupIsManager .close").addEventListener("click", function (e) {
-                    document.querySelector(".popupIsManager").style.display = "none";
-                    document.querySelector("#checkboxIsAdmin").checked = false;
-                });
-
-                e.preventDefault();
-            }
-
-            document.querySelector(".confirm-admin").addEventListener("click", function (e) {
-                document.querySelector("#userForm").submit();
-            });
-        });
-
     </script>
 
 </body>
