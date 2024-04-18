@@ -9,16 +9,16 @@
     $role = $user["typeOfUser"];
     
     if ($role == "admin" || $role == "manager") {
-        $payhExtention = "../";
+        $pathExtention = "../";
     } else {
-        $payhExtention = "";
+        $pathExtention = "";
     }
-?> 
+?>  
 
 <nav class="desktopNav">
     <div class="column">
         <div class="top">
-            <div class="logo"></div>
+            <div class="logo" style="background-image: url('<?php echo $pathExtention ?>assets/images/favicon.png');"></div>
             <p class="border"></p>
             <div class="role">
                 <p><?php echo $role ?></p>
@@ -67,9 +67,9 @@
             <?php endif ?>
         </div>
         <div class="settings">
-            <a href="../logout.php">
+            <a href="<?php echo $pathExtention ?>logout.php">
                 <div>
-                    <img class="logoutItem" src="../assets/icons/logout.svg" alt="logout">
+                    <img class="logoutItem" src="<?php echo $pathExtention ?>assets/icons/logout.svg" alt="logout">
                     <p>Logout</p>
                 </div>
             </a>
