@@ -27,6 +27,7 @@
                     <p>Home</p>
                 </div>
             </a>
+            <?php endif ?>
             <a href="users.php">
                 <div>
                     <img class="<?php echo ($current_page == 'users') ? 'usersItem active' : 'usersItem'; ?>"
@@ -34,7 +35,6 @@
                     <p>Home</p>
                 </div>
             </a>
-            <?php endif ?>
         </div>
     </div>
     <div class="column center">

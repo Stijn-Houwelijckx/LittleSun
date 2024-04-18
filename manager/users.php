@@ -12,8 +12,9 @@ $current_page = 'users';
 
 $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
-
-if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
+$userLocation = Manager::getManagerLocation($pdo, $_SESSION["user_id"]);
+var_dump($userLocation);
+if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
     try {
         $pdo = Db::getInstance();
         $user = User::getUserById($pdo, $_SESSION["user_id"]);
@@ -25,6 +26,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
     header("Location: ../login.php?error=notLoggedIn");
     exit();
 }
+
 
 $selectedUser = Manager::getUserById($pdo, 0);
 
@@ -55,19 +57,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $user->setLastname($_POST['lastname']);
             $user->settypeOfUser($_POST['typeOfUser']);
             $user->setEmail($_POST['email']);
-            $user->setStreet($_POST['street']);
-            $user->setHouseNumber($_POST['houseNumber']);
-            $user->setZipCode($_POST['zipCode']);
-            $user->setCity($_POST['city']);
             $user->updateUser($pdo, $_POST["user_id"]);
 
             unset($_SESSION["firstname"]);
             unset($_SESSION["lastname"]);
             unset($_SESSION["email"]);
-            unset($_SESSION["street"]);
-            unset($_SESSION["houseNumber"]);
-            unset($_SESSION["zipCode"]);
-            unset($_SESSION["city"]);
 
             $selectedUser = User::getUserById($pdo, $_POST["user_id"]);
         } catch (Exception $e) {
@@ -94,6 +88,7 @@ $users = Manager::getAllUsers($pdo);
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="usersAdmin">
         <h1>Users</h1>
+        <a href="addUser.php" class="btn">add user</a>
         <form action="" id="userSelector" onchange="submitUserForm()" method="post">
         <select name="user_id">
             <?php foreach ($users as $user): ?>
@@ -122,12 +117,6 @@ $users = Manager::getAllUsers($pdo);
                             </div>
                             <div class="column">
                             <input type="hidden" name="user_id" id="user_id" value="<?php echo htmlspecialchars($selectedUser["id"]); ?>">
-                            
-                            <div class="row">
-                                <input type="hidden" name="typeOfUser" value="user">
-                                <label for="checkboxTypeOfUser">Manager:</label>
-                                <input type="checkbox" name="typeOfUser" id="checkboxTypeOfUser" value="manager" <?php if ($selectedUser["typeOfUser"] == "manager") echo "checked"; ?>>
-                            </div>
                         </div>
                     </div>
                     <div class="buttons">

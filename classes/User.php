@@ -303,14 +303,10 @@ class User
     public function addUser(PDO $pdo): bool
     {
         try {
-            $stmt = $pdo->prepare("INSERT INTO users (firstname, lastname, email, street, houseNumber, zipCode, city, password) VALUES (:firstname, :lastname, :email, :street, :houseNumber, :zipCode, :city, :password)");
+            $stmt = $pdo->prepare("INSERT INTO users (firstname, lastname, email, password) VALUES (:firstname, :lastname, :email, :password)");
             $stmt->bindParam(':firstname', $this->firstname);
             $stmt->bindParam(':lastname', $this->lastname);
             $stmt->bindParam(':email', $this->email);
-            $stmt->bindParam(':street', $this->street);
-            $stmt->bindParam(':houseNumber', $this->houseNumber);
-            $stmt->bindParam(':zipCode', $this->zipCode);
-            $stmt->bindParam(':city', $this->city);
             $stmt->bindParam(':password', $this->password);
 
             // Controleer of de SQL-instructie met succes is uitgevoerd
