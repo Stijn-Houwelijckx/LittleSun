@@ -247,13 +247,13 @@ class User
         }
     }
 
-    public function updateUser(PDO $pdo, $user_id): bool
+    public function updateUser(PDO $pdo, $user_id, $typeOfUser): bool
     {
         try {
             $stmt = $pdo->prepare("UPDATE users SET firstname = :firstname, lastname = :lastname, typeOfUser = :typeOfUser WHERE id = :user_id");
             $stmt->bindParam(':firstname', $this->firstname);
             $stmt->bindParam(':lastname', $this->lastname);
-            $stmt->bindParam(':typeOfUser', $this->typeOfUser);
+            $stmt->bindParam(':typeOfUser', $typeOfUser);
             $stmt->bindParam(':user_id', $user_id);
 
 
