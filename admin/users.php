@@ -56,14 +56,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $user->settypeOfUser($_POST['typeOfUser']);
             $user->setEmail($_POST['email']);
             $user->updateUser($pdo, $_POST["user_id"]);
-
             unset($_SESSION["firstname"]);
             unset($_SESSION["lastname"]);
             unset($_SESSION["email"]);
-            unset($_SESSION["street"]);
-            unset($_SESSION["houseNumber"]);
-            unset($_SESSION["zipCode"]);
-            unset($_SESSION["city"]);
 
             $selectedUser = User::getUserById($pdo, $_POST["user_id"]);
         } catch (Exception $e) {
