@@ -41,12 +41,19 @@
                 </div>
             </a>
             <a href="users.php">
-                    <div>
-                        <img class="<?php echo ($current_page == 'users') ? 'usersItem active' : 'usersItem'; ?>"
-                            src="../assets/icons/Users.svg" alt="users">
-                        <p>Home</p>
-                    </div>
-                </a>
+                <div>
+                    <img class="<?php echo ($current_page == 'users') ? 'usersItem active' : 'usersItem'; ?>"
+                        src="../assets/icons/users.svg" alt="users">
+                    <p>Home</p>
+                </div>
+            </a>
+            <a href="tasks.php">
+                <div>
+                    <img class="<?php echo ($current_page == 'tasks') ? 'usersItem active' : 'usersItem'; ?>"
+                        src="../assets/icons/task.svg" alt="tasks">
+                    <p>Home</p>
+                </div>
+            </a>
             <?php endif ?>
 
             <?php if ($role == "manager") : ?>
@@ -60,7 +67,7 @@
                 <a href="employees.php">
                     <div>
                         <img class="<?php echo ($current_page == 'users') ? 'usersItem active' : 'usersItem'; ?>"
-                            src="../assets/icons/Users.svg" alt="users">
+                            src="../assets/icons/users.svg" alt="users">
                         <p>Home</p>
                     </div>
                 </a>
