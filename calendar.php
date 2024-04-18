@@ -99,7 +99,8 @@ array_unshift($allDaysThisMonth, ...$emptyDays);
         </div>
         <div id="month">
             <?php foreach ($allDaysThisMonth as $day): ?>
-                <div class="day"><p><?php echo $day ?></p></div>
+                <?php $date = new DateTime($day); ?>
+                <div class="day"><p><?php echo $date->format('d'); ?></p></div>
             <?php endforeach; ?>
         </div>
     </div>
