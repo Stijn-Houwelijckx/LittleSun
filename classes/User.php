@@ -73,8 +73,8 @@ class User
 
     /**
      * Get the value of typeOfUser
-     */
-    public function gettypeOfUser()
+     */ 
+    public function getTypeOfUser()
     {
         return $this->typeOfUser;
     }
@@ -83,8 +83,8 @@ class User
      * Set the value of typeOfUser
      *
      * @return  self
-     */
-    public function settypeOfUser($typeOfUser)
+     */ 
+    public function setTypeOfUser($typeOfUser)
     {
         $this->typeOfUser = $typeOfUser;
 
@@ -175,9 +175,10 @@ class User
     public function addUser(PDO $pdo): bool
     {
         try {
-            $stmt = $pdo->prepare("INSERT INTO users (firstname, lastname, email, location, password) VALUES (:firstname, :lastname, :email, :location, :password)");
+            $stmt = $pdo->prepare("INSERT INTO users (firstname, lastname, typeOfUser, email, location, password) VALUES (:firstname, :lastname, :typeOfUser, :email, :location, :password)");
             $stmt->bindParam(':firstname', $this->firstname);
             $stmt->bindParam(':lastname', $this->lastname);
+            $stmt->bindParam(':typeOfUser', $this->typeOfUser);
             $stmt->bindParam(':email', $this->email);
             $stmt->bindParam(':location', $this->location);
             $stmt->bindParam(':password', $this->password);
@@ -279,4 +280,6 @@ class User
             throw new Exception('Database error: Unable to retrieve users');
         }
     }
+
+
 }
