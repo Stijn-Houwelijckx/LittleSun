@@ -37,6 +37,7 @@ if (isset($_POST["task_select"])) {
 
 if (isset($_POST["delete"])) {
     try {
+        $selectedTask = Task::getTaskById($pdo, $_POST["delete"]);
         Task::deleteTask($pdo, $_POST["delete"]);
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
@@ -64,7 +65,7 @@ $allTasks =  Task::getAllTasks($pdo);
         <form action="" method="post" id="taskSelector">
             <select name="task_select" onchange=submitTaskForm()>
                 <?php foreach ($allTasks as $task): ?>
-                    <option value="<?php echo $task["id"]; ?> <?php if ($task["id"] == $selectedTask["id"]) echo "selected"; ?>">
+                    <option value="<?php echo $task["id"]; ?>" <?php if ($task["id"] == $selectedTask["id"]) echo "selected"; ?>>
                         <?php echo htmlspecialchars($task["task"]); ?>
                     </option>
                 <?php endforeach; ?>
