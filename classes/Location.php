@@ -128,4 +128,26 @@ class Location
             throw new Exception('Database error: Unable to update read status');
         }
     }
+
+    public function updateLocation(PDO $pdo, $id)
+    {
+        try {
+            $stmt = $pdo->prepare("UPDATE locations SET name = :name, city = :city, country = :country WHERE id = :id");
+
+            $stmt->bindParam(':name', $this->name);
+            $stmt->bindParam(':city', $this->city);
+            $stmt->bindParam(':country', $this->country);
+            $stmt->bindParam(':id', $id);
+            
+            // Return true if the SQL query is successfully executed, otherwise return false
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            return false;
+        }
+    }
 }

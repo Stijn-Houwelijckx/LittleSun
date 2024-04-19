@@ -380,7 +380,21 @@ button {
   border-radius: 16px 16px 0 0;
 }
 
-#hubLocationsAdmin .hubLocations .hubLocation .fa-trash {
+#hubLocationsAdmin .hubLocations .hubLocation .hubLocationControls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  /* padding: 8px; */
+
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+#hubLocationsAdmin .hubLocations .hubLocation .fa-trash,
+#hubLocationsAdmin .hubLocations .hubLocation .fa-edit {
   padding: 8px;
   width: 32px;
   height: 32px;
@@ -388,11 +402,11 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  top: 8px; /* Afstand vanaf de bovenkant van de .hubLocation div */
-  right: 8px; /* Afstand vanaf de rechterkant van de .hubLocation div */
+  /* position: absolute;
+  top: 8px;
+  right: 8px; */
   z-index: 999;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 50%;
 }
 

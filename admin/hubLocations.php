@@ -51,12 +51,19 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
             <h1>Hub locations</h1>
             <a href="addHubLocation.php" class="btn">+ Toevoegen</a>
         </div>
-        <form action="" method="post">
-            <div class="hubLocations">
+        <div class="hubLocations">
             <?php foreach ($hubLocations As $hubLocation) : ?>
                 <div class="hubLocation">
-                    <label for="delete[<?php echo $hubLocation["id"] ?>]"><i class="fa fa-trash"></i></label>
-                    <input hidden type="submit" name="delete[<?php echo $hubLocation["id"] ?>]" id="delete[<?php echo $hubLocation["id"] ?>]">
+                    <div class="hubLocationControls">
+                        <a href="editHubLocation.php?hubLocation=<?php echo $hubLocation["id"]; ?>">
+                            <i class="fa fa-edit"></i>
+                        </a>
+
+                        <form action="" method="post">
+                            <label for="delete[<?php echo $hubLocation["id"] ?>]"><i class="fa fa-trash"></i></label>
+                            <input hidden type="submit" name="delete[<?php echo $hubLocation["id"] ?>]" id="delete[<?php echo $hubLocation["id"] ?>]">
+                        </form>
+                    </div>
                     <div class="image" style="background-image: url('../assets/images/locations/<?php echo str_replace(' ', '', $hubLocation["image"]); ?>');"></div>
                     <div class="text">
                         <h2><?php echo $hubLocation["name"] ?></h2>
@@ -66,7 +73,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
                 </div>
             <?php endforeach ?>
             </div>
-        </form>
     </div>
 </body>
 
