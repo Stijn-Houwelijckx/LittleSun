@@ -15,8 +15,12 @@ $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
 
 if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
-    try {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_GET["hubLocation"])) {
+        $location = Location::getLocationById($pdo, $_GET["hubLocation"]);
+    }
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        try {
             // $name = $_POST["name"];
             // $city = $_POST["city"];
             // $country = $_POST["country"];
@@ -28,9 +32,12 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
             $location -> setCountry($_POST["country"]);
 
             $location -> updateLocation($pdo, $_GET["hubLocation"]);
+
+            header("Location: hubLocations.php");
+            exit();
+        } catch (Exception $e) {
+            error_log('Database error: ' . $e->getMessage());
         }
-    } catch (Exception $e) {
-        error_log('Database error: ' . $e->getMessage());
     }
 } else {
     header("Location: ../login.php?error=notLoggedIn");
@@ -56,15 +63,15 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
         <form action="" method="post" enctype="multipart/form-data">
             <div class="column">
                 <label for="name">Name</label>
-                <input type="text" name="name" required>
+                <input type="text" name="name" value="<?php echo $location["name"] ?>" required>
             </div>
             <div class="column">
                 <label for="city">City</label>
-                <input type="text" name="city" required>
+                <input type="text" name="city" value="<?php echo $location["city"] ?>" required>
             </div>
             <div class="column">
                 <label for="country">Country</label>
-                <input type="text" name="country" required>
+                <input type="text" name="country" value="<?php echo $location["country"] ?>" required>
             </div>
             <button type="submit" class="btn">Submit</button>
         </form>
