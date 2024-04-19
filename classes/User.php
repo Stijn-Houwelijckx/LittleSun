@@ -354,4 +354,23 @@ class User
             return false;
         }
     }
+
+    public function updatePassword(PDO $pdo, $user_id): bool
+    {
+        try {
+            $stmt = $pdo->prepare("UPDATE users SET password = :password WHERE id = :user_id");
+            $stmt->bindParam(':password', $this->password);
+            $stmt->bindParam(':user_id', $user_id);
+
+            // Controleer of de SQL-instructie met succes is uitgevoerd
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            return false;
+        }
+    }
 }

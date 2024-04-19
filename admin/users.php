@@ -56,6 +56,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $user->setLastname($_POST['lastname']);
             $user->setEmail($_POST['email']);
 
+            if (!empty($_POST['password'])) {
+                $user->setPassword($_POST['password']);
+                $user->updatePassword($pdo, $_POST["user_id"]);
+            }
+
             $user->updateUser($pdo, $_POST["user_id"], $_POST['typeOfUser']);
 
             $selectedUser = User::getUserById($pdo, $_POST["user_id"]);
@@ -136,6 +141,10 @@ $managers = Manager::getAllManagers($pdo);
                             <div class="column">
                                 <input type="hidden" name="user_id" id="user_id" value="<?php echo htmlspecialchars($selectedUser["id"]); ?>">
                                 <input type="hidden" name="typeOfUser" id="typeOfUser" value="<?php echo htmlspecialchars($selectedUser["typeOfUser"]); ?>">
+                            </div>
+                            <div class="column">
+                                <label for="password">Give new password if needed:</label>
+                                <input type="password" name="password" id="password" value="" placeholder="New password">
                             </div>
                         </div>
                     </div>
