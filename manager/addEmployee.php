@@ -10,6 +10,8 @@ ini_set('error_log', 'error.log');
 
 session_start();
 
+$current_page = 'employees';
+
 $pdo = Db::getInstance();
 $manager = User::getUserById($pdo, $_SESSION["user_id"]);
 
@@ -58,30 +60,36 @@ if (isset($_POST['firstname'], $_POST['lastname'], $_POST['email'], $_POST['pass
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.png">
 </head>
 <body>
-    <form action="" method="post" id="userForm">
-        <div class="user">
-            <div class="text">
-                <div class="column">
-                    <label for="firstname">Firstname:</label>
-                    <input type="text" name="firstname" id="firstname" placeholder="Firstname">
+    <?php include_once ('../inc/nav.inc.php'); ?>
+    <div id="usersAdmin">
+        <h1>Add new employee</h1>
+        <div class="users">
+            <form action="" method="post" id="userForm">
+                <div class="user">
+                    <div class="text">
+                        <div class="column">
+                            <label for="firstname">Firstname:</label>
+                            <input type="text" name="firstname" id="firstname" placeholder="Firstname" required>
+                        </div>
+                        <div class="column">
+                            <label for="lastname">Lastname:</label>
+                            <input type="text" name="lastname" id="lastname" placeholder="Lastname" required>
+                        </div>
+                        <div class="column">
+                            <label for="email">E-mail:</label>
+                            <input type="text" name="email" id="email" placeholder="Email" required>
+                        </div>
+                        <div class="column">
+                            <label for="password">Password:</label>
+                            <input type="password" name="password" id="password" placeholder="Password" required>
+                        </div>
+                    </div>
                 </div>
-                <div class="column">
-                    <label for="lastname">Lastname:</label>
-                    <input type="text" name="lastname" id="lastname" placeholder="Lastname">
+                <div class="buttons">
+                    <button type="submit" class="btn">Add employee</button>
                 </div>
-                <div class="column">
-                    <label for="email">E-mail:</label>
-                    <input type="text" name="email" id="email" placeholder="Email">
-                </div>
-                <div class="column">
-                    <label for="password">Password:</label>
-                    <input type="password" name="password" id="password" placeholder="Password">
-                </div>
-            </div>
+            </form>
         </div>
-        <div class="buttons">
-            <button type="submit" class="btn">Opslaan</button>
-        </div>
-    </form>
+    </div>
 </body>
 </html>
