@@ -3,7 +3,7 @@ include_once (__DIR__ . "/../classes/Db.php");
 include_once (__DIR__ . "/../classes/User.php");
 include_once (__DIR__ . "/../classes/Location.php");
 session_start();
-$current_page = 'Locations';
+$current_page = 'locations';
 
 $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
