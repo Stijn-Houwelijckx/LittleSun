@@ -81,15 +81,18 @@ $users = User::getAll($pdo);
 <body>
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="usersAdmin">
-        <h1>Users</h1>
+        <div class="row">
+            <h1>users</h1>
+            <a href="addHubManager.php" class="btn">+ Toevoegen</a>
+        </div>
         <form action="" id="userSelector" onchange="submitUserForm()" method="post">
-        <select name="user_id">
-            <?php foreach ($users as $user): ?>
-                <option value="<?php echo $user["id"] ?>" <?php if ($user["id"] == $selectedUser["id"]) echo "selected"; ?>>
-                    <?php echo htmlspecialchars($user["firstname"]) . " " . htmlspecialchars($user["lastname"]) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+            <select name="user_id">
+                <?php foreach ($users as $user): ?>
+                    <option value="<?php echo $user["id"] ?>" <?php if ($user["id"] == $selectedUser["id"]) echo "selected"; ?>>
+                        <?php echo htmlspecialchars($user["firstname"]) . " " . htmlspecialchars($user["lastname"]) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
         </form>
         <div class="users">
             <?php if (!empty($users)): ?>
@@ -122,16 +125,6 @@ $users = User::getAll($pdo);
                         <button type="submit" class="btn">Opslaan</button>
                     </div>
                 </form>
-                <!-- <div class="popup">
-                    <p>Weet je zeker dat je deze gebruiker wilt verwijderen?</p>
-                    <div class="btns">
-                        <a href="#" class="close">Nee</a>
-                        <form action="" method="POST">
-                            <input type="text" name="id" hidden value="<?php echo $selectedUser["id"] ?>>">
-                            <button type="submit" class="btn">Ja</button>
-                        </form>
-                    </div>
-                </div> -->
                 <div class="popupIsManager">
                     <p>Weet je zeker dat je deze gebruiker manager wilt maken?</p>
                     <div class="btns">

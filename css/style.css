@@ -72,6 +72,10 @@ button {
   text-decoration: none;
 }
 
+.buttons {
+  margin-top: 16px;
+}
+
 .btn {
   padding: 8px 16px;
   background-color: var(--yellow);
@@ -342,7 +346,8 @@ button {
 /* ---- hubLocationsAdmin ---- */
 #hubLocationsAdmin,
 #addHubLocation,
-#hubworkerDetails {
+#hubworkerDetails,
+#usersAdmin {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -354,7 +359,8 @@ button {
   gap: 16px;
 }
 
-#hubLocationsAdmin .row {
+#hubLocationsAdmin .row,
+#usersAdmin .row {
   display: flex;
   flex-direction: row;
   justify-content: space-between;

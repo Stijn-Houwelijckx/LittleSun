@@ -86,16 +86,16 @@ class Manager extends User
         return $this;
     }
 
-    public static function getAllUsers(PDO $pdo)
+    public static function getAllManagers(PDO $pdo)
     {
         try {
-            $stmt = $pdo->prepare("SELECT * FROM users WHERE typeOfUser = 'user' AND status = 1");
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE typeOfUser = 'manager' AND status = 1");
             $stmt->execute();
             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $users ?: [];
         } catch (PDOException $e) {
-            error_log('Database error in getAllUsers(): ' . $e->getMessage());
-            throw new Exception('Database error: Unable to retrieve users', 0, $e);
+            error_log('Database error: ' . $e->getMessage());
+            return null;
         }
     }  
 }
