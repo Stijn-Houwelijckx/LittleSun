@@ -77,8 +77,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="usersAdmin">
-        <h1>Users</h1>
-        <a href="addEmployee.php" class="btn">add user</a>
+        <div class="row">
+            <h1>Employees</h1>
+            <a href="addEmployee.php" class="btn">+ Toevoegen</a>
+        </div>
         <form action="" id="userSelector" onchange="submitUserForm()" method="post">
         <select name="user_id">
             <?php foreach ($users as $user): ?>
