@@ -335,4 +335,23 @@ class User
             return false;
         }
     }
+
+    public static function updateTypeOfUser(PDO $pdo, $user_id, $typeOfUser): bool
+    {
+        try {
+            $stmt = $pdo->prepare("UPDATE users SET typeOfUser = :typeOfUser WHERE id = :user_id");
+            $stmt->bindParam(':typeOfUser', $typeOfUser);
+            $stmt->bindParam(':user_id', $user_id);
+
+            // Controleer of de SQL-instructie met succes is uitgevoerd
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            return false;
+        }
+    }
 }

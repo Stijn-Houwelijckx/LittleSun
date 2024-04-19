@@ -2,6 +2,7 @@
 include_once (__DIR__ . "../../classes/Db.php");
 include_once (__DIR__ . "../../classes/User.php");
 include_once (__DIR__ . "../../classes/Manager.php");
+include_once (__DIR__ . "../../classes/Employee.php");
 session_start();
 
 error_reporting(E_ALL);
@@ -12,7 +13,7 @@ $current_page = 'users';
 
 $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
-$selectedUser = User::getUserById($pdo, 0);
+$selectedUser = null;
 
 if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
     try {
@@ -27,6 +28,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
     exit();
 }
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["id"])) {
         try {
@@ -36,12 +38,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             error_log('Database error: ' . $e->getMessage());
         }
     }
-
+    
     if (isset($_POST["user_id"])) {
         try {
             $user_id = $_POST["user_id"];
             $selectedUser = User::getUserById($pdo, $user_id);
-
         } catch (Exception $e) {
             error_log('Database error: ' . $e->getMessage());
         }
@@ -62,9 +63,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             error_log('Database error: ' . $e->getMessage());
         }
     }
+
+    if (isset($_POST["changeTypeOfUser"])) {
+        try {
+            User::updateTypeOfUser($pdo, $_POST["user_id"], $_POST["changeTypeOfUser"]);
+            $selectedUser = User::getUserById($pdo, $_POST["user_id"]);
+        } catch (Exception $e) {
+            error_log('Database error: ' . $e->getMessage());
+        }
+    }
 }
 
-$users = User::getAll($pdo);
+// $users = User::getAll($pdo);
+$employees = Employee::getAllEmployees($pdo);
+$managers = Manager::getAllManagers($pdo);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -86,38 +98,44 @@ $users = User::getAll($pdo);
             <a href="addHubManager.php" class="btn">+ Toevoegen</a>
         </div>
         <form action="" id="userSelector" onchange="submitUserForm()" method="post">
-            <select name="user_id">
-                <?php foreach ($users as $user): ?>
-                    <option value="<?php echo $user["id"] ?>" <?php if ($user["id"] == $selectedUser["id"]) echo "selected"; ?>>
-                        <?php echo htmlspecialchars($user["firstname"]) . " " . htmlspecialchars($user["lastname"]) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+            <div class="column">
+                <label for="user_id">Select a user:</label>
+                <select name="user_id" id="user_id">
+                    <option value="" disabled <?php if ($selectedUser == null) echo "selected"; ?>>--- Managers ---</option>
+                    <?php foreach ($managers as $manager): ?>
+                        <option value="<?php echo $manager["id"] ?>" <?php if ($selectedUser != null && $manager["id"] == $selectedUser["id"]) echo "selected"; ?>>
+                            <?php echo htmlspecialchars($manager["firstname"]) . " " . htmlspecialchars($manager["lastname"]) ?>
+                        </option>
+                    <?php endforeach; ?>
+                    <option value="" disabled>--- Employees ---</option>
+                    <?php foreach ($employees as $employee): ?>
+                        <option value="<?php echo $employee["id"] ?>" <?php if ($selectedUser != null &&  $employee["id"] == $selectedUser["id"]) echo "selected"; ?>>
+                            <?php echo htmlspecialchars($employee["firstname"]) . " " . htmlspecialchars($employee["lastname"]) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </form>
         <div class="users">
-            <?php if (!empty($users)): ?>
+            <?php if (!empty($managers || $employees) && $selectedUser != null): ?>
                 <form action="" method="post" id="userForm">
                     <div class="user">
                         <div class="text">
                             <div class="column">
-                            <label for="firstname">Firstname:</label>
-                            <input type="text" name="firstname" id="firstname" value="<?php echo htmlspecialchars($selectedUser["firstname"]); ?>">
+                                <label for="firstname">Firstname:</label>
+                                <input type="text" name="firstname" id="firstname" value="<?php echo htmlspecialchars($selectedUser["firstname"]); ?>">
                             </div>
                             <div class="column">
-                            <label for="lastname">Lastname:</label>
-                            <input type="text" name="lastname" id="lastname" value="<?php echo htmlspecialchars($selectedUser["lastname"]); ?>">
+                                <label for="lastname">Lastname:</label>
+                                <input type="text" name="lastname" id="lastname" value="<?php echo htmlspecialchars($selectedUser["lastname"]); ?>">
                             </div>
                             <div class="column">
-                            <label for="email">E-mail:</label>
-                            <input type="text" name="email" id="email" value="<?php echo htmlspecialchars($selectedUser["email"]); ?>">
+                                <label for="email">E-mail:</label>
+                                <input type="text" name="email" id="email" value="<?php echo htmlspecialchars($selectedUser["email"]); ?>">
                             </div>
                             <div class="column">
-                            <input type="hidden" name="user_id" id="user_id" value="<?php echo htmlspecialchars($selectedUser["id"]); ?>">
-                            
-                            <div class="row">
-                                <input type="hidden" name="typeOfUser" value="user">
-                                <label for="checkboxTypeOfUser">Manager:</label>
-                                <input type="checkbox" name="typeOfUser" id="checkboxTypeOfUser" value="manager" <?php if ($selectedUser["typeOfUser"] == "manager") echo "checked"; ?>>
+                                <input type="hidden" name="user_id" id="user_id" value="<?php echo htmlspecialchars($selectedUser["id"]); ?>">
+                                <input type="hidden" name="typeOfUser" id="typeOfUser" value="<?php echo htmlspecialchars($selectedUser["typeOfUser"]); ?>">
                             </div>
                         </div>
                     </div>
@@ -125,13 +143,21 @@ $users = User::getAll($pdo);
                         <button type="submit" class="btn">Opslaan</button>
                     </div>
                 </form>
+                <form action="" method="post" id="changeTypeOfUser">
+                    <div class="row">
+                        <label for="checkboxTypeOfUser">Manager:</label>
+                        <input type="checkbox" id="checkboxTypeOfUser" <?php if ($selectedUser["typeOfUser"] == "manager") echo "checked"; ?>>
+                        <input type="text" name="changeTypeOfUser" value="<?php echo ($selectedUser["typeOfUser"] == "manager")? "employee" : "manager" ?>" hidden>
+                        <input type="text" name="user_id" value="<?php echo $selectedUser["id"] ?>" hidden>
+                    </div>
+                </form>
                 <div class="popupIsManager">
-                    <p>Weet je zeker dat je deze gebruiker manager wilt maken?</p>
+                    <p>Do you really want to change admin status?</p>
                     <div class="btns">
-                        <a href="#" class="close">Nee</a>
+                        <a href="#" class="close">No</a>
                         <form action="" method="POST">
-                            <input type="text" name="user_admin_id" hidden value="<?php echo $selectedUser["id"] ?>>">
-                            <button type="button" class="btn confirm-admin">Ja</button>
+                            <input type="text" name="user_id" hidden value="<?php echo $selectedUser["id"] ?>>">
+                            <button type="button" class="btn confirm-admin">Yes</button>
                         </form>
                     </div>
                 </div>
@@ -153,21 +179,23 @@ $users = User::getAll($pdo);
         //     });
         // });
 
-        document.querySelector("#checkboxTypeOfUser").addEventListener("change", function (e) {
-            if (this.checked) {
-                document.querySelector(".popupIsManager").style.display = "flex";
-                document.querySelector(".popupIsManager .close").addEventListener("click", function (e) {
-                    document.querySelector(".popupIsManager").style.display = "none";
-                    document.querySelector("#checkboxIsAdmin").checked = false;
+        <? if ($selectedUser != null): ?>
+            document.querySelector("#checkboxTypeOfUser").addEventListener("change", function (e) {
+                // if (this.checked) {
+                    document.querySelector(".popupIsManager").style.display = "flex";
+                    document.querySelector(".popupIsManager .close").addEventListener("click", function (e) {
+                        document.querySelector(".popupIsManager").style.display = "none";
+                        document.querySelector("#checkboxTypeOfUser").checked ^= 1;
+                    });
+
+                    e.preventDefault();
+                // }
+
+                document.querySelector(".confirm-admin").addEventListener("click", function (e) {
+                    document.querySelector("#changeTypeOfUser").submit();
                 });
-
-                e.preventDefault();
-            }
-
-            document.querySelector(".confirm-admin").addEventListener("click", function (e) {
-                document.querySelector("#userForm").submit();
             });
-        });
+        <? endif; ?>
 
     </script>
 

@@ -438,7 +438,8 @@ button {
   gap: 16px;
 }
 
-#addHubLocation form .column {
+#addHubLocation form .column,
+#usersAdmin form .column {
   display: flex;
   flex-direction: column;
   gap: 8px;

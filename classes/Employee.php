@@ -1,6 +1,18 @@
 <?php
 class Employee extends User
 {
+    public static function getAllEmployees(PDO $pdo)
+    {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE typeOfUser = 'employee' AND status = 1");
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
     public static function getAllEmployeesByLocation(PDO $pdo, $location_id)
     {
         try {
