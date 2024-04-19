@@ -176,16 +176,16 @@ class User
     public function setPassword($password)
     {
         if (empty(trim($password))) {
-            throw new Exception("Vul een wachtwoord in");
+            throw new Exception("You must fill in a password.");
         }
 
         if (strlen($password) < 8) {
-            throw new Exception("Wachtwoord moet minstens 8 karakters lang zijn.");
+            throw new Exception("Password should be at least 8 characters long.");
         }
 
         $reValid = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$/';
         if (!preg_match($reValid, $password)) {
-            throw new Exception("Wachtwoord moet minstens 1 hoofdletter, 1 kleine letter, 1 cijfer en 1 speciaal karakter (!@#$%^&*) bevatten.");
+            throw new Exception("Password must contain at least 1 capital, 1 lowercase letter, 1 number and 1 special character (!@#$%^&*).");
         }
 
         $this->password = password_hash($password, PASSWORD_DEFAULT);
