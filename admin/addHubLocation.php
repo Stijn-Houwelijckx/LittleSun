@@ -87,7 +87,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
             </div>
             <div class="column">
                 <label for="image">Image</label>
-                <input type="file" name="image" id="image" required>
+                <input type="file" name="image" id="image">
             </div>
             <button type="submit" class="btn">Submit</button>
         </form>
