@@ -28,7 +28,7 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
     exit();
 }
 
-$employees = Employee::getAllEmployees($pdo, $manager["location_id"]);
+$employees = Employee::getAllEmployeesByLocation($pdo, $manager["location_id"]);
 $allTasks =  Task::getAllTasks($pdo);
 ?>
 

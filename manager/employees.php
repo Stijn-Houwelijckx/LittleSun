@@ -20,7 +20,7 @@ if (!isset($_SESSION["user_id"]) || $manager["typeOfUser"] != "manager") {
     exit();
 }
 
-$users = Employee::getAllEmployees($pdo, $manager["location_id"]);
+$users = Employee::getAllEmployeesByLocation($pdo, $manager["location_id"]);
 $selectedUser = $users[0];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
