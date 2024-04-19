@@ -1,5 +1,5 @@
 <?php
-class Task {
+class Task {  
     private $task;
 
     public function getTask()
@@ -30,9 +30,7 @@ class Task {
         try {
             $stmt = $pdo->prepare("INSERT INTO taskTypes (task) VALUES (:task)");
             $stmt->bindParam(':task', $this->task);
-
             $stmt->execute();
-
             return true;
         } catch (PDOException $e) {
             error_log('Database error: ' . $e->getMessage());
@@ -40,6 +38,37 @@ class Task {
         }
     }
 
+    public static function linkTasksToUser(PDO $pdo, $user_id)
+    {
+        try {
+            $stmt = $pdo->prepare("INSERT INTO user_tasks (user_id, task_id) SELECT :user_id, id FROM tasktypes");
+            $stmt->bindParam(':user_id', $user_id);
+
+            // Controleer of de SQL-instructie met succes is uitgevoerd
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public static function addTaskToUser(PDO $pdo, $user_id, $task_id){
+        try {
+            $stmt = $pdo->prepare("UPDATE user_tasks SET is_assigned = 1 WHERE user_id = :user_id AND task_id = :task_id");
+            $stmt->bindParam(':task_id', $task_id, PDO::PARAM_INT);
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $stmt->execute();
+            return true;
+        } catch (PDOException $e) {
+            error_log('Database error in addTaskToUser(): ' . $e->getMessage());
+            throw new Exception('Database error: Unable to update user task', 0, $e);
+        }
+    }
+    
     public static function deleteTask(PDO $pdo, $id)
     {
         try {
@@ -64,5 +93,4 @@ class Task {
             throw new Exception('Database error: Unable to retrieve tasks', 0, $e);
         }
     }
-
 }

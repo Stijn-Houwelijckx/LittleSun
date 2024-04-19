@@ -2,6 +2,7 @@
 include_once (__DIR__ . "../../classes/Db.php");
 include_once (__DIR__ . "../../classes/User.php");
 include_once (__DIR__ . "../../classes/Manager.php");
+include_once (__DIR__ . "../../classes/Task.php");
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -17,7 +18,7 @@ if (!isset($_SESSION["user_id"]) || $manager["typeOfUser"] != "manager") {
     exit();
 }
 
- if (isset($_POST['firstname']) && isset($_POST['lastname']) && isset($_POST['email']) && isset($_POST['password'])){
+if (isset($_POST['firstname'], $_POST['lastname'], $_POST['email'], $_POST['password'])){
     $user = new User;
 
     try {
@@ -33,27 +34,30 @@ if (!isset($_SESSION["user_id"]) || $manager["typeOfUser"] != "manager") {
         $user->setLocation_id($manager["location_id"]);
     
         $newUserId = $user->addUser($pdo, "employee");
-        $user->addToLocation($pdo, $newUserId);
-    
-        header("Location: employees.php");
-        exit();
+        
+        if ($newUserId) {
+            $user->addToLocation($pdo, $newUserId);
+            Task::linkTasksToUser($pdo, $newUserId); // Link tasks to the new user
+            header("Location: employees.php");
+            exit();
+        }
     } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
     }
- }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-        <link rel="stylesheet" href="../css/style.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="icon" type="image/x-icon" href="../assets/images/favicon.png">
-    </head>
-    <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add User</title>
+    <link rel="stylesheet" href="../css/style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.png">
+</head>
+<body>
     <form action="" method="post" id="userForm">
         <div class="user">
             <div class="text">
@@ -70,7 +74,7 @@ if (!isset($_SESSION["user_id"]) || $manager["typeOfUser"] != "manager") {
                     <input type="text" name="email" id="email" placeholder="Email">
                 </div>
                 <div class="column">
-                    <label for="password">password:</label>
+                    <label for="password">Password:</label>
                     <input type="password" name="password" id="password" placeholder="Password">
                 </div>
             </div>
@@ -78,6 +82,6 @@ if (!isset($_SESSION["user_id"]) || $manager["typeOfUser"] != "manager") {
         <div class="buttons">
             <button type="submit" class="btn">Opslaan</button>
         </div>
-        </form> 
-    </body>
+    </form>
+</body>
 </html>

@@ -92,7 +92,12 @@ array_unshift($allDaysThisMonth, ...$emptyDays);
 <body>
     <?php include_once ('inc/nav.inc.php'); ?>
     <div id="calendar">
-        <a href="addAgendaItem" class="btn">+ Add agendaItem</a>
+        <div class="btns">
+            <a href="" class="btn active">Daily</a>
+            <a href="" class="btn">Weekly</a>
+            <a href="" class="btn">Monthly</a>
+            <a href="addAgendaItem" class="btn big">+ Add agendaItem</a>  
+        </div> 
         <div id="top">
             <i class="fa fa-angle-left" id="prevMonth"></i>
             <h2><?php echo date('F', strtotime('2000-' . $currentMonth . '-01')); ?></h2>

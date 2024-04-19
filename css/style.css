@@ -341,10 +341,17 @@ button {
 
 /* ---- hubLocationsAdmin ---- */
 #hubLocationsAdmin,
-#addHubLocation {
+#addHubLocation,
+#hubworkerDetails {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+#hubworkerDetails .tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 #hubLocationsAdmin .row {
@@ -495,6 +502,9 @@ button {
   padding: 8px;
 }
 
+#hubworkers .hubs .hub .btn {
+  width: 80px;
+}
 #hubworkers .hubs .hub img {
   width: 32px;
   height: 32px;
@@ -508,12 +518,34 @@ button {
   color: var(--black);
 }
 
+#hubworkers .hubs .hub:nth-child(even) .btn {
+  background-color: var(--white);
+}
+
 /* ---- calendar ---- */
 #calendar {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 24px;
+}
+
+#calendar .btns {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+}
+
+#calendar .btns .btn {
+  width: 54px;
+  text-align: center;
+  background-color: var(--white);
+}
+
+#calendar .btns .btn.active {
+  background-color: var(--darkYellow);
+  color: var(--white);
 }
 
 #calendar #top {
@@ -538,8 +570,11 @@ button {
   color: var(--darkYellow);
 }
 
-#calendar .btn {
+#calendar .btn.big {
   width: 132px;
+  background-color: transparent;
+  border: 1px solid var(--darkYellow);
+  color: var(--darkYellow);
 }
 
 @media (min-width: 800px) {
@@ -565,7 +600,8 @@ button {
   #addHubLocation,
   #usersAdmin,
   #hubworkers,
-  #calendar {
+  #calendar,
+  #hubworkerDetails {
     padding: 24px;
     padding-left: 144px;
   }
