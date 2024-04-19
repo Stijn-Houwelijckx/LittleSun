@@ -99,6 +99,19 @@ class Location
         }
     }
 
+    public static function getLocationById(PDO $pdo, $id)
+    {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM locations WHERE id = :id");
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
     public static function addLocation(PDO $pdo, $image, $name, $city, $country)
     {
         try {
