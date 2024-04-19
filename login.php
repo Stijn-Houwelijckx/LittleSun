@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdo = Db::getInstance();
         $user = User::getUserByEmail($pdo, $email);
 
-        if ($user) {
+        if ($user && password_verify($password, $user['password'])) {
             // Gebruiker succesvol ingelogd
             $_SESSION['user_id'] = $user['id'];
             if ($user["typeOfUser"] == "admin") {
