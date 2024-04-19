@@ -44,13 +44,14 @@ $employees = Employee::getAllEmployees($pdo, $manager["location_id"]);
 <body>
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="hubworkers">
-        <h1>Employees at <?php echo $employees[0]["name"] ?></h1>
+        <h1>Employees at my hublocation</h1>
         <div class="hubs">
             <?php foreach ($employees As $employee) : ?>
                 <div class="hub">
-                <p><?php echo $employee["firstname"]?></p>
-                <p><?php echo $employee["lastname"]?></p>
-                <p>Milking cows, cleaning</p>
+                    <img src="../assets/images/<?php echo $employee["profileImg"]?>" alt="profileImg">
+                    <p><?php echo $employee["firstname"]?></p>
+                    <p><?php echo $employee["lastname"]?></p>
+                    <p>Milking cows, cleaning</p>
                 </div>
             <?php endforeach ?>
         </div>

@@ -468,9 +468,17 @@ button {
 
 #hubworkers .hubs .hub {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   background-color: rgba(255, 255, 255, 0.6);
   padding: 8px;
+}
+
+#hubworkers .hubs .hub img {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--darkYellow);
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 #hubworkers .hubs .hub:nth-child(even) {
