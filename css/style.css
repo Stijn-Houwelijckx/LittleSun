@@ -516,6 +516,24 @@ button {
   gap: 24px;
 }
 
+#calendar .btns {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+}
+
+#calendar .btns .btn {
+  width: 54px;
+  text-align: center;
+  background-color: var(--white);
+}
+
+#calendar .btns .btn.active {
+  background-color: var(--darkYellow);
+  color: var(--white);
+}
+
 #calendar #top {
   display: flex;
   flex-direction: row;
@@ -538,8 +556,11 @@ button {
   color: var(--darkYellow);
 }
 
-#calendar .btn {
+#calendar .btn.big {
   width: 132px;
+  background-color: transparent;
+  border: 1px solid var(--darkYellow);
+  color: var(--darkYellow);
 }
 
 @media (min-width: 800px) {
