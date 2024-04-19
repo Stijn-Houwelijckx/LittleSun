@@ -7,7 +7,7 @@ class User
     private $email;
     private $location_id;
     private string $password;
-
+    private $profileImg;
 
     /**
      * Get the value of firstname
@@ -153,6 +153,26 @@ class User
      * @return  self
      */
 
+         /**
+     * Get the value of profileImg
+     */ 
+    public function getProfileImg()
+    {
+        return $this->profileImg;
+    }
+
+    /**
+     * Set the value of profileImg
+     *
+     * @return  self
+     */ 
+    public function setProfileImg($profileImg)
+    {
+        $this->profileImg = $profileImg;
+
+        return $this;
+    }
+
     public function setPassword($password)
     {
         if (empty(trim($password))) {
@@ -294,5 +314,25 @@ class User
         }
     }
 
+    public function updateProfileImg(PDO $pdo, $user_id): bool
+    {
+        try {
+            $stmt = $pdo->prepare("UPDATE users SET profileImg = :profileImg WHERE id = :user_id");
+            $stmt->bindParam(':profileImg', $this->profileImg);
+            $stmt->bindParam(':user_id', $user_id);
 
+            // Controleer of de SQL-instructie met succes is uitgevoerd
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            return false;
+        } catch (Exception $e) {
+            error_log('Error: ' . $e->getMessage());
+            return false;
+        }
+    }
 }
