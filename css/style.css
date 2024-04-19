@@ -341,10 +341,17 @@ button {
 
 /* ---- hubLocationsAdmin ---- */
 #hubLocationsAdmin,
-#addHubLocation {
+#addHubLocation,
+#hubworkerDetails {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+#hubworkerDetails .tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 #hubLocationsAdmin .row {
@@ -481,6 +488,9 @@ button {
   padding: 8px;
 }
 
+#hubworkers .hubs .hub .btn {
+  width: 80px;
+}
 #hubworkers .hubs .hub img {
   width: 32px;
   height: 32px;
@@ -492,6 +502,10 @@ button {
 #hubworkers .hubs .hub:nth-child(even) {
   background-color: var(--yellow);
   color: var(--black);
+}
+
+#hubworkers .hubs .hub:nth-child(even) .btn {
+  background-color: var(--white);
 }
 
 /* ---- calendar ---- */
@@ -551,7 +565,8 @@ button {
   #addHubLocation,
   #usersAdmin,
   #hubworkers,
-  #calendar {
+  #calendar,
+  #hubworkerDetails {
     padding: 24px;
     padding-left: 144px;
   }

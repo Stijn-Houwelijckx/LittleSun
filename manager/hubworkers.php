@@ -3,6 +3,7 @@ include_once (__DIR__ . "../../classes/Db.php");
 include_once (__DIR__ . "../../classes/User.php");
 include_once (__DIR__ . "../../classes/Manager.php");
 include_once (__DIR__ . "../../classes/Employee.php");
+include_once (__DIR__ . "../../classes/Task.php");
 session_start();
 
 error_reporting(E_ALL);
@@ -13,6 +14,7 @@ $current_page = 'hubworkers';
 
 $pdo = Db::getInstance();
 $manager = User::getUserById($pdo, $_SESSION["user_id"]);
+$selectedTask = Task::getTaskById($pdo, 1);
 
 if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
     try {
@@ -27,6 +29,7 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
 }
 
 $employees = Employee::getAllEmployees($pdo, $manager["location_id"]);
+$allTasks =  Task::getAllTasks($pdo);
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +54,7 @@ $employees = Employee::getAllEmployees($pdo, $manager["location_id"]);
                     <img src="../assets/images/<?php echo $employee["profileImg"]?>" alt="profileImg">
                     <p><?php echo $employee["firstname"]?></p>
                     <p><?php echo $employee["lastname"]?></p>
-                    <p>Milking cows, cleaning</p>
+                    <a class="btn" href="hubworkerDetails.php?employee=<?php echo $employee["id"]; ?>">Assign task</a>     
                 </div>
             <?php endforeach ?>
         </div>
