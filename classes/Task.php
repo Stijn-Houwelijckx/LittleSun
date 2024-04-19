@@ -38,6 +38,24 @@ class Task {
         }
     }
 
+    public static function linkTasksToUser(PDO $pdo, $user_id)
+    {
+        try {
+            $stmt = $pdo->prepare("INSERT INTO user_tasks (user_id, task_id) SELECT :user_id, id FROM tasktypes");
+            $stmt->bindParam(':user_id', $user_id);
+
+            // Controleer of de SQL-instructie met succes is uitgevoerd
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     public static function addTaskToUser(PDO $pdo, $user_id, $task_id){
         try {
             $stmt = $pdo->prepare("UPDATE user_tasks SET is_assigned = 1 WHERE user_id = :user_id AND task_id = :task_id");
@@ -51,7 +69,6 @@ class Task {
         }
     }
     
-
     public static function deleteTask(PDO $pdo, $id)
     {
         try {
