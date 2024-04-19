@@ -139,6 +139,14 @@ button {
   margin-top: 16px;
 }
 
+.desktopNav img {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--white);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .desktopNav .column .top .border {
   width: 100%;
   border: 1px solid var(--black);

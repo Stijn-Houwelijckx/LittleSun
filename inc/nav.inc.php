@@ -7,6 +7,7 @@
     $user = User::getUserById($pdo, $_SESSION["user_id"]);
 
     $role = $user["typeOfUser"];
+    $profileImg = $user["profileImg"];
     
     if ($role == "admin" || $role == "manager") {
         $pathExtention = "../";
@@ -20,6 +21,8 @@
         <div class="top">
             <div class="logo" style="background-image: url('<?php echo $pathExtention ?>assets/images/favicon.png');"></div>
             <p class="border"></p>
+            <img src="../assets/images/<?php echo $profileImg ?>" alt="profileImg">
+            <p><?php echo $user["firstname"] . " " . $user["lastname"]; ?></p>
             <div class="role">
                 <p><?php echo $role ?></p>
             </div>
