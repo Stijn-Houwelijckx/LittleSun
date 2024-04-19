@@ -88,7 +88,7 @@ array_unshift($allDaysThisMonth, ...$emptyDays);
             <a href="" class="btn active">Daily</a>
             <a href="" class="btn">Weekly</a>
             <a href="" class="btn">Monthly</a>
-            <a href="addAgendaItem" class="btn big">+ Add agendaItem</a>  
+            <a href="addCalendarItem.php" class="btn big">+ Add agendaItem</a>  
         </div>      
         <div id="top">
             <i class="fa fa-angle-left" id="prevMonth"></i>
