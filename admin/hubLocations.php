@@ -58,7 +58,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
                         <a href="editHubLocation.php?hubLocation=<?php echo $hubLocation["id"]; ?>">
                             <i class="fa fa-edit"></i>
                         </a>
-
                         <form action="" method="post">
                             <label for="delete[<?php echo $hubLocation["id"] ?>]"><i class="fa fa-trash"></i></label>
                             <input hidden type="submit" name="delete[<?php echo $hubLocation["id"] ?>]" id="delete[<?php echo $hubLocation["id"] ?>]">

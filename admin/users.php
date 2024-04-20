@@ -170,7 +170,7 @@ $managers = Manager::getAllManagers($pdo);
                         </form>
                     </div>
                 </div>
-                <!-- <button class="btn remove">Verwijderen</button> -->
+                <button class="btn remove">Verwijderen</button>
             <?php endif; ?>
         </div>
     </div>
@@ -181,14 +181,14 @@ $managers = Manager::getAllManagers($pdo);
             document.getElementById("userSelector").submit();
         }
 
-        // document.querySelector(".users .remove").addEventListener("click", function (e) {
-        //     document.querySelector(".popup").style.display = "flex";
-        //     document.querySelector(".popup .close").addEventListener("click", function (e) {
-        //         document.querySelector(".popup").style.display = "none";
-        //     });
-        // });
+        document.querySelector(".users .remove").addEventListener("click", function (e) {
+            document.querySelector(".popup").style.display = "flex";
+            document.querySelector(".popup .close").addEventListener("click", function (e) {
+                document.querySelector(".popup").style.display = "none";
+            });
+        });
 
-        <? if ($selectedUser != null): ?>
+        <?php if ($selectedUser != null): ?>
             document.querySelector("#checkboxTypeOfUser").addEventListener("change", function (e) {
                 // if (this.checked) {
                     document.querySelector(".popupIsManager").style.display = "flex";
@@ -204,8 +204,6 @@ $managers = Manager::getAllManagers($pdo);
                     document.querySelector("#changeTypeOfUser").submit();
                 });
             });
-        <? endif; ?>
-
+        <?php endif; ?>
     </script>
-
 </body>
