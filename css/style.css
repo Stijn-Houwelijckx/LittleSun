@@ -62,6 +62,8 @@ select,
 option,
 input,
 input::placeholder,
+textarea,
+textarea::placeholder,
 button {
   font-family: "Outfit", sans-serif;
   font-size: 16px;
@@ -348,7 +350,7 @@ button {
 #addHubLocation,
 #hubworkerDetails,
 #usersAdmin,
-#userDashboard {
+.dashboard {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -362,7 +364,7 @@ button {
 
 #hubLocationsAdmin .row,
 #usersAdmin .row,
-#userDashboard .row {
+.dashboard .row {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -532,16 +534,16 @@ button {
 }
 
 /* ---- UserDashboard ---- */
-#userDashboard {
+.dashboard {
   padding: 16px;
 }
 
-#userDashboard .bento-item {
+.dashboard .bento-item {
   height: fit-content;
   width: calc(100% - 32px);
   min-width: fit-content;
   padding: 16px;
-  background-color: var(--gray);
+  background-color: rgb(230, 230, 230);
 
   border-radius: 16px;
 
@@ -550,36 +552,130 @@ button {
   gap: 16px;
 }
 
-#userDashboard .request {
+.dashboard .request {
   background-color: var(--offWhite);
   padding: 8px;
   border-radius: 8px;
 }
 
-#userDashboard .request .request-label {
+.dashboard .request button {
+  margin-top: 16px;
+}
+
+.dashboard .time-off-popup .form-btns {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.dashboard .time-off-popup .btn-approve {
+  background-color: green;
+  color: var(--white);
+}
+.dashboard .time-off-popup .btn-decline {
+  background-color: red;
+  color: var(--white);
+}
+
+.dashboard .request .request-label,
+.dashboard .time-off-popup .request-label {
   font-weight: bold;
 }
 
-#userDashboard .request .request-status {
+.dashboard .request .request-status {
   margin-top: 8px;
 }
 
-#userDashboard .request .request-status-text {
+.dashboard .request .request-status-text {
   padding: 4px;
   border-radius: 8px;
 }
 
-#userDashboard .request .request-status-pending {
+.dashboard .request .request-status-pending {
   background-color: orange;
   color: var(--black);
 }
-#userDashboard .request .request-status-approved {
+.dashboard .request .request-status-approved {
   background-color: green;
   color: var(--white);
 }
-#userDashboard .request .request-status-declined {
+.dashboard .request .request-status-declined {
   background-color: red;
   color: var(--white);
+}
+
+.dashboard .time-off-popup {
+  flex-direction: column;
+  gap: 16px;
+  background-color: var(--gray);
+  padding: 32px;
+  border-radius: 8px;
+
+  position: fixed;
+  z-index: 999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: calc(100% - 64px);
+  max-width: 400px;
+}
+
+.pop-up-overlay {
+  display: none;
+  position: fixed;
+  z-index: 998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.pop-up-overlay .btn-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+  color: var(--darkYellow);
+}
+
+.pop-up-overlay .popup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  width: 100%;
+}
+
+.pop-up-overlay form .form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pop-up-overlay form .form-row {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
+.pop-up-overlay form input,
+.pop-up-overlay form textarea {
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  padding: 4px 8px;
+  border-radius: 8px;
+  background-color: transparent;
+  /* width: 100%; */
+
+  resize: none;
+}
+
+.pop-up-overlay form .btn-submit {
+  margin-top: 16px;
 }
 
 /* ---- calendar ---- */
@@ -662,12 +758,12 @@ button {
   #hubworkers,
   #calendar,
   #hubworkerDetails,
-  #userDashboard {
+  .dashboard {
     padding: 24px;
     padding-left: 144px;
   }
 
-  #userDashboard .bento-item {
+  .dashboard .bento-item {
     width: calc(33.333% - 32px);
   }
 }
@@ -693,7 +789,7 @@ button {
     height: 100%;
   }
 
-  #userDashboard .bento-item {
+  .dashboard .bento-item {
     width: calc(25% - 32px);
   }
 }
