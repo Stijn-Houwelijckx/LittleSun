@@ -347,7 +347,8 @@ button {
 #hubLocationsAdmin,
 #addHubLocation,
 #hubworkerDetails,
-#usersAdmin {
+#usersAdmin,
+#userDashboard {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -360,7 +361,8 @@ button {
 }
 
 #hubLocationsAdmin .row,
-#usersAdmin .row {
+#usersAdmin .row,
+#userDashboard .row {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -529,6 +531,57 @@ button {
   background-color: var(--white);
 }
 
+/* ---- UserDashboard ---- */
+#userDashboard {
+  padding: 16px;
+}
+
+#userDashboard .bento-item {
+  height: fit-content;
+  width: calc(100% - 32px);
+  min-width: fit-content;
+  padding: 16px;
+  background-color: var(--gray);
+
+  border-radius: 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#userDashboard .request {
+  background-color: var(--offWhite);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+#userDashboard .request .request-label {
+  font-weight: bold;
+}
+
+#userDashboard .request .request-status {
+  margin-top: 8px;
+}
+
+#userDashboard .request .request-status-text {
+  padding: 4px;
+  border-radius: 8px;
+}
+
+#userDashboard .request .request-status-pending {
+  background-color: orange;
+  color: var(--black);
+}
+#userDashboard .request .request-status-approved {
+  background-color: green;
+  color: var(--white);
+}
+#userDashboard .request .request-status-declined {
+  background-color: red;
+  color: var(--white);
+}
+
 /* ---- calendar ---- */
 #calendar {
   display: flex;
@@ -608,9 +661,14 @@ button {
   #usersAdmin,
   #hubworkers,
   #calendar,
-  #hubworkerDetails {
+  #hubworkerDetails,
+  #userDashboard {
     padding: 24px;
     padding-left: 144px;
+  }
+
+  #userDashboard .bento-item {
+    width: calc(33.333% - 32px);
   }
 }
 
@@ -633,5 +691,9 @@ button {
     width: 42%;
     justify-content: center;
     height: 100%;
+  }
+
+  #userDashboard .bento-item {
+    width: calc(25% - 32px);
   }
 }

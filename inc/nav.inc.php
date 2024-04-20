@@ -21,7 +21,7 @@
         <div class="top">
             <div class="logo" style="background-image: url('<?php echo $pathExtention ?>assets/images/favicon.png');"></div>
             <p class="border"></p>
-            <img class="profileImg" src="../assets/images/<?php echo $profileImg ?>" alt="profileImg">
+            <img class="profileImg" src="<?php echo $pathExtention ?>assets/images/<?php echo $profileImg ?>" alt="profileImg">
             <p><?php echo $user["firstname"] . " " . $user["lastname"]; ?></p>
             <div class="role">
                 <p><?php echo $role ?></p>
@@ -91,6 +91,13 @@
             <?php endif ?>
 
             <?php if ($role == "employee") : ?>
+                <a href="dashboard.php">
+                    <div>
+                        <img class="<?php echo ($current_page == 'home') ? 'homeItem active' : 'homeItem'; ?>"
+                            src="assets/icons/Home.svg" alt="home">
+                        <p>Home</p>
+                    </div>
+                </a>
                 <a href="calendar.php">
                     <div>
                         <img class="<?php echo ($current_page == 'calendar') ? 'usersItem active' : 'usersItem'; ?>"
