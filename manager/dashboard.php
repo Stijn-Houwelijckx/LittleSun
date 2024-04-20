@@ -23,7 +23,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
 
         if (isset($_POST["approve"])) {
             $requestId = $_POST["requestId"];
-            // var_dump("Approved: " . $requestId);
 
             TimeOffRequest::updateRequestStatus($pdo, $requestId, "Approved");
 
@@ -32,7 +31,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
         
         if (isset($_POST["decline"])) {
             $requestId = $_POST["requestId"];
-            // var_dump("Declined: " . $requestId);
             
             TimeOffRequest::updateRequestStatus($pdo, $requestId, "Declined");
 
@@ -76,24 +74,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
                         </div>
                     <?php endforeach ?>
                 <?php endif ?>
-                <!-- <div class="request" data-requestid="1">
-                    <p class="request-creator"><span class="request-label">Employee:</span> Leen De Haes</p>
-                    <p class="request-reason"><span class="request-label">Reason:</span> Vacation</p>
-                    <p class="request-date-time"><span class="request-label">When:</span> 12/08/2024 08:00 - 15/08/2024 08:00</p>
-                    <button class="btn">See request</button>
-                </div> -->
-                <!-- <div class="request" data-requestid="2">
-                    <p class="request-creator"><span class="request-label">Employee:</span> Leen De Haes</p>
-                    <p class="request-reason"><span class="request-label">Reason:</span> Vacation</p>
-                    <p class="request-date-time"><span class="request-label">When:</span> 12/08/2024 08:00 - 15/08/2024 08:00</p>
-                    <button class="btn">See request</button>
-                </div>
-                <div class="request" data-requestid="3">
-                    <p class="request-creator"><span class="request-label">Employee:</span> Leen De Haes</p>
-                    <p class="request-reason"><span class="request-label">Reason:</span> Vacation</p>
-                    <p class="request-date-time"><span class="request-label">When:</span> 12/08/2024 08:00 - 15/08/2024 08:00</p>
-                    <button class="btn">See request</button>
-                </div> -->
                 <?php if (empty($timeOffRequests)) : ?>
                     <p>There are no time off requests</p>
                 <?php endif ?>
@@ -148,15 +128,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
             }
         });
     });
-
-
-    // requests.forEach(request => {
-    //     request.addEventListener("click", function (e) {
-    //         const requestId = request.getAttribute("data-requestid");
-    //         popup.querySelector("input[name='requestId']").value = requestId;
-    //         popupOverlay.style.display = "block";
-    //     });
-    // });
 
     btnClose.addEventListener("click", function (e) {
         popupOverlay.style.display = "none";
