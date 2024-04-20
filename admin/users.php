@@ -30,10 +30,9 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["deletetask"])) {
+    if (isset($_POST["deleteUser"])) {
         try {
-            User::deleteUser($pdo, $_POST["deletetask"]);
-            $selectedUser = User::getUserById($pdo, 0);
+            User::deleteUser($pdo, $_POST["deleteUser"]);
         } catch (Exception $e) {
             error_log('Database error: ' . $e->getMessage());
         }
@@ -161,12 +160,12 @@ $managers = Manager::getAllManagers($pdo);
                     </div>
                 </form>
                 <div class="popupIsManager">
-                    <p>Do you really want to change admin status?</p>
+                    <p>Do you really want to delete this user?</p>
                     <div class="btns">
                         <a href="#" class="close">No</a>
                         <form action="" method="POST">
                             <input type="text" name="deletetask" hidden value="<?php echo $selectedUser["id"] ?>>">
-                            <button type="submit" class="btn deleteTask">Yes</button>
+                            <button type="submit" class="btn deleteUser">Yes</button>
                         </form>
                     </div>
                 </div>
@@ -203,7 +202,7 @@ $managers = Manager::getAllManagers($pdo);
             });
             <?php endif; ?>
             
-            document.querySelector(".deleteTask").addEventListener("click", function (e) {
+            document.querySelector(".deleteUser").addEventListener("click", function (e) {
                 console.log("ded");
                 document.querySelector("#changeTypeOfUser").submit();
             });
