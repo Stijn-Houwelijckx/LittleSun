@@ -1,5 +1,6 @@
 <?php
 include_once (__DIR__ . "../../classes/User.php");
+include_once (__DIR__ . "../../classes/Employee.php");
 include_once (__DIR__ . "../../classes/Db.php");
 include_once (__DIR__ . "../../classes/CalendarItem.php");
 
@@ -50,12 +51,18 @@ $emptyDays = array_fill(0, $dayOfWeek - 1, '');
 array_unshift($allDaysThisMonth, ...$emptyDays);
 
 $allCalendarItems = CalendarItem::getAllEmployees($pdo, $user["location_id"]);
+$allEmployeesByLocation = Employee::getAllEmployeesByLocation($pdo, $user["location_id"]);
 
 $groupedCalendarItems = [];
 foreach ($allCalendarItems as $calendarItem) {
     $date = new DateTime($calendarItem["start_time"]);
     $day = $date->format('Y-m-d');
     $groupedCalendarItems[$day][] = $calendarItem;
+}
+
+function generateColor($id) {
+    srand($id); // seed the random number generator with the employee ID
+    return '#' . substr(str_shuffle('ABCDEF0123456789'), 0, 6);
 }
 ?>
 
@@ -137,6 +144,14 @@ foreach ($allCalendarItems as $calendarItem) {
                             </p>
                         <?php endforeach; ?>
                     <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <div class="legenda">
+            <?php foreach ($allEmployeesByLocation as $employee): ?>
+                <div class="employee">
+                    <p class="color" style="background-color: <?php echo generateColor($employee["id"]); ?>"></p>
+                    <p><?php echo $employee["firstname"] . " " . $employee["lastname"]?></p>
                 </div>
             <?php endforeach; ?>
         </div>
