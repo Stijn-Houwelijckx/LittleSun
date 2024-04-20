@@ -193,4 +193,20 @@ class CalendarItem
             throw new Exception('Database error: Unable to retrieve users');
         }
     }
+
+    public static function getMyCalendarAsEmployee(PDO $pdo, $user_id){
+        try {
+            $stmt = $pdo->prepare("SELECT DISTINCT calendar.* 
+            FROM calendar, users 
+            WHERE calendar.user_id = :user_id
+            ");
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->execute();
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $users ?: [];
+        } catch (PDOException $e) {
+            error_log('Database error in getUsers(): ' . $e->getMessage());
+            throw new Exception('Database error: Unable to retrieve users');
+        }
+    }
 }
