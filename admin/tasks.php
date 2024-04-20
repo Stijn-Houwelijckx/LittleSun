@@ -77,7 +77,7 @@ $allTasks =  Task::getAllTasks($pdo);
         </form>
 
         <div class="popupIsManager">
-            <p>Do you really want to delete this user?</p>
+            <p>Do you really want to delete this task?</p>
             <div class="btns">
                 <a href="#" class="close">No</a>
                 <form action="" method="POST">
