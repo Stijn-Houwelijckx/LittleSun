@@ -174,10 +174,17 @@ class CalendarItem
         }
     }    
 
-    public static function getAllEmployees(PDO $pdo)
+    public static function getAllEmployees(PDO $pdo, $location_id)
     {
         try {
-            $stmt = $pdo->prepare("SELECT calendar.* FROM calendar, users WHERE users.typeOfUser = 'employee' AND calendar.user_id = users.id");
+            $stmt = $pdo->prepare("SELECT DISTINCT calendar.* 
+            FROM calendar, users, user_locations 
+            WHERE calendar.user_id = users.id
+            AND users.id = user_locations.user_id
+            AND users.typeOfUser = 'employee'
+            AND user_locations.location_id = :location_id;
+            ");
+            $stmt->bindParam(':location_id', $location_id);
             $stmt->execute();
             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $users ?: [];

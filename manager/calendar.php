@@ -49,7 +49,7 @@ $dayOfWeek = $date->format('N');
 $emptyDays = array_fill(0, $dayOfWeek - 1, '');
 array_unshift($allDaysThisMonth, ...$emptyDays);
 
-$allCalendarItems = CalendarItem::getAllEmployees($pdo);
+$allCalendarItems = CalendarItem::getAllEmployees($pdo, $user["location_id"]);
 
 $groupedCalendarItems = [];
 foreach ($allCalendarItems as $calendarItem) {
