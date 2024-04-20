@@ -74,10 +74,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="column passwordInput">
                     <label for="password">Password</label>
                     <div class="row">
-                        <input type="password" id="password" name="password" placeholder="Wachtwoord">
+                        <input type="password" id="password" name="password" placeholder="password">
                         <i class="fa fa-eye-slash"></i>
+                    </div>
+
+                </div>
                 <button type="submit" class="btn" id="btnsignup">Sign in</button>
             </form>
+            <div class="row">
+            </div>
         </div>
         <div class="image"></div>
     </div>
