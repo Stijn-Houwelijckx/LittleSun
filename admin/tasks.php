@@ -39,7 +39,6 @@ if (isset($_POST["task_select"])) {
 
 if (isset($_POST["deletetask"])) {
     try {
-        $selectedTask = Task::getTaskById($pdo, $_POST["deletetask"]);
         Task::deleteTask($pdo, $_POST["deletetask"]);
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
@@ -78,7 +77,7 @@ $allTasks =  Task::getAllTasks($pdo);
         </form>
 
         <div class="popupIsManager">
-            <p>Do you really want to delete this user?</p>
+            <p>Do you really want to delete this task?</p>
             <div class="btns">
                 <a href="#" class="close">No</a>
                 <form action="" method="POST">
