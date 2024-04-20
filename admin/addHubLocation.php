@@ -22,20 +22,20 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
             if($check !== false) {
                 $uploadOk = 1;
             } else {
-                echo "Het geüploade bestand is geen afbeelding.";
+                echo "the file is not an image.";
                 $uploadOk = 0;
             }
             if (file_exists($target_file)) {
-                echo "Sorry, het bestand bestaat al.";
+                echo "Sorry, the file already exists.";
                 $uploadOk = 0;
             }
             if ($_FILES["image"]["size"] > 5000000) {
-                echo "Sorry, het bestand is te groot.";
+                echo "Sorry, the file is too large.";
                 $uploadOk = 0;
             }
             if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
             && $imageFileType != "gif" ) {
-                echo "Sorry, alleen JPG, JPEG, PNG & GIF bestanden zijn toegestaan.";
+                echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
                 $uploadOk = 0;
             }
             if ($uploadOk == 1) {
@@ -44,7 +44,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
                     header("Location: hubLocations.php");
                     exit;
                 } else {
-                    echo "Sorry, er was een fout bij het uploaden van je bestand.";
+                    echo "Sorry, there was an error uploading your file.";
                 }
             }
         }

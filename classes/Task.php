@@ -44,7 +44,7 @@ class Task {
             $stmt = $pdo->prepare("INSERT INTO user_tasks (user_id, task_id) SELECT :user_id, id FROM tasktypes");
             $stmt->bindParam(':user_id', $user_id);
 
-            // Controleer of de SQL-instructie met succes is uitgevoerd
+            // check if the query was successful
             if ($stmt->execute()) {
                 return true;
             } else {

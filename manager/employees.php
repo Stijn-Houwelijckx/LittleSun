@@ -75,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div id="usersAdmin">
         <div class="row">
             <h1>Employees</h1>
-            <a href="addEmployee.php" class="btn">+ Toevoegen</a>
+            <a href="addEmployee.php" class="btn">+ Add</a>
         </div>
         <form action="" id="userSelector" onchange="submitUserForm()" method="post">
         <select name="user_id">
@@ -108,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                     </div>
                     <div class="buttons">
-                        <button type="submit" class="btn">Opslaan</button>
+                        <button type="submit" class="btn">Save</button>
                     </div>
                 </form>
             <?php endif; ?>
