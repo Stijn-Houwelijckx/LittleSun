@@ -34,7 +34,6 @@ class User
             throw new Exception("Voornaam is niet geldig.");
         }
 
-        $_SESSION["firstname"] = $firstname;
         $this->firstname = $firstname;
 
         return $this;
@@ -65,7 +64,6 @@ class User
             throw new Exception("Achternaam is niet geldig.");
         }
 
-        $_SESSION["lastname"] = $lastname;
         $this->lastname = $lastname;
 
         return $this;
@@ -114,7 +112,6 @@ class User
             throw new Exception("Email is niet geldig.");
         }
 
-        $_SESSION["email"] = $email;
         $this->email = $email;
 
         return $this;
@@ -270,10 +267,11 @@ class User
     public function updateUser(PDO $pdo, $user_id, $typeOfUser): bool
     {
         try {
-            $stmt = $pdo->prepare("UPDATE users SET firstname = :firstname, lastname = :lastname, typeOfUser = :typeOfUser WHERE id = :user_id");
+            $stmt = $pdo->prepare("UPDATE users SET firstname = :firstname, lastname = :lastname, typeOfUser = :typeOfUser, email = :email WHERE id = :user_id");
             $stmt->bindParam(':firstname', $this->firstname);
             $stmt->bindParam(':lastname', $this->lastname);
             $stmt->bindParam(':typeOfUser', $typeOfUser);
+            $stmt->bindParam(':email', $this->email);
             $stmt->bindParam(':user_id', $user_id);
 
 
