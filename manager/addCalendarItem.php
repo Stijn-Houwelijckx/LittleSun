@@ -67,7 +67,7 @@ if (isset($_POST['event_date'], $_POST['event_title'], $_POST['event_description
             </div>
         </div>
         <div class="buttons">
-            <button type="submit" class="btn">Opslaan</button>
+            <button type="submit" class="btn">Save</button>
         </div>
     </form>
 </body>

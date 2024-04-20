@@ -49,7 +49,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
     <div id="hubLocationsAdmin">
         <div class="row">
             <h1>Hub locations</h1>
-            <a href="addHubLocation.php" class="btn">+ Toevoegen</a>
+            <a href="addHubLocation.php" class="btn">+ add</a>
         </div>
         <div class="hubLocations">
             <?php foreach ($hubLocations As $hubLocation) : ?>
@@ -58,7 +58,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
                         <a href="editHubLocation.php?hubLocation=<?php echo $hubLocation["id"]; ?>">
                             <i class="fa fa-edit"></i>
                         </a>
-
                         <form action="" method="post">
                             <label for="delete[<?php echo $hubLocation["id"] ?>]"><i class="fa fa-trash"></i></label>
                             <input hidden type="submit" name="delete[<?php echo $hubLocation["id"] ?>]" id="delete[<?php echo $hubLocation["id"] ?>]">

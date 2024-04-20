@@ -30,9 +30,9 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["id"])) {
+    if (isset($_POST["deletetask"])) {
         try {
-            User::deleteUser($pdo, $_POST["id"]);
+            User::deleteUser($pdo, $_POST["deletetask"]);
             $selectedUser = User::getUserById($pdo, 0);
         } catch (Exception $e) {
             error_log('Database error: ' . $e->getMessage());
@@ -100,7 +100,7 @@ $managers = Manager::getAllManagers($pdo);
     <div id="usersAdmin">
         <div class="row">
             <h1>users</h1>
-            <a href="addHubManager.php" class="btn">+ Toevoegen</a>
+            <a href="addHubManager.php" class="btn">+ Add</a>
         </div>
         <form action="" id="userSelector" onchange="submitUserForm()" method="post">
             <div class="column">
@@ -149,7 +149,7 @@ $managers = Manager::getAllManagers($pdo);
                         </div>
                     </div>
                     <div class="buttons">
-                        <button type="submit" class="btn">Opslaan</button>
+                        <button type="submit" class="btn">Save</button>
                     </div>
                 </form>
                 <form action="" method="post" id="changeTypeOfUser">
@@ -165,12 +165,12 @@ $managers = Manager::getAllManagers($pdo);
                     <div class="btns">
                         <a href="#" class="close">No</a>
                         <form action="" method="POST">
-                            <input type="text" name="user_id" hidden value="<?php echo $selectedUser["id"] ?>>">
-                            <button type="button" class="btn confirm-admin">Yes</button>
+                            <input type="text" name="deletetask" hidden value="<?php echo $selectedUser["id"] ?>>">
+                            <button type="submit" class="btn deleteTask">Yes</button>
                         </form>
                     </div>
                 </div>
-                <!-- <button class="btn remove">Verwijderen</button> -->
+                <button class="btn remove">Verwijderen</button>
             <?php endif; ?>
         </div>
     </div>
@@ -181,14 +181,14 @@ $managers = Manager::getAllManagers($pdo);
             document.getElementById("userSelector").submit();
         }
 
-        // document.querySelector(".users .remove").addEventListener("click", function (e) {
-        //     document.querySelector(".popup").style.display = "flex";
-        //     document.querySelector(".popup .close").addEventListener("click", function (e) {
-        //         document.querySelector(".popup").style.display = "none";
-        //     });
-        // });
+        document.querySelector(".users .remove").addEventListener("click", function (e) {
+            document.querySelector(".popupIsManager").style.display = "flex";
+            document.querySelector(".popupIsManager .close").addEventListener("click", function (e) {
+                document.querySelector(".popupIsManager").style.display = "none";
+            });
+        });
 
-        <? if ($selectedUser != null): ?>
+        <?php if ($selectedUser != null): ?>
             document.querySelector("#checkboxTypeOfUser").addEventListener("change", function (e) {
                 // if (this.checked) {
                     document.querySelector(".popupIsManager").style.display = "flex";
@@ -200,12 +200,12 @@ $managers = Manager::getAllManagers($pdo);
                     e.preventDefault();
                 // }
 
-                document.querySelector(".confirm-admin").addEventListener("click", function (e) {
-                    document.querySelector("#changeTypeOfUser").submit();
-                });
             });
-        <? endif; ?>
-
-    </script>
-
+            <?php endif; ?>
+            
+            document.querySelector(".deleteTask").addEventListener("click", function (e) {
+                console.log("ded");
+                document.querySelector("#changeTypeOfUser").submit();
+            });
+            </script>
 </body>
