@@ -584,6 +584,13 @@ button {
   color: var(--darkYellow);
 }
 
+#calendar .calendarItem {
+  background-color: var(--darkYellow);
+  color: var(--black);
+  padding: 8px;
+  border-radius: 8px;
+}
+
 @media (min-width: 800px) {
   .desktopNav {
     display: flex;

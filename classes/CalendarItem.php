@@ -5,8 +5,9 @@ class CalendarItem
     private $event_title;
     private $event_description;
     private $event_location;
+    private $start_time;
+    private $end_time;
     private $created_at;
-    private $updated_at;
 
 
     /**
@@ -110,34 +111,57 @@ class CalendarItem
     }
 
     /**
-     * Get the value of updated_at
+     * Get the value of start_time
      */ 
-    public function getUpdated_at()
+    public function getStart_time()
     {
-        return $this->updated_at;
+        return $this->start_time;
     }
 
     /**
-     * Set the value of updated_at
+     * Set the value of start_time
      *
      * @return  self
      */ 
-    public function setUpdated_at($updated_at)
+    public function setStart_time($start_time)
     {
-        $this->updated_at = $updated_at;
+        $this->start_time = $start_time;
 
         return $this;
     }
 
-    public function addCalendarItem(PDO $pdo): int|bool
+    /**
+     * Get the value of end_time
+     */ 
+    public function getEnd_time()
+    {
+        return $this->end_time;
+    }
+
+    /**
+     * Set the value of end_time
+     *
+     * @return  self
+     */ 
+    public function setEnd_time($end_time)
+    {
+        $this->end_time = $end_time;
+
+        return $this;
+    }    
+
+    public function addCalendarItem(PDO $pdo, $user_id): int|bool
     {
         try {
-            $stmt = $pdo->prepare("INSERT INTO calendar (event_date, event_title, event_description, event_location) VALUES (:event_date, :event_title, :event_description, :event_location)");
+            $stmt = $pdo->prepare("INSERT INTO calendar (user_id, event_date, event_title, event_description, event_location, start_time, end_time) VALUES (:user_id, :event_date, :event_title, :event_description, :event_location, :start_time, :end_time)");
+            $stmt->bindParam(':user_id', $user_id);
             $stmt->bindParam(':event_date', $this->event_date);
             $stmt->bindParam(':event_title', $this->event_title);
             $stmt->bindParam(':event_description', $this->event_description);
             $stmt->bindParam(':event_location', $this->event_location);
-
+            $stmt->bindParam(':start_time', $this->start_time);
+            $stmt->bindParam(':end_time', $this->end_time);
+    
             // Execute and return id of the new user
             if ($stmt->execute()) {
                 return $pdo->lastInsertId();
@@ -147,6 +171,19 @@ class CalendarItem
         } catch (PDOException $e) {
             error_log('Database error: ' . $e->getMessage());
             return false;
+        }
+    }    
+
+    public static function getAllEmployees(PDO $pdo)
+    {
+        try {
+            $stmt = $pdo->prepare("SELECT calendar.* FROM calendar, users WHERE users.typeOfUser = 'employee' AND calendar.user_id = users.id");
+            $stmt->execute();
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $users ?: [];
+        } catch (PDOException $e) {
+            error_log('Database error in getUsers(): ' . $e->getMessage());
+            throw new Exception('Database error: Unable to retrieve users');
         }
     }
 }
