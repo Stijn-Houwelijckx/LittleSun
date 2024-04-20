@@ -39,6 +39,7 @@ if (isset($_POST["task_select"])) {
 
 if (isset($_POST["deletetask"])) {
     try {
+        $selectedTask = Task::getTaskById($pdo, $_POST["deletetask"]);
         Task::deleteTask($pdo, $_POST["deletetask"]);
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
@@ -68,6 +69,7 @@ $allTasks =  Task::getAllTasks($pdo);
         </div>
         <form action="" method="post" id="taskSelector">
             <select name="task_select" onchange=submitTaskForm()>
+                <option value="" disabled selected>--- Tasks ---</option>
                 <?php foreach ($allTasks as $task): ?>
                     <option value="<?php echo $task["id"]; ?>" <?php if ($task["id"] == $selectedTask["id"]) echo "selected"; ?>>
                         <?php echo htmlspecialchars($task["task"]); ?>
