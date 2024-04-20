@@ -100,7 +100,7 @@ $managers = Manager::getAllManagers($pdo);
     <div id="usersAdmin">
         <div class="row">
             <h1>users</h1>
-            <a href="addHubManager.php" class="btn">+ Toevoegen</a>
+            <a href="addHubManager.php" class="btn">+ Add</a>
         </div>
         <form action="" id="userSelector" onchange="submitUserForm()" method="post">
             <div class="column">
@@ -149,7 +149,7 @@ $managers = Manager::getAllManagers($pdo);
                         </div>
                     </div>
                     <div class="buttons">
-                        <button type="submit" class="btn">Opslaan</button>
+                        <button type="submit" class="btn">Save</button>
                     </div>
                 </form>
                 <form action="" method="post" id="changeTypeOfUser">

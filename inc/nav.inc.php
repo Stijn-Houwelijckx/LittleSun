@@ -146,9 +146,9 @@
 
         navIcon.addEventListener("click", function (e) {
             if (!isOpen) {
-                desktopNav.classList.add("open-desktopNav"); // Voeg de klasse toe om de animatie te starten
+                desktopNav.classList.add("open-desktopNav"); // add the class to animate
             } else {
-                desktopNav.classList.remove("open-desktopNav"); // Verwijder de klasse om de animatie om te keren
+                desktopNav.classList.remove("open-desktopNav"); // remove the class to animate
             }
             isOpen = !isOpen;
         });
@@ -171,7 +171,7 @@
                 });
             } else {
                 desktopNav.style.width = "120px";
-                desktopNavLogo.style.backgroundImage = "url('assets/images/favicon.png')"; // Terugkeren naar standaard achtergrondafbeelding
+                desktopNavLogo.style.backgroundImage = "url('assets/images/favicon.png')"; // return to the original logo
                 desktopNavLogo.style.width = "48px";
                 pTags.forEach(pTag => {
                     pTag.style.display = "none";

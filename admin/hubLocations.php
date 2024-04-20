@@ -49,7 +49,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
     <div id="hubLocationsAdmin">
         <div class="row">
             <h1>Hub locations</h1>
-            <a href="addHubLocation.php" class="btn">+ Toevoegen</a>
+            <a href="addHubLocation.php" class="btn">+ add</a>
         </div>
         <div class="hubLocations">
             <?php foreach ($hubLocations As $hubLocation) : ?>

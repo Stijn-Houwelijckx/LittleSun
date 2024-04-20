@@ -25,13 +25,13 @@ class User
     public function setFirstname($firstname)
     {
         if (empty(trim($firstname))) {
-            throw new Exception("Voornaam is verplicht.");
+            throw new Exception("Firstname is obligatory.");
         }
 
         $reValid = '/^(?!.*\s\s)[A-Za-z]+([-\' ][A-Za-z]+)*$/';
 
         if (!preg_match($reValid, $firstname)) {
-            throw new Exception("Voornaam is niet geldig.");
+            throw new Exception("firstname is not valid.");
         }
 
         $this->firstname = $firstname;
@@ -55,13 +55,13 @@ class User
     public function setLastname($lastname)
     {
         if (empty(trim($lastname))) {
-            throw new Exception("Achternaam is verplicht.");
+            throw new Exception("lastname is obligatory.");
         }
 
         $reValid = '/^(?!.*\s\s)[A-Za-z]+([-\' ][A-Za-z]+)*$/';
 
         if (!preg_match($reValid, $lastname)) {
-            throw new Exception("Achternaam is niet geldig.");
+            throw new Exception("lastname is not valid.");
         }
 
         $this->lastname = $lastname;
@@ -105,11 +105,11 @@ class User
     public function setEmail($email)
     {
         if (empty(trim($email))) {
-            throw new Exception("Email is verplicht.");
+            throw new Exception("email is obligatory.");
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("Email is niet geldig.");
+            throw new Exception("email is not valid.");
         }
 
         $this->email = $email;
@@ -275,7 +275,7 @@ class User
             $stmt->bindParam(':user_id', $user_id);
 
 
-            // Controleer of de SQL-instructie met succes is uitgevoerd
+            // check if the query was successful
             if ($stmt->execute()) {
                 return true;
             } else {
@@ -319,7 +319,7 @@ class User
             $stmt->bindParam(':profileImg', $this->profileImg);
             $stmt->bindParam(':user_id', $user_id);
 
-            // Controleer of de SQL-instructie met succes is uitgevoerd
+            // check if the query was successful
             if ($stmt->execute()) {
                 return true;
             } else {
@@ -341,7 +341,7 @@ class User
             $stmt->bindParam(':typeOfUser', $typeOfUser);
             $stmt->bindParam(':user_id', $user_id);
 
-            // Controleer of de SQL-instructie met succes is uitgevoerd
+            // check if the query was successful
             if ($stmt->execute()) {
                 return true;
             } else {
@@ -360,7 +360,7 @@ class User
             $stmt->bindParam(':password', $this->password);
             $stmt->bindParam(':user_id', $user_id);
 
-            // Controleer of de SQL-instructie met succes is uitgevoerd
+            // check if the query was successful
             if ($stmt->execute()) {
                 return true;
             } else {

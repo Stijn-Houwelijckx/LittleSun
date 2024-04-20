@@ -39,7 +39,7 @@ function generateDaysForMonth($year, $month) {
 }
 
 $currentYear = date('Y');
-$currentMonth = isset($_GET['month']) ? $_GET['month'] : date('m'); // Haal de maandwaarde op uit de URL of gebruik de huidige maand
+$currentMonth = isset($_GET['month']) ? $_GET['month'] : date('m'); // get the month from the query string or default to the current month
 $allDaysThisMonth = generateDaysForMonth($currentYear, $currentMonth);
 
 $date = new DateTime($allDaysThisMonth[0]);
