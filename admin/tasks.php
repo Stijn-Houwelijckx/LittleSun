@@ -37,10 +37,10 @@ if (isset($_POST["task_select"])) {
     }
 }
 
-if (isset($_POST["delete"])) {
+if (isset($_POST["deletetask"])) {
     try {
-        $selectedTask = Task::getTaskById($pdo, $_POST["delete"]);
-        Task::deleteTask($pdo, $_POST["delete"]);
+        $selectedTask = Task::getTaskById($pdo, $_POST["deletetask"]);
+        Task::deleteTask($pdo, $_POST["deletetask"]);
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
     }
@@ -77,11 +77,19 @@ $allTasks =  Task::getAllTasks($pdo);
             </select>
         </form>
 
+        <div class="popupIsManager">
+            <p>Do you really want to delete this user?</p>
+            <div class="btns">
+                <a href="#" class="close">No</a>
+                <form action="" method="POST">
+                    <input type="text" name="deletetask" hidden value="<?php echo $selectedTask["id"] ?>>">
+                    <button type="submit" class="btn deleteTask">Yes</button>
+                </form>
+            </div>
+        </div>
+
         <div class="tasks">
-            <form action="" method="post" id="removetask">
-                <button type="submit" class="btn"><i class="fa fa-trash"></i> delete</button>
-                <input hidden type="text" name="delete" value="<?php echo $selectedTask["id"] ?>">
-            </form>
+            <button class="btn">Remove task</button>
         </div>
     </div>
 
@@ -89,5 +97,16 @@ $allTasks =  Task::getAllTasks($pdo);
         function submitTaskForm() {
             document.getElementById("taskSelector").submit();
         }
+
+        document.querySelector(".tasks .btn").addEventListener("click", function (e) {
+            document.querySelector(".popupIsManager").style.display = "flex";
+            document.querySelector(".popupIsManager .close").addEventListener("click", function (e) {
+                document.querySelector(".popupIsManager").style.display = "none";
+            });
+        });
+
+        document.querySelector(".deleteTask").addEventListener("click", function (e) {
+            document.querySelector("#changeTypeOfUser").submit();
+        });
     </script>
 </body>
