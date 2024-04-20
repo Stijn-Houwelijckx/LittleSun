@@ -169,7 +169,7 @@ $managers = Manager::getAllManagers($pdo);
                         </form>
                     </div>
                 </div>
-                <button class="btn remove">Verwijderen</button>
+                <button class="btn remove">Remove</button>
             <?php endif; ?>
         </div>
     </div>

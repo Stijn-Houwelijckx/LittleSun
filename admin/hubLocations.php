@@ -14,6 +14,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
         $user = User::getUserById($pdo, $_SESSION["user_id"]);
         $hubLocations = Location::getAll($pdo);
         if (isset($_POST["delete"])) {
+            var_dump($_POST["delete"]);
             try {
                 foreach ($_POST["delete"] as $id => $value) {
                     Location::deleteLocation($pdo, $id);
@@ -58,10 +59,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
                         <a href="editHubLocation.php?hubLocation=<?php echo $hubLocation["id"]; ?>">
                             <i class="fa fa-edit"></i>
                         </a>
-                        <form action="" method="post">
-                            <label for="delete[<?php echo $hubLocation["id"] ?>]"><i class="fa fa-trash"></i></label>
-                            <input hidden type="submit" name="delete[<?php echo $hubLocation["id"] ?>]" id="delete[<?php echo $hubLocation["id"] ?>]">
-                        </form>
+                        <button class="remove"><i class="fa fa-trash"></i></button>
                     </div>
                     <div class="image" style="background-image: url('../assets/images/locations/<?php echo str_replace(' ', '', $hubLocation["image"]); ?>');"></div>
                     <div class="text">
@@ -70,9 +68,48 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
                         <p><?php echo $hubLocation["country"] ?></p>
                     </div>
                 </div>
+
+                <div class="popupIsManager">
+                    <p>Do you really want to delete this hublocation?</p>
+                    <div class="btns">
+                        <a href="#" class="close">No</a>
+                        <form action="" method="POST" id="deleteHublocation">
+                            <input type="text" name="delete[<?php echo $hubLocation["id"] ?>]" hidden value="<?php echo $hubLocation["id"] ?>>">
+                            <button type="submit" class="btn deleteHublocation">Yes</button>
+                        </form>
+                    </div>
+                </div>
             <?php endforeach ?>
-            </div>
+        </div>
+        </div>
     </div>
+
+    <script>
+        <?php if ($hubLocations != null): ?>
+            document.querySelectorAll(".hubLocation .remove").forEach(function(element) {
+                element.addEventListener("click", function (e) {
+                    // Verkrijg de ouder hubLocation van het verwijderen knopelement
+                    var hubLocation = e.target.closest(".hubLocation");
+                    
+                    // Verkrijg de bijbehorende popupIsManager voor deze hubLocation
+                    var popupIsManager = document.querySelector(".popupIsManager");
+                    
+                    // Toon de popup
+                    popupIsManager.style.display = "flex";
+                    
+                    // Voeg event listener toe aan de close knop van de popup
+                    popupIsManager.querySelector(".close").addEventListener("click", function (e) {
+                        // Verberg de popup
+                        popupIsManager.style.display = "none";
+                    });
+                });
+            });
+
+            document.querySelector("#deleteHublocation").addEventListener("click", function (e) {
+                document.querySelector("#deleteHublocation").submit();
+            });
+        <?php endif; ?>
+    </script>
 </body>
 
 </html>

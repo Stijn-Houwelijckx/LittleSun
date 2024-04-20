@@ -81,6 +81,18 @@ class Task {
         }
     }
 
+    public static function removeTaskTypesFromUsers(PDO $pdo, $task_id)
+    {
+        try {
+            $stmt = $pdo->prepare("DELETE FROM user_tasks WHERE task_id = :task_id;");
+            $stmt->bindParam(':task_id', $task_id);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            throw new Exception('Database error: Unable to update read status');
+        }
+    }
+
     public static function getAllTasks(PDO $pdo)
     {
         try {
