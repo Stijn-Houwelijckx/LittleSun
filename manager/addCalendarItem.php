@@ -18,20 +18,24 @@ if (!isset($_SESSION["user_id"]) || $manager["typeOfUser"] != "manager") {
     exit();
 }
 
-if (isset($_POST['event_date'], $_POST['event_title'], $_POST['event_description'])){
+if (isset($_POST['event_date'], $_POST['event_title'], $_POST['event_description'], $_POST['start_time'], $_POST['end_time'])){
     $calendarItem = new CalendarItem;
 
     try {
         $event_date = $_POST['event_date'];
         $event_title = $_POST['event_title'];
         $event_description = $_POST['event_description'];
+        $start_time = $_POST['start_time'];
+        $end_time = $_POST['end_time'];
     
         $calendarItem->setEvent_date($event_date);
         $calendarItem->setEvent_title($event_title);
         $calendarItem->setEvent_description($event_description);
         $calendarItem->setEvent_location($manager["location_id"]);
+        $calendarItem->setStart_time($start_time);
+        $calendarItem->setEnd_time($end_time);
     
-        $newCalendaritem = $calendarItem->addCalendarItem($pdo);
+        $newCalendaritem = $calendarItem->addCalendarItem($pdo, $_SESSION["user_id"]);
     } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
     }
@@ -63,6 +67,14 @@ if (isset($_POST['event_date'], $_POST['event_title'], $_POST['event_description
                 <div class="column">
                     <label for="event_description">Event_description:</label>
                     <textarea name="event_description" id="event_description" placeholder="Event_description"></textarea>
+                </div>
+                <div class="column">
+                    <label for="start_time">Start_time:</label>
+                    <input type="time" name="start_time" id="start_time" placeholder="Start_time">
+                </div>
+                <div class="column">
+                    <label for="end_time">End_time:</label>
+                    <input type="time" name="end_time" id="end_time" placeholder="End_time">
                 </div>
             </div>
         </div>

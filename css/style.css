@@ -733,6 +733,32 @@ button {
   color: var(--darkYellow);
 }
 
+#calendar .calendarItem {
+  background-color: var(--darkYellow);
+  color: var(--black);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+#calendar .legenda {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+#calendar .legenda .employee {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+#calendar .legenda .employee .color {
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+}
+
 @media (min-width: 800px) {
   .desktopNav {
     display: flex;

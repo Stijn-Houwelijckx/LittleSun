@@ -1,6 +1,7 @@
 <?php
 include_once (__DIR__ . "/classes/User.php");
 include_once (__DIR__ . "/classes/Db.php");
+include_once (__DIR__ . "/classes/CalendarItem.php");
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -13,15 +14,7 @@ $current_page = 'calendar';
 $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
 
-$role = $user["typeOfUser"];
-
-if ($role == "admin" || $role == "manager") {
-    $pathExtention = "../";
-} else {
-    $pathExtention = "";
-}
-
-if (isset($_SESSION["user_id"])) {
+if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "employee") {
     $pdo = Db::getInstance();
     $user = User::getUserById($pdo, $_SESSION["user_id"]);
 
@@ -47,7 +40,7 @@ function generateDaysForMonth($year, $month) {
 }
 
 $currentYear = date('Y');
-$currentMonth = isset($_GET['month']) ? $_GET['month'] : date('m'); // Haal de maandwaarde op uit de URL of gebruik de huidige maand
+$currentMonth = isset($_GET['month']) ? $_GET['month'] : date('m'); // get the month from the query string or default to the current month
 $allDaysThisMonth = generateDaysForMonth($currentYear, $currentMonth);
 
 $date = new DateTime($allDaysThisMonth[0]);
@@ -55,6 +48,15 @@ $dayOfWeek = $date->format('N');
 
 $emptyDays = array_fill(0, $dayOfWeek - 1, '');
 array_unshift($allDaysThisMonth, ...$emptyDays);
+
+$myCalendarItems = CalendarItem::getMyCalendarAsEmployee($pdo, $_SESSION["user_id"]);
+
+$groupedCalendarItems = [];
+foreach ($myCalendarItems as $calendarItem) {
+    $date = new DateTime($calendarItem["start_time"]);
+    $day = $date->format('Y-m-d');
+    $groupedCalendarItems[$day][] = $calendarItem;
+}
 ?>
 
 <!DOCTYPE html>
@@ -74,17 +76,24 @@ array_unshift($allDaysThisMonth, ...$emptyDays);
             grid-template-columns: repeat(7, 1fr);
             grid-gap: 10px;
         }
- 
+
         div#month {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             grid-gap: 10px;
         }
- 
+
         div.day {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
             border: 1px solid #ccc;
             padding: 10px;
-            height: 100px;
+            min-height: 100px; /* Stel een minimale hoogte in voor de dag */
+        }
+
+        div.day p.calendarItem {
+            margin: 0; /* Verwijder de marge van de paragraaf om ongewenste ruimte te voorkomen */
         }
     </style>
 </head>
@@ -96,7 +105,8 @@ array_unshift($allDaysThisMonth, ...$emptyDays);
             <a href="" class="btn active">Daily</a>
             <a href="" class="btn">Weekly</a>
             <a href="" class="btn">Monthly</a>
-        </div> 
+            <a href="addCalendarItem.php" class="btn big">+ Add agendaItem</a>  
+        </div>      
         <div id="top">
             <i class="fa fa-angle-left" id="prevMonth"></i>
             <h2><?php echo date('F', strtotime('2000-' . $currentMonth . '-01')); ?></h2>
@@ -113,8 +123,21 @@ array_unshift($allDaysThisMonth, ...$emptyDays);
         </div>
         <div id="month">
             <?php foreach ($allDaysThisMonth as $day): ?>
-                <?php $date = new DateTime($day); ?>
-                <div class="day"><p><?php echo $date->format('d'); ?></p></div>
+                <?php 
+                    $date = new DateTime($day); 
+                    $dayKey = $date->format('Y-m-d');
+                    $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
+                ?>
+                <div class="day" style="min-height: <?php echo $totalItems * 30 + 100 ?>px;">
+                    <p><?php echo $date->format('d'); ?></p>
+                    <?php if (isset($groupedCalendarItems[$dayKey])): ?>
+                        <?php foreach ($groupedCalendarItems[$dayKey] as $item): ?>
+                            <p class="calendarItem">
+                                <?php echo $item["start_time"] ?> - <?php echo $item["event_description"] ?>
+                            </p>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
             <?php endforeach; ?>
         </div>
     </div>
