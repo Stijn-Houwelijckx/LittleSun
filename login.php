@@ -57,8 +57,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div id="login">
         <div class="text">
-            <h1>Aanmelden</h1>
-            <p>We hebben alleen wat meer informatie nodig om je aan te melden. </p>
+            <h1>Sign in</h1>
+            <p>We just need some information to log you in </p>
 
             <?php if (isset($error)): ?>
                 <p class="alert">
@@ -72,19 +72,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="text" id="email" name="email" placeholder="JohnDoe@gmail.com">
                 </div>
                 <div class="column passwordInput">
-                    <label for="password">Wachtwoord</label>
+                    <label for="password">Password</label>
                     <div class="row">
                         <input type="password" id="password" name="password" placeholder="Wachtwoord">
                         <i class="fa fa-eye-slash"></i>
-                    </div>
-                    <a href="resetPassword.php">Wachtwoord vergeten?</a>
-                </div>
-                <button type="submit" class="btn" id="btnsignup">Aanmelden</button>
+                <button type="submit" class="btn" id="btnsignup">Sign in</button>
             </form>
-            <div class="row">
-                <p>Nog geen lid?</p>
-                <a href="signUp.php?step=1" class="active">Een account aanmaken</a>
-            </div>
         </div>
         <div class="image"></div>
     </div>
