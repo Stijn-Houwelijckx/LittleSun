@@ -14,6 +14,7 @@ $current_page = 'calendar';
 
 $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
+$manager = User::getUserById($pdo, $_SESSION["user_id"]);
 
 if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
     $pdo = Db::getInstance();
@@ -27,6 +28,29 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
 } else {
     header("Location: ../login.php?error=notLoggedIn");
     exit();
+}
+
+if (isset($_POST['event_date'], $_POST['event_title'], $_POST['event_description'], $_POST['start_time'], $_POST['end_time'])){
+    $calendarItem = new CalendarItem;
+
+    try {
+        $event_date = $_POST['event_date'];
+        $event_title = $_POST['event_title'];
+        $event_description = $_POST['event_description'];
+        $start_time = $_POST['start_time'];
+        $end_time = $_POST['end_time'];
+    
+        $calendarItem->setEvent_date($event_date);
+        $calendarItem->setEvent_title($event_title);
+        $calendarItem->setEvent_description($event_description);
+        $calendarItem->setEvent_location($manager["location_id"]);
+        $calendarItem->setStart_time($start_time);
+        $calendarItem->setEnd_time($end_time);
+    
+        $newCalendaritem = $calendarItem->addCalendarItem($pdo, $_SESSION["user_id"]);
+    } catch (PDOException $e) {
+        error_log('Database error: ' . $e->getMessage());
+    }
 }
 
 function generateDaysForMonth($year, $month) {
@@ -80,7 +104,7 @@ foreach ($allCalendarItems as $calendarItem) {
             <a href="calendar.php?view=daily" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "daily" ? "active" : ""; } ?> daily">Daily</a>
             <a href="calendar.php?view=weekly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "weekly" ? "active" : ""; } ?> weekly">Weekly</a>
             <a href="calendar.php?view=monthly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "monthly" ? "active" : ""; } ?> monthly">Monthly</a>
-            <a href="addCalendarItem.php" class="btn big">+ Add agendaItem</a>  
+            <a href="" class="btn big">+ Add agendaItem</a>  
         </div>  
 
         <div class="dailyview">
@@ -119,7 +143,8 @@ foreach ($allCalendarItems as $calendarItem) {
                                     $itemColor = "rgb($red, $green, $blue)";
                                 ?>
                                 <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
-                                    <?php echo $item["start_time"] ?> - <?php echo $item["event_description"] ?>
+                                    <?php $time = strtotime($item["start_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
+                                    - <?php echo $item["event_description"] ?>
                                 </p>
                             <?php endforeach; ?>
                         <?php else: ?>
@@ -278,6 +303,37 @@ foreach ($allCalendarItems as $calendarItem) {
         </div>
     </div>
 
+    <div class="popupAddCalendarItem">
+        <i class="fa fa-plus"></i>
+        <form action="" method="post" id="addCalendarItem">
+            <div class="text">
+                <div class="column">
+                    <label for="event_date">Event_date:</label>
+                    <input type="date" name="event_date" id="event_date" placeholder="Event_date">
+                </div>
+                <div class="column">
+                    <label for="event_title">Event_title:</label>
+                    <input type="text" name="event_title" id="event_title" placeholder="Event_title">
+                </div>
+                <div class="column">
+                    <label for="event_description">Event_description:</label>
+                    <textarea name="event_description" id="event_description" placeholder="Event_description"></textarea>
+                </div>
+                <div class="column">
+                    <label for="start_time">Start_time:</label>
+                    <input type="time" name="start_time" id="start_time" placeholder="Start_time">
+                </div>
+                <div class="column">
+                    <label for="end_time">End_time:</label>
+                    <input type="time" name="end_time" id="end_time" placeholder="End_time">
+                </div>
+            </div>
+            <div class="buttons">
+                <button type="submit" class="btn">Save</button>
+            </div>
+        </form>
+    </div>
+
     <input type="hidden" id="currentDateInput" value="<?php echo $today->format('Y-m-d'); ?>">
 
     <script src="calendar.js"></script>
@@ -299,6 +355,14 @@ foreach ($allCalendarItems as $calendarItem) {
             document.querySelector(".weeklyview").style.display = "none";
             document.querySelector(".monthlyview").style.display = "flex";
         <?php endif; ?>
+
+        document.querySelector(".big").addEventListener("click", function(e){
+            document.querySelector(".popupAddCalendarItem").style.display = "flex";
+            e.preventDefault();
+            document.querySelector(".popupAddCalendarItem .fa-plus").addEventListener("click", function(e){
+                document.querySelector(".popupAddCalendarItem").style.display = "none";
+            });
+        });
     </script>
     <script>const groupedCalendarItems = <?php echo json_encode($groupedCalendarItems); ?>;
 </script>
