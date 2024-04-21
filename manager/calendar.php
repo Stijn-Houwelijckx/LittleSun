@@ -82,52 +82,120 @@ foreach ($allCalendarItems as $calendarItem) {
             <a href="calendar.php?view=monthly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "monthly" ? "active" : ""; } ?> monthly">Monthly</a>
             <a href="addCalendarItem.php" class="btn big">+ Add agendaItem</a>  
         </div>  
-        <div class="dailyview"></div>
 
-        <div class="weeklyview">
+        <div class="dailyview">
             <div id="top">
-                <i class="fa fa-angle-left" id="prevWeek"></i>
+                <i class="fa fa-angle-left" id="prevDay"></i>
                 <div>
-                    <h2>Week <?php echo date('W', strtotime($allDaysThisMonth[0])); ?></h2>
-                    <h2>-</h2>
-                    <h2><?php echo date('Y', strtotime($allDaysThisMonth[0])); ?></h2>
+                    <h2 id="currentDate">
+                        <?php 
+                            $today = new DateTime();
+                            echo $today->format('d F Y');
+                        ?>
+                    </h2>
                 </div>
-                <i class="fa fa-angle-right" id="nextWeek"></i>
+                <i class="fa fa-angle-right" id="nextDay"></i>
             </div>
+
             <div id="days">
-                <h3>Mon</h3>
-                <h3>Tue</h3>
-                <h3>Wed</h3>
-                <h3>Thu</h3>
-                <h3>Fri</h3>
-                <h3>Sat</h3>
-                <h3>Sun</h3>
+                <h3 id="currentDay"><?php echo $today->format('D'); ?></h3>
             </div>
-            <div id="week">
-                <?php for ($i = 0; $i < 7; $i++): ?>
-                    <?php 
-                        $date = new DateTime($allDaysThisMonth[$i]); 
-                        $dayKey = $date->format('Y-m-d');
-                        $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
-                    ?>
-                    <div class="day" style="min-height: <?php echo $totalItems * 30 + 250 ?>px;">
-                        <p><?php echo $date->format('d'); ?></p>
-                        <?php if (isset($groupedCalendarItems[$dayKey])): ?>
+
+            <div id="day">
+                <?php 
+                    $startDate = new DateTime($_POST['date'] ?? $today->format('Y-m-d'));
+                    $dayKey = $startDate->format('Y-m-d');
+                    $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
+                ?>
+                <div class="day" style="min-height: <?php echo $totalItems * 30 + 250 ?>px;">
+                    <p><?php echo $startDate->format('d'); ?></p>
+                    <div id="dayItems">
+                        <?php if (isset($groupedCalendarItems[$dayKey]) && !empty($groupedCalendarItems[$dayKey])): ?>
                             <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
                                 <?php 
                                     $red = ($index * 70) % 256;
                                     $green = ($index * 120) % 256;
                                     $blue = ($index * 170) % 256;
-
                                     $itemColor = "rgb($red, $green, $blue)";
                                 ?>
                                 <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
                                     <?php echo $item["start_time"] ?> - <?php echo $item["event_description"] ?>
                                 </p>
                             <?php endforeach; ?>
+                        <?php else: ?>
+                            <p>No calendar items for this day.</p>
                         <?php endif; ?>
                     </div>
-                <?php endfor; ?>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="weeklyview">
+            <div id="top">
+                <i class="fa fa-angle-left" id="prevWeek"></i>
+                <div>
+                    <h2>
+                        <?php 
+                            $today = new DateTime();
+                            $startDate = clone $today;
+                            $startDate->modify('last monday');
+                            $endDate = clone $startDate;
+                            $endDate->modify('next sunday');
+                            echo $startDate->format('d F Y') . ' - ' . $endDate->format('d F Y');
+                        ?>
+                    </h2>
+                </div>
+                <i class="fa fa-angle-right" id="nextWeek"></i>
+            </div>
+
+            <div id="days">
+                <?php 
+                    $today = new DateTime();
+                    $startDate = clone $today;
+                    $startDate->modify('last monday');
+
+                    for ($i = 0; $i < 7; $i++) {
+                        echo '<h3>' . $startDate->format('D') . '</h3>';
+                        $startDate->modify('+1 day');
+                    }
+                ?>
+            </div>
+
+            <div id="week">
+                <?php 
+                    $startDate = new DateTime();
+                    $startDate->modify('last monday');
+
+                    $endDate = clone $startDate;
+                    $endDate->modify('next sunday');
+
+                    while ($startDate <= $endDate) {
+                        $dayKey = $startDate->format('Y-m-d');
+                        $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
+                ?>
+                        <div class="day" style="min-height: <?php echo $totalItems * 30 + 250 ?>px;">
+                            <p><?php echo $startDate->format('d'); ?></p>
+                            <?php if (isset($groupedCalendarItems[$dayKey])): ?>
+                                <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
+                                    <?php 
+                                        $red = ($index * 70) % 256;
+                                        $green = ($index * 120) % 256;
+                                        $blue = ($index * 170) % 256;
+
+                                        $itemColor = "rgb($red, $green, $blue)";
+                                    ?>
+                                    <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
+                                        <?php echo $item["start_time"] ?> - <?php echo $item["event_description"] ?>
+                                    </p>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                <?php 
+                        $startDate->modify('+1 day');
+                    }
+                ?>
             </div>
         </div>
 
@@ -158,6 +226,7 @@ foreach ($allCalendarItems as $calendarItem) {
                         $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
                     ?>
                     <div class="day" style="min-height: <?php echo $totalItems * 30 + 100 ?>px;">
+                        <input type="hidden" id="currentDateInput" value="<?php echo $today->format('Y-m-d'); ?>">
                         <p><?php echo $date->format('d'); ?></p>
                         <?php if (isset($groupedCalendarItems[$dayKey])): ?>
                             <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
@@ -195,6 +264,9 @@ foreach ($allCalendarItems as $calendarItem) {
         </div>
     </div>
 
+    <input type="hidden" id="currentDateInput" value="<?php echo $today->format('Y-m-d'); ?>">
+
+    <script src="calendar.js"></script>
     <script>    
         <?php if ($_GET["view"] == "daily"): ?>
             document.querySelector(".dailyview").style.display = "flex";
@@ -213,24 +285,9 @@ foreach ($allCalendarItems as $calendarItem) {
             document.querySelector(".weeklyview").style.display = "none";
             document.querySelector(".monthlyview").style.display = "flex";
         <?php endif; ?>
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const currentMonth = <?php echo $currentMonth; ?>;
-            const prevMonthBtn = document.getElementById('prevMonth');
-            const nextMonthBtn = document.getElementById('nextMonth');
-
-            prevMonthBtn.addEventListener('click', function () {
-                const newMonth = currentMonth <= 1 ? 12 : currentMonth - 1;
-                window.location.href = `?month=${newMonth}`;
-            });
-
-            nextMonthBtn.addEventListener('click', function () {
-                const newMonth = currentMonth >= 12 ? 1 : currentMonth + 1;
-                window.location.href = `?month=${newMonth}`;
-            });
-
-        });
     </script>
+    <script>const groupedCalendarItems = <?php echo json_encode($groupedCalendarItems); ?>;
+</script>
 </body>
 </html>
 
