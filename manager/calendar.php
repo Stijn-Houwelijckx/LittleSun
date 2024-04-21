@@ -77,9 +77,9 @@ foreach ($allCalendarItems as $calendarItem) {
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="calendar">
         <div class="btns">
-            <a href="" class="btn active daily">Daily</a>
-            <a href="" class="btn weekly">Weekly</a>
-            <a href="" class="btn monthly">Monthly</a>
+            <a href="calendar.php?view=daily" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "daily" ? "active" : ""; } ?> daily">Daily</a>
+            <a href="calendar.php?view=weekly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "weekly" ? "active" : ""; } ?> weekly">Weekly</a>
+            <a href="calendar.php?view=monthly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "monthly" ? "active" : ""; } ?> monthly">Monthly</a>
             <a href="addCalendarItem.php" class="btn big">+ Add agendaItem</a>  
         </div>  
         <div class="dailyview"></div>
@@ -150,21 +150,29 @@ foreach ($allCalendarItems as $calendarItem) {
         </div>
     </div>
 
-    <script>
+    <script>    
+    document.querySelector(".daily").addEventListener("click", function(e){
+        toggleActiveBtns(this);
+        showView(".dailyview");
+        hideView(".weeklyview");
+        hideView(".monthlyview");
+        e.preventDefault();
+    });
+
     document.querySelector(".weekly").addEventListener("click", function(e){
         toggleActiveBtns(this);
-        e.preventDefault();
         showView(".weeklyview");
         hideView(".monthlyview");
         hideView(".dailyview");
+        e.preventDefault();
     });
 
     document.querySelector(".monthly").addEventListener("click", function(e){
         toggleActiveBtns(this);
-        e.preventDefault();
         showView(".monthlyview");
         hideView(".weeklyview");
         hideView(".dailyview");
+        e.preventDefault();
     });
 
     function toggleActiveBtns(clickedBtn) {
