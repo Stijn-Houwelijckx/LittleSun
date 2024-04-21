@@ -21,8 +21,13 @@ if (!isset($_SESSION["user_id"]) || $manager["typeOfUser"] != "manager") {
 }
 
 $users = Employee::getAllEmployeesByLocation($pdo, $manager["location_id"]);
-$selectedUser = $users[0];
 
+if (!empty($users)) {
+    $selectedUser = $users[0];
+} else {
+    $selectedUser = null;
+    $error = "No employees found";
+}   
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["id"])) {
         try {
@@ -77,42 +82,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h1>Employees</h1>
             <a href="addEmployee.php" class="btn">+ Add</a>
         </div>
-        <form action="" id="userSelector" onchange="submitUserForm()" method="post">
-        <select name="user_id">
-            <?php foreach ($users as $user): ?>
-                <option value="<?php echo $user["id"] ?>" <?php if ($user["id"] == $selectedUser["id"]) echo "selected"; ?>>
-                    <?php echo htmlspecialchars($user["firstname"]) . " " . htmlspecialchars($user["lastname"]) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        </form>
-        <div class="users">
-            <?php if (!empty($users)): ?>
-                <form action="" method="post" id="userForm">
-                    <div class="user">
-                        <div class="text">
-                            <div class="column">
-                            <label for="firstname">Firstname:</label>
-                            <input type="text" name="firstname" id="firstname" value="<?php echo htmlspecialchars($selectedUser["firstname"]); ?>">
-                            </div>
-                            <div class="column">
-                            <label for="lastname">Lastname:</label>
-                            <input type="text" name="lastname" id="lastname" value="<?php echo htmlspecialchars($selectedUser["lastname"]); ?>">
-                            </div>
-                            <div class="column">
-                            <label for="email">E-mail:</label>
-                            <input type="text" name="email" id="email" value="<?php echo htmlspecialchars($selectedUser["email"]); ?>">
-                            </div>
-                            <div class="column">
-                            <input type="hidden" name="user_id" id="user_id" value="<?php echo htmlspecialchars($selectedUser["id"]); ?>">
-                        </div>
-                    </div>
-                    <div class="buttons">
-                        <button type="submit" class="btn">Save</button>
-                    </div>
-                </form>
+        <div class="error">
+            <?php if (isset($error)) : ?>
+                <p><?php echo $error; ?></p>
             <?php endif; ?>
         </div>
+        <?php if (!empty($users)): ?>
+            <form action="" id="userSelector" onchange="submitUserForm()" method="post">
+            <select name="user_id">
+                <?php foreach ($users as $user): ?>
+                    <option value="<?php echo $user["id"] ?>" <?php if ($user["id"] == $selectedUser["id"]) echo "selected"; ?>>
+                        <?php echo htmlspecialchars($user["firstname"]) . " " . htmlspecialchars($user["lastname"]) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            </form>
+            <div class="users">
+                <?php if (!empty($users)): ?>
+                    <form action="" method="post" id="userForm">
+                        <div class="user">
+                            <div class="text">
+                                <div class="column">
+                                <label for="firstname">Firstname:</label>
+                                <input type="text" name="firstname" id="firstname" value="<?php echo htmlspecialchars($selectedUser["firstname"]); ?>">
+                                </div>
+                                <div class="column">
+                                <label for="lastname">Lastname:</label>
+                                <input type="text" name="lastname" id="lastname" value="<?php echo htmlspecialchars($selectedUser["lastname"]); ?>">
+                                </div>
+                                <div class="column">
+                                <label for="email">E-mail:</label>
+                                <input type="text" name="email" id="email" value="<?php echo htmlspecialchars($selectedUser["email"]); ?>">
+                                </div>
+                                <div class="column">
+                                <input type="hidden" name="user_id" id="user_id" value="<?php echo htmlspecialchars($selectedUser["id"]); ?>">
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <button type="submit" class="btn">Save</button>
+                        </div>
+                    </form>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
     </div>
 
 
