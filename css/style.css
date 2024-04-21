@@ -686,6 +686,26 @@ button {
   gap: 24px;
 }
 
+.dailyview,
+.weeklyview,
+.monthlyview {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.weeklyview #week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 10px;
+}
+
+.weeklyview,
+.monthlyview {
+  display: none;
+}
+
 #calendar .btns {
   display: flex;
   flex-direction: row;
@@ -711,6 +731,13 @@ button {
   align-items: center;
 }
 
+#calendar #top div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
 #calendar #top,
 #calendar #days,
 #calendar #month {
@@ -733,9 +760,40 @@ button {
   color: var(--darkYellow);
 }
 
-#calendar .calendarItem {
-  background-color: var(--darkYellow);
-  color: var(--black);
+div#days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 10px;
+}
+
+div#month {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 10px;
+}
+
+div.day {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 100px;
+}
+
+div.day #dayItems {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+div.day p.calendarItem {
+  margin: 0;
+}
+
+div.day p.calendarItem {
+  color: var(--white);
+  background-color: var(--calendarItemColor);
   padding: 8px;
   border-radius: 8px;
 }
@@ -757,6 +815,42 @@ button {
   border-radius: 50%;
   width: 16px;
   height: 16px;
+}
+
+.popupAddCalendarItem {
+  padding: 16px;
+  display: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.6);
+  position: absolute;
+  z-index: 999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 366px;
+}
+
+.popupAddCalendarItem .fa {
+  transform: rotate(45deg);
+}
+
+.popupAddCalendarItem form {
+  width: 100%;
+}
+
+.popupAddCalendarItem form .text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.popupAddCalendarItem .text .column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 @media (min-width: 800px) {
