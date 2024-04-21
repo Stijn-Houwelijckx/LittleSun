@@ -733,18 +733,34 @@ button {
   color: var(--darkYellow);
 }
 
-/* #calendar .calendarItem {
-  background-color: var(--darkYellow);
-  color: var(--black);
-  padding: 8px;
-  border-radius: 8px;
-} */
+div#days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 10px;
+}
+
+div#month {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 10px;
+}
+
+div.day {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 100px;
+}
 
 div.day p.calendarItem {
   margin: 0;
-  background-color: var(
-    --calendarItemColor
-  ); /* gebruik CSS variabele voor achtergrondkleur */
+}
+
+div.day p.calendarItem {
+  color: var(--white);
+  background-color: var(--calendarItemColor);
   padding: 8px;
   border-radius: 8px;
 }

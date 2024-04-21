@@ -71,33 +71,6 @@ foreach ($allCalendarItems as $calendarItem) {
     <link rel="stylesheet" href="../css/style.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.png">
-
-    <style>
-        div#days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            grid-gap: 10px;
-        }
-
-        div#month {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            grid-gap: 10px;
-        }
-
-        div.day {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            min-height: 100px;
-        }
-
-        div.day p.calendarItem {
-            margin: 0;
-        }
-    </style>
 </head>
 
 <body>
