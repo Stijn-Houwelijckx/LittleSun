@@ -686,6 +686,19 @@ button {
   gap: 24px;
 }
 
+.dailyview,
+.weeklyview,
+.monthlyview {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.weeklyview,
+.monthlyview {
+  visibility: hidden;
+}
+
 #calendar .btns {
   display: flex;
   flex-direction: row;

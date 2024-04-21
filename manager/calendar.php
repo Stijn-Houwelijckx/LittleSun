@@ -77,70 +77,106 @@ foreach ($allCalendarItems as $calendarItem) {
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="calendar">
         <div class="btns">
-            <a href="" class="btn active">Daily</a>
-            <a href="" class="btn">Weekly</a>
-            <a href="" class="btn">Monthly</a>
+            <a href="" class="btn active daily">Daily</a>
+            <a href="" class="btn weekly">Weekly</a>
+            <a href="" class="btn monthly">Monthly</a>
             <a href="addCalendarItem.php" class="btn big">+ Add agendaItem</a>  
-        </div>      
-        <div id="top">
-            <i class="fa fa-angle-left" id="prevMonth"></i>
-            <h2><?php echo date('F', strtotime('2000-' . $currentMonth . '-01')); ?></h2>
-            <i class="fa fa-angle-right" id="nextMonth"></i>
-        </div>
-        <div id="days">
-            <h3>Mon</h3>
-            <h3>Tue</h3>
-            <h3>Wed</h3>
-            <h3>Thu</h3>
-            <h3>Fri</h3>
-            <h3>Sat</h3>
-            <h3>Sun</h3>
-        </div>
-        <div id="month">
-            <?php foreach ($allDaysThisMonth as $day): ?>
-                <?php 
-                    $date = new DateTime($day); 
-                    $dayKey = $date->format('Y-m-d');
-                    $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
-                ?>
-                <div class="day" style="min-height: <?php echo $totalItems * 30 + 100 ?>px;">
-                    <p><?php echo $date->format('d'); ?></p>
-                    <?php if (isset($groupedCalendarItems[$dayKey])): ?>
-                        <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
-                            <?php 
-                                $red = ($index * 70) % 256;
-                                $green = ($index * 120) % 256;
-                                $blue = ($index * 170) % 256;
+        </div>  
+        <div class="dailyview"></div>
 
-                                $itemColor = "rgb($red, $green, $blue)";
-                            ?>
-                            <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
-                                <?php echo $item["start_time"] ?> - <?php echo $item["event_description"] ?>
-                            </p>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
-        </div>
+        <div class="weeklyview"></div>  
 
-        <div class="legenda">
-            <?php foreach ($allEmployeesByLocation as $index => $employee): ?>
-                <?php 
-                    $red = ($index * 70) % 256;
-                    $green = ($index * 120) % 256;
-                    $blue = ($index * 170) % 256;
+        <div class="monthlyview">   
+            <div id="top">
+                <i class="fa fa-angle-left" id="prevMonth"></i>
+                <h2><?php echo date('F', strtotime('2000-' . $currentMonth . '-01')); ?></h2>
+                <i class="fa fa-angle-right" id="nextMonth"></i>
+            </div>
+            <div id="days">
+                <h3>Mon</h3>
+                <h3>Tue</h3>
+                <h3>Wed</h3>
+                <h3>Thu</h3>
+                <h3>Fri</h3>
+                <h3>Sat</h3>
+                <h3>Sun</h3>
+            </div>
+            <div id="month">
+                <?php foreach ($allDaysThisMonth as $day): ?>
+                    <?php 
+                        $date = new DateTime($day); 
+                        $dayKey = $date->format('Y-m-d');
+                        $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
+                    ?>
+                    <div class="day" style="min-height: <?php echo $totalItems * 30 + 100 ?>px;">
+                        <p><?php echo $date->format('d'); ?></p>
+                        <?php if (isset($groupedCalendarItems[$dayKey])): ?>
+                            <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
+                                <?php 
+                                    $red = ($index * 70) % 256;
+                                    $green = ($index * 120) % 256;
+                                    $blue = ($index * 170) % 256;
 
-                    $userColor = "rgb($red, $green, $blue)";
-                ?>
-                <div class="employee">
-                    <p class="color" style="background-color: <?php echo $userColor; ?>"></p>
-                    <p><?php echo $employee["firstname"] . " " . $employee["lastname"]?></p>
-                </div>
-            <?php endforeach; ?>
+                                    $itemColor = "rgb($red, $green, $blue)";
+                                ?>
+                                <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
+                                    <?php echo $item["start_time"] ?> - <?php echo $item["event_description"] ?>
+                                </p>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="legenda">
+                <?php foreach ($allEmployeesByLocation as $index => $employee): ?>
+                    <?php 
+                        $red = ($index * 70) % 256;
+                        $green = ($index * 120) % 256;
+                        $blue = ($index * 170) % 256;
+
+                        $userColor = "rgb($red, $green, $blue)";
+                    ?>
+                    <div class="employee">
+                        <p class="color" style="background-color: <?php echo $userColor; ?>"></p>
+                        <p><?php echo $employee["firstname"] . " " . $employee["lastname"]?></p>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
 
     <script>
+    document.querySelector(".weekly").addEventListener("click", function(e){
+        toggleActiveBtns(this);
+        e.preventDefault();
+        showView(".weeklyview");
+        hideView(".monthlyview");
+    });
+
+    document.querySelector(".monthly").addEventListener("click", function(e){
+        toggleActiveBtns(this);
+        e.preventDefault();
+        showView(".monthlyview");
+        hideView(".weeklyview");
+    });
+
+    function toggleActiveBtns(clickedBtn) {
+        let activeBtns = document.querySelectorAll(".btns .active");
+        activeBtns.forEach(btn => {
+            btn.classList.remove("active");
+        });
+        clickedBtn.classList.add("active");
+    }
+
+    function showView(selector) {
+        document.querySelector(selector).style.visibility = "visible";
+    }
+
+    function hideView(selector) {
+        document.querySelector(selector).style.visibility = "hidden";
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         const currentMonth = <?php echo $currentMonth; ?>;
         const prevMonthBtn = document.getElementById('prevMonth');
@@ -155,6 +191,7 @@ foreach ($allCalendarItems as $calendarItem) {
             const newMonth = currentMonth >= 12 ? 1 : currentMonth + 1;
             window.location.href = `?month=${newMonth}`;
         });
+
     });
 </script>
 </body>
