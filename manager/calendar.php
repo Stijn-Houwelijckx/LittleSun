@@ -89,7 +89,11 @@ foreach ($allCalendarItems as $calendarItem) {
         <div class="monthlyview">   
             <div id="top">
                 <i class="fa fa-angle-left" id="prevMonth"></i>
-                <h2><?php echo date('F', strtotime('2000-' . $currentMonth . '-01')); ?></h2>
+                <div>
+                    <h2><?php echo date('F', strtotime('2000-' . $currentMonth . '-01')); ?></h2>
+                    <h2>-</h2>
+                    <h2><?php echo $currentYear; ?></h2>
+                </div>
                 <i class="fa fa-angle-right" id="nextMonth"></i>
             </div>
             <div id="days">
