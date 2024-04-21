@@ -733,9 +733,18 @@ button {
   color: var(--darkYellow);
 }
 
-#calendar .calendarItem {
+/* #calendar .calendarItem {
   background-color: var(--darkYellow);
   color: var(--black);
+  padding: 8px;
+  border-radius: 8px;
+} */
+
+div.day p.calendarItem {
+  margin: 0;
+  background-color: var(
+    --calendarItemColor
+  ); /* gebruik CSS variabele voor achtergrondkleur */
   padding: 8px;
   border-radius: 8px;
 }

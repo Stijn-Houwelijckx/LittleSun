@@ -41,7 +41,7 @@ function generateDaysForMonth($year, $month) {
 }
 
 $currentYear = date('Y');
-$currentMonth = isset($_GET['month']) ? $_GET['month'] : date('m'); // get the month from the query string or default to the current month
+$currentMonth = isset($_GET['month']) ? $_GET['month'] : date('m');
 $allDaysThisMonth = generateDaysForMonth($currentYear, $currentMonth);
 
 $date = new DateTime($allDaysThisMonth[0]);
@@ -58,11 +58,6 @@ foreach ($allCalendarItems as $calendarItem) {
     $date = new DateTime($calendarItem["start_time"]);
     $day = $date->format('Y-m-d');
     $groupedCalendarItems[$day][] = $calendarItem;
-}
-
-function generateColor($id) {
-    srand($id); // seed the random number generator with the employee ID
-    return '#' . substr(str_shuffle('ABCDEF0123456789'), 0, 6);
 }
 ?>
 
@@ -96,11 +91,11 @@ function generateColor($id) {
             gap: 16px;
             border: 1px solid #ccc;
             padding: 10px;
-            min-height: 100px; /* Stel een minimale hoogte in voor de dag */
+            min-height: 100px;
         }
 
         div.day p.calendarItem {
-            margin: 0; /* Verwijder de marge van de paragraaf om ongewenste ruimte te voorkomen */
+            margin: 0;
         }
     </style>
 </head>
@@ -138,8 +133,15 @@ function generateColor($id) {
                 <div class="day" style="min-height: <?php echo $totalItems * 30 + 100 ?>px;">
                     <p><?php echo $date->format('d'); ?></p>
                     <?php if (isset($groupedCalendarItems[$dayKey])): ?>
-                        <?php foreach ($groupedCalendarItems[$dayKey] as $item): ?>
-                            <p class="calendarItem">
+                        <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
+                            <?php 
+                                $red = ($index * 70) % 256;
+                                $green = ($index * 120) % 256;
+                                $blue = ($index * 170) % 256;
+
+                                $itemColor = "rgb($red, $green, $blue)";
+                            ?>
+                            <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
                                 <?php echo $item["start_time"] ?> - <?php echo $item["event_description"] ?>
                             </p>
                         <?php endforeach; ?>
@@ -147,10 +149,18 @@ function generateColor($id) {
                 </div>
             <?php endforeach; ?>
         </div>
+
         <div class="legenda">
-            <?php foreach ($allEmployeesByLocation as $employee): ?>
+            <?php foreach ($allEmployeesByLocation as $index => $employee): ?>
+                <?php 
+                    $red = ($index * 70) % 256;
+                    $green = ($index * 120) % 256;
+                    $blue = ($index * 170) % 256;
+
+                    $userColor = "rgb($red, $green, $blue)";
+                ?>
                 <div class="employee">
-                    <p class="color" style="background-color: <?php echo generateColor($employee["id"]); ?>"></p>
+                    <p class="color" style="background-color: <?php echo $userColor; ?>"></p>
                     <p><?php echo $employee["firstname"] . " " . $employee["lastname"]?></p>
                 </div>
             <?php endforeach; ?>
