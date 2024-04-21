@@ -84,7 +84,52 @@ foreach ($allCalendarItems as $calendarItem) {
         </div>  
         <div class="dailyview"></div>
 
-        <div class="weeklyview"></div>  
+        <div class="weeklyview">
+            <div id="top">
+                <i class="fa fa-angle-left" id="prevWeek"></i>
+                <div>
+                    <h2>Week <?php echo date('W', strtotime($allDaysThisMonth[0])); ?></h2>
+                    <h2>-</h2>
+                    <h2><?php echo date('Y', strtotime($allDaysThisMonth[0])); ?></h2>
+                </div>
+                <i class="fa fa-angle-right" id="nextWeek"></i>
+            </div>
+            <div id="days">
+                <h3>Mon</h3>
+                <h3>Tue</h3>
+                <h3>Wed</h3>
+                <h3>Thu</h3>
+                <h3>Fri</h3>
+                <h3>Sat</h3>
+                <h3>Sun</h3>
+            </div>
+            <div id="week">
+                <?php for ($i = 0; $i < 7; $i++): ?>
+                    <?php 
+                        $date = new DateTime($allDaysThisMonth[$i]); 
+                        $dayKey = $date->format('Y-m-d');
+                        $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
+                    ?>
+                    <div class="day" style="min-height: <?php echo $totalItems * 30 + 250 ?>px;">
+                        <p><?php echo $date->format('d'); ?></p>
+                        <?php if (isset($groupedCalendarItems[$dayKey])): ?>
+                            <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
+                                <?php 
+                                    $red = ($index * 70) % 256;
+                                    $green = ($index * 120) % 256;
+                                    $blue = ($index * 170) % 256;
+
+                                    $itemColor = "rgb($red, $green, $blue)";
+                                ?>
+                                <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
+                                    <?php echo $item["start_time"] ?> - <?php echo $item["event_description"] ?>
+                                </p>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                <?php endfor; ?>
+            </div>
+        </div>
 
         <div class="monthlyview">   
             <div id="top">
@@ -151,63 +196,41 @@ foreach ($allCalendarItems as $calendarItem) {
     </div>
 
     <script>    
-    document.querySelector(".daily").addEventListener("click", function(e){
-        toggleActiveBtns(this);
-        showView(".dailyview");
-        hideView(".weeklyview");
-        hideView(".monthlyview");
-        e.preventDefault();
-    });
+        <?php if ($_GET["view"] == "daily"): ?>
+            document.querySelector(".dailyview").style.display = "flex";
+            document.querySelector(".weeklyview").style.display = "none";
+            document.querySelector(".monthlyview").style.display = "none";
+        <?php endif; ?>
 
-    document.querySelector(".weekly").addEventListener("click", function(e){
-        toggleActiveBtns(this);
-        showView(".weeklyview");
-        hideView(".monthlyview");
-        hideView(".dailyview");
-        e.preventDefault();
-    });
+        <?php if ($_GET["view"] == "weekly"): ?>
+            document.querySelector(".dailyview").style.display = "none";
+            document.querySelector(".weeklyview").style.display = "flex";
+            document.querySelector(".monthlyview").style.display = "none";
+        <?php endif; ?>
 
-    document.querySelector(".monthly").addEventListener("click", function(e){
-        toggleActiveBtns(this);
-        showView(".monthlyview");
-        hideView(".weeklyview");
-        hideView(".dailyview");
-        e.preventDefault();
-    });
+        <?php if ($_GET["view"] == "monthly"): ?>
+            document.querySelector(".dailyview").style.display = "none";
+            document.querySelector(".weeklyview").style.display = "none";
+            document.querySelector(".monthlyview").style.display = "flex";
+        <?php endif; ?>
 
-    function toggleActiveBtns(clickedBtn) {
-        let activeBtns = document.querySelectorAll(".btns .active");
-        activeBtns.forEach(btn => {
-            btn.classList.remove("active");
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentMonth = <?php echo $currentMonth; ?>;
+            const prevMonthBtn = document.getElementById('prevMonth');
+            const nextMonthBtn = document.getElementById('nextMonth');
+
+            prevMonthBtn.addEventListener('click', function () {
+                const newMonth = currentMonth <= 1 ? 12 : currentMonth - 1;
+                window.location.href = `?month=${newMonth}`;
+            });
+
+            nextMonthBtn.addEventListener('click', function () {
+                const newMonth = currentMonth >= 12 ? 1 : currentMonth + 1;
+                window.location.href = `?month=${newMonth}`;
+            });
+
         });
-        clickedBtn.classList.add("active");
-    }
-
-    function showView(selector) {
-        document.querySelector(selector).style.display = "flex";
-    }
-
-    function hideView(selector) {
-        document.querySelector(selector).style.display = "none";
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const currentMonth = <?php echo $currentMonth; ?>;
-        const prevMonthBtn = document.getElementById('prevMonth');
-        const nextMonthBtn = document.getElementById('nextMonth');
-
-        prevMonthBtn.addEventListener('click', function () {
-            const newMonth = currentMonth <= 1 ? 12 : currentMonth - 1;
-            window.location.href = `?month=${newMonth}`;
-        });
-
-        nextMonthBtn.addEventListener('click', function () {
-            const newMonth = currentMonth >= 12 ? 1 : currentMonth + 1;
-            window.location.href = `?month=${newMonth}`;
-        });
-
-    });
-</script>
+    </script>
 </body>
 </html>
 

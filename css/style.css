@@ -692,6 +692,13 @@ button {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 100%;
+}
+
+.weeklyview #week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 10px;
 }
 
 .weeklyview,
