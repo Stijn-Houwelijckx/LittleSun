@@ -152,6 +152,7 @@ foreach ($allCalendarItems as $calendarItem) {
         e.preventDefault();
         showView(".weeklyview");
         hideView(".monthlyview");
+        hideView(".dailyview");
     });
 
     document.querySelector(".monthly").addEventListener("click", function(e){
@@ -159,6 +160,7 @@ foreach ($allCalendarItems as $calendarItem) {
         e.preventDefault();
         showView(".monthlyview");
         hideView(".weeklyview");
+        hideView(".dailyview");
     });
 
     function toggleActiveBtns(clickedBtn) {
@@ -170,11 +172,11 @@ foreach ($allCalendarItems as $calendarItem) {
     }
 
     function showView(selector) {
-        document.querySelector(selector).style.visibility = "visible";
+        document.querySelector(selector).style.display = "flex";
     }
 
     function hideView(selector) {
-        document.querySelector(selector).style.visibility = "hidden";
+        document.querySelector(selector).style.display = "none";
     }
 
     document.addEventListener('DOMContentLoaded', function () {

@@ -696,7 +696,7 @@ button {
 
 .weeklyview,
 .monthlyview {
-  visibility: hidden;
+  display: none;
 }
 
 #calendar .btns {
