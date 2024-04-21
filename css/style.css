@@ -781,6 +781,12 @@ div.day {
   min-height: 100px;
 }
 
+div.day #dayItems {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 div.day p.calendarItem {
   margin: 0;
 }

@@ -128,7 +128,21 @@ foreach ($allCalendarItems as $calendarItem) {
                     </div>
                 </div>
             </div>
+            <div class="legenda">
+                <?php foreach ($allEmployeesByLocation as $index => $employee): ?>
+                    <?php 
+                        $red = ($index * 70) % 256;
+                        $green = ($index * 120) % 256;
+                        $blue = ($index * 170) % 256;
 
+                        $userColor = "rgb($red, $green, $blue)";
+                    ?>
+                    <div class="employee">
+                        <p class="color" style="background-color: <?php echo $userColor; ?>"></p>
+                        <p><?php echo $employee["firstname"] . " " . $employee["lastname"]?></p>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         </div>
 
 

@@ -1,3 +1,4 @@
+// dailyview
 document.addEventListener("DOMContentLoaded", function () {
   const prevDayBtn = document.getElementById("prevDay");
   const nextDayBtn = document.getElementById("nextDay");
@@ -65,3 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 });
+
+// weeklyview
+
+// monthlyview

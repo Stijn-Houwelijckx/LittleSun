@@ -81,7 +81,7 @@
                         <p>Employees</p>
                     </div>
                 </a>
-                <a href="calendar.php">
+                <a href="calendar.php?view=daily">
                     <div>
                         <img class="<?php echo ($current_page == 'calendar') ? 'usersItem active' : 'usersItem'; ?>"
                             src="../assets/icons/calendar.svg" alt="Calendar">
@@ -98,7 +98,7 @@
                         <p>Home</p>
                     </div>
                 </a>
-                <a href="calendar.php">
+                <a href="calendar.php?view=daily">
                     <div>
                         <img class="<?php echo ($current_page == 'calendar') ? 'usersItem active' : 'usersItem'; ?>"
                             src="assets/icons/calendar.svg" alt="Calendar">
