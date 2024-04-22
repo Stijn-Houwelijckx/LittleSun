@@ -372,6 +372,21 @@ button {
   width: 100%;
 }
 
+#hubLocationsAdmin .row div {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+#hubLocationsAdmin .row div .search {
+  border: none;
+  border-radius: 8px;
+}
+
+#hubLocationsAdmin .row div .search::placeholder {
+  padding-left: 8px;
+}
+
 #hubLocationsAdmin .hubLocations {
   display: flex;
   flex-direction: row;

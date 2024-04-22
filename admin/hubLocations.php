@@ -50,7 +50,10 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
     <div id="hubLocationsAdmin">
         <div class="row">
             <h1>Hub locations</h1>
-            <a href="addHubLocation.php" class="btn">+ add</a>
+            <div> 
+                <input type="text" class="search" placeholder="Search hublocation">
+                <a href="addHubLocation.php" class="btn">+ add</a>
+            </div>
         </div>
         <div class="hubLocations">
             <?php foreach ($hubLocations As $hubLocation) : ?>
@@ -109,6 +112,26 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
                 document.querySelector("#deleteHublocation").submit();
             });
         <?php endif; ?>
+
+        document.querySelector("#hubLocationsAdmin .search").addEventListener("keyup", function(e){
+            let searchTerm = e.target.value.toLowerCase();
+            let hubLocations = document.querySelectorAll(".hubLocation");
+
+            hubLocations.forEach(function(hubLocation) {
+                let hubName = hubLocation.querySelector("h2").textContent.toLowerCase();
+                // let hubCity = hubLocation.querySelector("p:nth-child(2)").textContent.toLowerCase();
+                // let hubCountry = hubLocation.querySelector("p:nth-child(3)").textContent.toLowerCase();
+
+                if (hubName.includes(searchTerm))
+                // || hubCity.includes(searchTerm) || hubCountry.includes(searchTerm)) 
+            {
+                    hubLocation.style.display = "block";
+                } else {
+                    hubLocation.style.display = "none";
+                }
+            });
+        });
+
     </script>
 </body>
 
