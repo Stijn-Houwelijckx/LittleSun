@@ -56,6 +56,9 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
             </div>
         </div>
         <div class="hubLocations">
+            <?php if ($hubLocations == null) : ?>
+                <p>No hub locations found</p>
+            <?php endif; ?>
             <?php foreach ($hubLocations As $hubLocation) : ?>
                 <div class="hubLocation">
                     <div class="hubLocationControls">
@@ -67,8 +70,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
                     <div class="image" style="background-image: url('../assets/images/locations/<?php echo str_replace(' ', '', $hubLocation["image"]); ?>');"></div>
                     <div class="text">
                         <h2><?php echo $hubLocation["name"] ?></h2>
-                        <p><?php echo $hubLocation["city"] ?></p>
-                        <p><?php echo $hubLocation["country"] ?></p>
                     </div>
                 </div>
 

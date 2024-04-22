@@ -3,8 +3,6 @@ class Location
 {
     private $image;
     private $name;
-    private $city;
-    private $country;
 
         /**
      * Get the value of image
@@ -46,46 +44,6 @@ class Location
         return $this;
     }
 
-    /**
-     * Get the value of city
-     */ 
-    public function getCity()
-    {
-        return $this->city;
-    }
-
-    /**
-     * Set the value of city
-     *
-     * @return  self
-     */ 
-    public function setCity($city)
-    {
-        $this->city = $city;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of country
-     */ 
-    public function getCountry()
-    {
-        return $this->country;
-    }
-
-    /**
-     * Set the value of country
-     *
-     * @return  self
-     */ 
-    public function setCountry($country)
-    {
-        $this->country = $country;
-
-        return $this;
-    }    
-
     public static function getAll(PDO $pdo)
     {
         try {
@@ -112,14 +70,12 @@ class Location
         }
     }
 
-    public static function addLocation(PDO $pdo, $image, $name, $city, $country)
+    public static function addLocation(PDO $pdo, $image, $name)
     {
         try {
-            $stmt = $pdo->prepare("INSERT INTO locations (image, name, city, country) VALUES (:image, :name, :city, :country)");
+            $stmt = $pdo->prepare("INSERT INTO locations (image, name) VALUES (:image, :name)");
             $stmt->bindParam(':image', $image);
             $stmt->bindParam(':name', $name);
-            $stmt->bindParam(':city', $city);
-            $stmt->bindParam(':country', $country);
             
             $stmt->execute();
             
@@ -145,11 +101,9 @@ class Location
     public function updateLocation(PDO $pdo, $id)
     {
         try {
-            $stmt = $pdo->prepare("UPDATE locations SET name = :name, city = :city, country = :country WHERE id = :id");
+            $stmt = $pdo->prepare("UPDATE locations SET name = :name WHERE id = :id");
 
             $stmt->bindParam(':name', $this->name);
-            $stmt->bindParam(':city', $this->city);
-            $stmt->bindParam(':country', $this->country);
             $stmt->bindParam(':id', $id);
             
             // Return true if the SQL query is successfully executed, otherwise return false

@@ -21,15 +21,9 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
-            // $name = $_POST["name"];
-            // $city = $_POST["city"];
-            // $country = $_POST["country"];
-
             $location = new Location;
 
             $location -> setName($_POST["name"]);
-            $location -> setCity($_POST["city"]);
-            $location -> setCountry($_POST["country"]);
 
             $location -> updateLocation($pdo, $_GET["hubLocation"]);
 
@@ -64,14 +58,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
             <div class="column">
                 <label for="name">Name</label>
                 <input type="text" name="name" value="<?php echo $location["name"] ?>" required>
-            </div>
-            <div class="column">
-                <label for="city">City</label>
-                <input type="text" name="city" value="<?php echo $location["city"] ?>" required>
-            </div>
-            <div class="column">
-                <label for="country">Country</label>
-                <input type="text" name="country" value="<?php echo $location["country"] ?>" required>
             </div>
             <button type="submit" class="btn">Submit</button>
         </form>
