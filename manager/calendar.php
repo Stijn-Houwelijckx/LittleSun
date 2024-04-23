@@ -3,6 +3,7 @@ include_once (__DIR__ . "../../classes/User.php");
 include_once (__DIR__ . "../../classes/Employee.php");
 include_once (__DIR__ . "../../classes/Db.php");
 include_once (__DIR__ . "../../classes/CalendarItem.php");
+include_once (__DIR__ . "../../classes/Task.php");
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -83,6 +84,8 @@ foreach ($allCalendarItems as $calendarItem) {
     $day = $date->format('Y-m-d');
     $groupedCalendarItems[$day][] = $calendarItem;
 }
+
+$taskTypes = Task::getAllTasks($pdo);
 ?>
 
 <!DOCTYPE html>
@@ -307,6 +310,12 @@ foreach ($allCalendarItems as $calendarItem) {
         <i class="fa fa-plus"></i>
         <form action="" method="post" id="addCalendarItem">
             <div class="text">
+                <select name="taskSelector">
+                    <?php foreach ($taskTypes As $taskType) : ?>
+                        <option value="<?php echo $taskType['id']; ?>"><?php echo $taskType['task']; ?></option>
+                    <?php endforeach ?>
+                    <?php var_dump($taskType); ?>
+                    </select>
                 <div class="column">
                     <label for="event_date">Event_date:</label>
                     <input type="date" name="event_date" id="event_date" placeholder="Event_date">
