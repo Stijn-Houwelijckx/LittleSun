@@ -310,12 +310,15 @@ $taskTypes = Task::getAllTasks($pdo);
         <i class="fa fa-plus"></i>
         <form action="" method="post" id="addCalendarItem">
             <div class="text">
-                <select name="taskSelector">
-                    <?php foreach ($taskTypes As $taskType) : ?>
-                        <option value="<?php echo $taskType['id']; ?>"><?php echo $taskType['task']; ?></option>
-                    <?php endforeach ?>
-                    <?php var_dump($taskType); ?>
+                <div class="column">
+                    <label for="taskSelector">Select tasktype:</label>
+                    <select name="taskSelector">
+                        <?php foreach ($taskTypes As $taskType) : ?>
+                            <option value="<?php echo $taskType['id']; ?>"><?php echo $taskType['task']; ?></option>
+                        <?php endforeach ?>
+                        <?php var_dump($taskType); ?>
                     </select>
+                </div>
                 <div class="column">
                     <label for="event_date">Event_date:</label>
                     <input type="date" name="event_date" id="event_date" placeholder="Event_date">
