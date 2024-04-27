@@ -31,23 +31,27 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
     exit();
 }
 
-if (isset($_POST['event_date'], $_POST['event_title'], $_POST['event_description'], $_POST['start_time'], $_POST['end_time'])){
-    $calendarItem = new CalendarItem;
+$selectedTask = Task::getTaskById($pdo, 1);
+$selectedUser = User::getUserById($pdo, 1);
 
+// If-structuur voor de selectorUser
+if (isset($_POST['event_date'], $_POST['event_title'], $_POST['event_description'], $_POST['start_time'], $_POST['end_time'])) {
+    $calendarItem = new CalendarItem;
     try {
+        $selectedTask = Task::getTaskById($pdo, $_POST["task_select"]);
         $event_date = $_POST['event_date'];
         $event_title = $_POST['event_title'];
         $event_description = $_POST['event_description'];
         $start_time = $_POST['start_time'];
         $end_time = $_POST['end_time'];
-    
+
         $calendarItem->setEvent_date($event_date);
         $calendarItem->setEvent_title($event_title);
         $calendarItem->setEvent_description($event_description);
         $calendarItem->setEvent_location($manager["location_id"]);
         $calendarItem->setStart_time($start_time);
         $calendarItem->setEnd_time($end_time);
-    
+
         $newCalendaritem = $calendarItem->addCalendarItem($pdo, $_SESSION["user_id"]);
     } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
@@ -86,8 +90,8 @@ foreach ($allCalendarItems as $calendarItem) {
 }
 
 $taskTypes = Task::getAllTasks($pdo);
-$allUserByTaskTypeAndDate = CalendarItem::getAllUsersByTaskTypeAndEventDate($pdo, "cleaning");
-var_dump($allUserByTaskTypeAndDate);
+$allUsersByTaskTypeAndDate = CalendarItem::getAllUsersByTaskTypeAndEventDate($pdo, $selectedTask);
+var_dump($allUsersByTaskTypeAndDate);
 ?>
 
 <!DOCTYPE html>
@@ -314,13 +318,33 @@ var_dump($allUserByTaskTypeAndDate);
             <div class="text">
                 <div class="column">
                     <label for="taskSelector">Select tasktype:</label>
-                    <select name="taskSelector">
-                        <?php foreach ($taskTypes As $taskType) : ?>
-                            <option value="<?php echo $taskType['id']; ?>"><?php echo $taskType['task']; ?></option>
-                        <?php endforeach ?>
-                        <?php var_dump($taskType); ?>
+                    <select name="taskSelector" id="taskSelector">
+                        <?php if ($taskTypes && is_array($taskTypes)): ?>
+                            <?php foreach ($taskTypes as $taskType) : ?>
+                                <option value="<?php echo $taskType["id"]; ?>" <?php if ($taskType["id"] == $selectedTask["task"]) echo "selected"; ?>>
+                                    <?php echo htmlspecialchars($taskType["task"]); ?>
+                                </option>
+                            <?php endforeach ?>
+                        <?php else: ?>
+                            <p>No tasks available</p>
+                        <?php endif; ?>
                     </select>
                 </div>
+                <div class="column">
+                    <label for="userSelector">Select user:</label>
+                    <select name="userSelector" id="userSelector">
+                        <?php if ($allUsersByTaskTypeAndDate && is_array($allUsersByTaskTypeAndDate)): ?>
+                            <?php foreach ($allUsersByTaskTypeAndDate as $userByTaskTypeAndDate) : ?>
+                                <option value="<?php echo $userByTaskTypeAndDate["id"]; ?>" <?php if ($userByTaskTypeAndDate["id"] == $selectedUser["id"]) echo "selected"; ?>>
+                                    <?php echo htmlspecialchars($userByTaskTypeAndDate["firstname"] . " " . $userByTaskTypeAndDate["lastname"]); ?>
+                                </option>
+                            <?php endforeach ?>
+                        <?php else: ?>
+                            <p>No users available</p>
+                        <?php endif; ?>
+                    </select>
+                </div>
+
                 <div class="column">
                     <label for="event_date">Event_date:</label>
                     <input type="date" name="event_date" id="event_date" placeholder="Event_date">
@@ -426,7 +450,7 @@ var_dump($allUserByTaskTypeAndDate);
         });
     </script>
     <script>const groupedCalendarItems = <?php echo json_encode($groupedCalendarItems); ?>;
-</script>
+    </script>
 </body>
 </html>
 
