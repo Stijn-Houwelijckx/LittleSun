@@ -86,6 +86,8 @@ foreach ($allCalendarItems as $calendarItem) {
 }
 
 $taskTypes = Task::getAllTasks($pdo);
+$allUserByTaskTypeAndDate = CalendarItem::getAllUsersByTaskTypeAndEventDate($pdo, "cleaning");
+var_dump($allUserByTaskTypeAndDate);
 ?>
 
 <!DOCTYPE html>
@@ -331,13 +333,60 @@ $taskTypes = Task::getAllTasks($pdo);
                     <label for="event_description">Event_description:</label>
                     <textarea name="event_description" id="event_description" placeholder="Event_description"></textarea>
                 </div>
-                <div class="column">
-                    <label for="start_time">Start_time:</label>
-                    <input type="time" name="start_time" id="start_time" placeholder="Start_time">
-                </div>
-                <div class="column">
-                    <label for="end_time">End_time:</label>
-                    <input type="time" name="end_time" id="end_time" placeholder="End_time">
+                <div class="row">
+                    <div class="column">
+                        <label for="timeslot">Timeslots:</label>
+                        <div>
+                            <input type="checkbox" value="08:00 - 09:00">
+                            <p>08:00 - 09:00</p>
+                        </div>
+                        <div>
+                            <input type="checkbox" value="09:00 - 10:00">
+                            <p>09:00 - 10:00</p>
+                        </div>
+                        <div>
+                            <input type="checkbox" value="10:00 - 11:00">
+                            <p>10:00 - 11:00</p>
+                        </div>
+                        <div>
+                            <input type="checkbox" value="11:00 - 12:00">
+                            <p>11:00 - 12:00</p>
+                        </div>
+                        <div>
+                            <input type="checkbox" value="12:00 - 13:00">
+                            <p>12:00 - 13:00</p>
+                        </div>
+                        <div>
+                            <input type="checkbox" value="13:00 - 14:00">
+                            <p>13:00 - 14:00</p>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div>
+                            <input type="checkbox" value="14:00 - 15:00">
+                            <p>14:00 - 15:00</p>
+                        </div>
+                        <div>
+                            <input type="checkbox" value="15:00 - 16:00">
+                            <p>15:00 - 16:00</p>
+                        </div>
+                        <div>
+                            <input type="checkbox" value="16:00 - 17:00">
+                            <p>17:00 - 18:00</p>
+                        </div>
+                        <div>
+                            <input type="checkbox" value="18:00 - 19:00">
+                            <p>18:00 - 19:00</p>
+                        </div>
+                        <div>
+                            <input type="checkbox" value="19:00 - 20:00">
+                            <p>19:00 - 20:00</p>
+                        </div>
+                        <div>
+                            <input type="checkbox" value="20:00 - 21:00">
+                            <p>20:00 - 21:00</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="buttons">

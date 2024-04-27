@@ -209,4 +209,17 @@ class CalendarItem
             throw new Exception('Database error: Unable to retrieve users');
         }
     }
+
+    public static function getAllUsersByTaskTypeAndEventDate(PDO $pdo, $taskType){
+        try {
+            $stmt = $pdo->prepare("SELECT DISTINCT users.firstname, users.lastname FROM user_tasks, tasktypes, users WHERE user_tasks.user_id = users.id AND user_tasks.task_id = tasktypes.id AND tasktypes.task = :taskType AND users.typeOfUser = 'employee'");
+            $stmt->bindParam(':taskType', $taskType);
+            $stmt->execute();
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $users ?: [];
+        } catch (PDOException $e) {
+            error_log('Database error in getAllUsersByTaskTypeAndEventDate(): ' . $e->getMessage());
+            throw new Exception('Database error: Unable to retrieve users');
+        }
+    }
 }

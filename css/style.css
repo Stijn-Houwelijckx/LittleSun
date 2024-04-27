@@ -862,9 +862,22 @@ div.day p.calendarItem {
   gap: 16px;
 }
 
+.popupAddCalendarItem form .row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
 .popupAddCalendarItem .text .column {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+}
+
+.popupAddCalendarItem .text .column div {
+  display: flex;
+  flex-direction: row;
   gap: 8px;
 }
 
