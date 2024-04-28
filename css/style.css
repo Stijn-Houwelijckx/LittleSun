@@ -579,18 +579,28 @@ button {
 
 .dashboard .time-off-popup .form-btns {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 16px;
   margin-top: 16px;
+  width: 100%;
+}
+
+.dashboard .time-off-popup .btn-container {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  width: 100%;
 }
 
 .dashboard .time-off-popup .btn-approve {
   background-color: green;
   color: var(--white);
+  width: 100%;
 }
 .dashboard .time-off-popup .btn-decline {
   background-color: red;
   color: var(--white);
+  width: 100%;
 }
 
 .dashboard .request .request-label,
@@ -600,6 +610,7 @@ button {
 
 .dashboard .request .request-status {
   margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .dashboard .request .request-status-text {
@@ -650,6 +661,7 @@ button {
 
 .pop-up-overlay .btn-close {
   position: absolute;
+  cursor: pointer;
   top: 16px;
   right: 16px;
   background-color: transparent;

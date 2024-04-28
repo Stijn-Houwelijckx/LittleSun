@@ -139,12 +139,13 @@ class TimeOffRequest {
         }
     }
 
-    public static function updateRequestStatus(PDO $pdo, $request_id, $status)
+    public static function updateRequestStatus(PDO $pdo, $request_id, $status, $Comment)
     {
         try {
-            $stmt = $pdo->prepare("UPDATE time_off_requests SET status = :status WHERE id = :request_id");
+            $stmt = $pdo->prepare("UPDATE time_off_requests SET status = :status, managerComment = :comment WHERE id = :request_id");
             $stmt->bindParam(':status', $status);
             $stmt->bindParam(':request_id', $request_id);
+            $stmt->bindParam(':comment', $Comment);
             if ($stmt->execute()) {
                 return true;
             } else {

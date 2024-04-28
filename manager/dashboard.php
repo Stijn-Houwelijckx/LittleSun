@@ -23,16 +23,18 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
 
         if (isset($_POST["approve"])) {
             $requestId = $_POST["requestId"];
+            $managerComment = $_POST["managerComment"];
 
-            TimeOffRequest::updateRequestStatus($pdo, $requestId, "Approved");
+            TimeOffRequest::updateRequestStatus($pdo, $requestId, "Approved", $managerComment);
 
             header("Location: dashboard.php");
         }
         
         if (isset($_POST["decline"])) {
             $requestId = $_POST["requestId"];
+            $managerComment = $_POST["managerComment"];
             
-            TimeOffRequest::updateRequestStatus($pdo, $requestId, "Declined");
+            TimeOffRequest::updateRequestStatus($pdo, $requestId, "Declined", $managerComment);
 
             header("Location: dashboard.php");
         }
@@ -89,8 +91,12 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
                 <div class="row">
                     <form class="form-btns" action="" method="post">
                         <input type="hidden" name="requestId" value="">
-                        <button class="btn btn-decline" name="decline">Decline</button>
-                        <button class="btn btn-approve" name="approve">Approve</button>
+                        <label for="managerComment">Comment:</label>
+                        <input type="text" name="managerComment" id="managerComment">
+                        <div class="btn-container">
+                            <button class="btn btn-decline" name="decline">Decline</button>
+                            <button class="btn btn-approve" name="approve">Approve</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -117,10 +123,10 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
 
             if (selectedRequest) {
                 const popupContent = document.querySelector(".time-off-popup");
-                popupContent.querySelector(".request-creator").textContent = "Employee: " + selectedRequest.firstname + " " + selectedRequest.lastname;
-                popupContent.querySelector(".request-reason").textContent = "Reason: " + selectedRequest.reason;
-                popupContent.querySelector(".request-date-time").textContent = "When: " + selectedRequest.start_date + " - " + selectedRequest.end_date;
-                popupContent.querySelector(".request-description").textContent = "Description: " + selectedRequest.description;
+                popupContent.querySelector(".request-creator").innerHTML = "<span class='request-label'>Employee:</span> " + selectedRequest.firstname + " " + selectedRequest.lastname;
+                popupContent.querySelector(".request-reason").innerHTML = "<span class='request-label'>Reason:</span> " + selectedRequest.reason;
+                popupContent.querySelector(".request-date-time").innerHTML = "<span class='request-label'>When:</span> " + selectedRequest.start_date + " - " + selectedRequest.end_date;
+                popupContent.querySelector(".request-description").innerHTML = "<span class='request-label'>Description:</span> " + selectedRequest.description;
                 popupContent.querySelector("input[name='requestId']").value = requestId;
 
                 // Display the popup

@@ -63,6 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <p class="request-reason"><span class="request-label">Reason:</span> <?php echo $request["reason"] ?></p>
                             <p class="request-date-time"><span class="request-label">When:</span> <?php echo $request["start_date"] . " - " . $request["end_date"] ?></p>
                             <p class="request-status"><span class="request-label">Status:</span> <span class="request-status-text request-status-<?php echo strtolower($request["status"]) ?>"><?php echo $request["status"] ?></span></p>
+                            <?php if($request["status"] != "Pending"): ?>
+                                <p class="request-comment"><span class="request-label">Manager comment:</span> <?php echo $request["managerComment"] ?></p>
+                            <?php endif ?>
                         </div>
                     <?php endforeach ?>
                 <?php endif ?>
