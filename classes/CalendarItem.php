@@ -213,12 +213,13 @@ class CalendarItem
     public static function getAllUsersByTaskTypeAndEventDate(PDO $pdo, $selectedTask){
         try {
             $stmt = $pdo->prepare("
-            SELECT DISTINCT users.firstname, users.lastname 
-            FROM user_tasks, tasktypes, users 
-            WHERE user_tasks.user_id = users.id 
-            AND user_tasks.task_id = tasktypes.id 
-            AND tasktypes.task = :selectedTask 
-            AND users.typeOfUser = 'employee'");
+                SELECT DISTINCT users.firstname, users.lastname 
+                FROM user_tasks, tasktypes, users 
+                WHERE user_tasks.user_id = users.id 
+                AND user_tasks.task_id = tasktypes.id 
+                AND tasktypes.id = :selectedTask 
+                AND users.typeOfUser = 'employee'");
+            
             $stmt->bindParam(':selectedTask', $selectedTask);
             $stmt->execute();
             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -228,4 +229,5 @@ class CalendarItem
             throw new Exception('Database error: Unable to retrieve users');
         }
     }
+    
 }

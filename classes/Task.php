@@ -15,10 +15,10 @@ class Task {
     public static function getTaskById(PDO $pdo, $id)
     {
         try {
-            $stmt = $pdo->prepare("SELECT id, task FROM taskTypes WHERE id = :id");
+            $stmt = $pdo->prepare("SELECT id FROM taskTypes WHERE id = :id");
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            return $stmt->fetchColumn();
         } catch (PDOException $e) {
             error_log('Database error: ' . $e->getMessage());
             return null;

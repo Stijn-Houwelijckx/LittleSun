@@ -1,9 +1,9 @@
 <?php
+include_once (__DIR__ . "../../classes/Db.php");
 include_once (__DIR__ . "../../classes/User.php");
 include_once (__DIR__ . "../../classes/Employee.php");
-include_once (__DIR__ . "../../classes/Db.php");
-include_once (__DIR__ . "../../classes/CalendarItem.php");
 include_once (__DIR__ . "../../classes/Task.php");
+include_once (__DIR__ . "../../classes/CalendarItem.php");
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -31,10 +31,22 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
     exit();
 }
 
-$selectedTask = Task::getTaskById($pdo, 1);
 $selectedUser = User::getUserById($pdo, 1);
 
-// If-structuur voor de selectorUser
+if (isset($_POST['taskSelector'])) {
+    unset($_SESSION['selectedTaskId']);
+    $_SESSION['selectedTaskId'] = $_POST['taskSelector'];
+}
+
+if (isset($_POST['userSelector'])) {
+    $_SESSION['selectedUserId'] = $_POST['userSelector'];
+}
+
+$selectedTaskId = intval($_SESSION['selectedTaskId']) ?? 1;
+
+$selectedTask = Task::getTaskById($pdo, $selectedTaskId);
+$allUsersByTaskTypeAndDate = CalendarItem::getAllUsersByTaskTypeAndEventDate($pdo, $selectedTaskId);
+
 if (isset($_POST['event_date'], $_POST['event_title'], $_POST['event_description'], $_POST['start_time'], $_POST['end_time'])) {
     $calendarItem = new CalendarItem;
     try {
@@ -91,7 +103,7 @@ foreach ($allCalendarItems as $calendarItem) {
 
 $taskTypes = Task::getAllTasks($pdo);
 $allUsersByTaskTypeAndDate = CalendarItem::getAllUsersByTaskTypeAndEventDate($pdo, $selectedTask);
-var_dump($allUsersByTaskTypeAndDate);
+
 ?>
 
 <!DOCTYPE html>
@@ -115,7 +127,6 @@ var_dump($allUsersByTaskTypeAndDate);
             <a href="calendar.php?view=monthly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "monthly" ? "active" : ""; } ?> monthly">Monthly</a>
             <a href="" class="btn big">+ Add agendaItem</a>  
         </div>  
-
         <div class="dailyview">
             <div id="top">
                 <i class="fa fa-angle-left" id="prevDay"></i>
@@ -129,11 +140,9 @@ var_dump($allUsersByTaskTypeAndDate);
                 </div>
                 <i class="fa fa-angle-right" id="nextDay"></i>
             </div>
-
             <div id="days">
                 <h3 id="currentDay"><?php echo $today->format('D'); ?></h3>
             </div>
-
             <div id="day">
                 <?php 
                     $startDate = new DateTime($_POST['date'] ?? $today->format('Y-m-d'));
@@ -168,7 +177,6 @@ var_dump($allUsersByTaskTypeAndDate);
                         $red = ($index * 70) % 256;
                         $green = ($index * 120) % 256;
                         $blue = ($index * 170) % 256;
-
                         $userColor = "rgb($red, $green, $blue)";
                     ?>
                     <div class="employee">
@@ -178,8 +186,6 @@ var_dump($allUsersByTaskTypeAndDate);
                 <?php endforeach; ?>
             </div>
         </div>
-
-
         <div class="weeklyview">
             <div id="top">
                 <i class="fa fa-angle-left" id="prevWeek"></i>
@@ -197,7 +203,6 @@ var_dump($allUsersByTaskTypeAndDate);
                 </div>
                 <i class="fa fa-angle-right" id="nextWeek"></i>
             </div>
-
             <div id="days">
                 <?php 
                     $today = new DateTime();
@@ -210,7 +215,6 @@ var_dump($allUsersByTaskTypeAndDate);
                     }
                 ?>
             </div>
-
             <div id="week">
                 <?php 
                     $startDate = new DateTime();
@@ -246,7 +250,6 @@ var_dump($allUsersByTaskTypeAndDate);
                 ?>
             </div>
         </div>
-
         <div class="monthlyview">   
             <div id="top">
                 <i class="fa fa-angle-left" id="prevMonth"></i>
@@ -293,7 +296,6 @@ var_dump($allUsersByTaskTypeAndDate);
                     </div>
                 <?php endforeach; ?>
             </div>
-
             <div class="legenda">
                 <?php foreach ($allEmployeesByLocation as $index => $employee): ?>
                     <?php 
@@ -311,40 +313,43 @@ var_dump($allUsersByTaskTypeAndDate);
             </div>
         </div>
     </div>
-
     <div class="popupAddCalendarItem">
         <i class="fa fa-plus"></i>
         <form action="" method="post" id="addCalendarItem">
             <div class="text">
                 <div class="column">
-                    <label for="taskSelector">Select tasktype:</label>
-                    <select name="taskSelector" id="taskSelector">
-                        <?php if ($taskTypes && is_array($taskTypes)): ?>
-                            <?php foreach ($taskTypes as $taskType) : ?>
-                                <option value="<?php echo $taskType["id"]; ?>" <?php if ($taskType["id"] == $selectedTask["task"]) echo "selected"; ?>>
-                                    <?php echo htmlspecialchars($taskType["task"]); ?>
-                                </option>
-                            <?php endforeach ?>
-                        <?php else: ?>
-                            <p>No tasks available</p>
-                        <?php endif; ?>
-                    </select>
+                    <form id="taskSelectorForm" method="post" action="">
+                        <label for="taskSelector">Selecteer taaktype:</label>
+                        <select name="taskSelector" id="taskSelector">
+                            <?php if ($taskTypes && is_array($taskTypes)): ?>
+v                                <?php foreach ($taskTypes as $taskType) : ?>
+                                    <option value="<?php echo $taskType["id"]; ?>" <?php if ($selectedTaskId === $taskType["id"]) echo "selected"; ?>>
+                                        <?php echo htmlspecialchars($taskType["id"]); ?>
+                                    </option>
+                                <?php endforeach ?>                            <?php else: ?>
+                                <option>Geen taken beschikbaar</option>
+                            <?php endif; ?>
+                        </select>
+                    </form>
                 </div>
                 <div class="column">
                     <label for="userSelector">Select user:</label>
                     <select name="userSelector" id="userSelector">
-                        <?php if ($allUsersByTaskTypeAndDate && is_array($allUsersByTaskTypeAndDate)): ?>
+                        <?php if ($allUsersByTaskTypeAndDate && is_array($allUsersByTaskTypeAndDate) && count($allUsersByTaskTypeAndDate) > 0): ?>
                             <?php foreach ($allUsersByTaskTypeAndDate as $userByTaskTypeAndDate) : ?>
-                                <option value="<?php echo $userByTaskTypeAndDate["id"]; ?>" <?php if ($userByTaskTypeAndDate["id"] == $selectedUser["id"]) echo "selected"; ?>>
-                                    <?php echo htmlspecialchars($userByTaskTypeAndDate["firstname"] . " " . $userByTaskTypeAndDate["lastname"]); ?>
+                                <?php 
+                                $userId = $userByTaskTypeAndDate["id"] ?? null;
+                                $userName = $userByTaskTypeAndDate["firstname"] . " " . $userByTaskTypeAndDate["lastname"] ?? '';
+                                ?>
+                                <option value="<?php echo htmlspecialchars($userName); ?>">
+                                    <?php echo htmlspecialchars($userName); ?>
                                 </option>
                             <?php endforeach ?>
                         <?php else: ?>
-                            <p>No users available</p>
+                            <option>No users available</option>
                         <?php endif; ?>
                     </select>
                 </div>
-
                 <div class="column">
                     <label for="event_date">Event_date:</label>
                     <input type="date" name="event_date" id="event_date" placeholder="Event_date">
@@ -428,19 +433,16 @@ var_dump($allUsersByTaskTypeAndDate);
             document.querySelector(".weeklyview").style.display = "none";
             document.querySelector(".monthlyview").style.display = "none";
         <?php endif; ?>
-
         <?php if ($_GET["view"] == "weekly"): ?>
             document.querySelector(".dailyview").style.display = "none";
             document.querySelector(".weeklyview").style.display = "flex";
             document.querySelector(".monthlyview").style.display = "none";
         <?php endif; ?>
-
         <?php if ($_GET["view"] == "monthly"): ?>
             document.querySelector(".dailyview").style.display = "none";
             document.querySelector(".weeklyview").style.display = "none";
             document.querySelector(".monthlyview").style.display = "flex";
         <?php endif; ?>
-
         document.querySelector(".big").addEventListener("click", function(e){
             document.querySelector(".popupAddCalendarItem").style.display = "flex";
             e.preventDefault();
@@ -450,6 +452,34 @@ var_dump($allUsersByTaskTypeAndDate);
         });
     </script>
     <script>const groupedCalendarItems = <?php echo json_encode($groupedCalendarItems); ?>;
+    </script>
+    <script>
+        document.getElementById('taskSelector').addEventListener('change', function () {
+            var taskId = this.value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'get_users_by_task.php');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var userSelector = document.getElementById('userSelector');
+                    userSelector.innerHTML = '';
+                    var response = JSON.parse(xhr.responseText);
+                    response.users.forEach(function(user) {
+                        var option = document.createElement('option');
+                        option.value = user.id;
+                        option.textContent = user.name;
+                        userSelector.appendChild(option);
+                    });
+                } else {
+                    console.log('Request failed. Returned status of ' + xhr.status);
+                }
+            };
+            xhr.send('taskId=' + taskId);
+        });
+        document.querySelector("#taskSelector").addEventListener("change", function(e) {
+            var form = this.closest('form');
+            form.submit();
+        });
     </script>
 </body>
 </html>
