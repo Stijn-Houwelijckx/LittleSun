@@ -42,10 +42,12 @@ if (isset($_POST['userSelector'])) {
     $_SESSION['selectedUserId'] = $_POST['userSelector'];
 }
 
-$selectedTaskId = intval($_SESSION['selectedTaskId']) ?? 1;
+if (isset($_SESSION['selectedTaskId'])){
+    $selectedTaskId = intval($_SESSION['selectedTaskId']) ?? 1;
+    $selectedTask = Task::getTaskById($pdo, $selectedTaskId);
+    $allUsersByTaskTypeAndDate = CalendarItem::getAllUsersByTaskTypeAndEventDate($pdo, $selectedTaskId);
+}
 
-$selectedTask = Task::getTaskById($pdo, $selectedTaskId);
-$allUsersByTaskTypeAndDate = CalendarItem::getAllUsersByTaskTypeAndEventDate($pdo, $selectedTaskId);
 
 if (isset($_POST['event_date'], $_POST['event_title'], $_POST['event_description'], $_POST['start_time'], $_POST['end_time'])) {
     $calendarItem = new CalendarItem;
@@ -102,8 +104,6 @@ foreach ($allCalendarItems as $calendarItem) {
 }
 
 $taskTypes = Task::getAllTasks($pdo);
-$allUsersByTaskTypeAndDate = CalendarItem::getAllUsersByTaskTypeAndEventDate($pdo, $selectedTask);
-
 ?>
 
 <!DOCTYPE html>
@@ -319,7 +319,7 @@ $allUsersByTaskTypeAndDate = CalendarItem::getAllUsersByTaskTypeAndEventDate($pd
             <div class="text">
                 <div class="column">
                     <form id="taskSelectorForm" method="post" action="">
-                        <label for="taskSelector">Selecteer taaktype:</label>
+                        <label for="taskSelector">Selecteer tasktype:</label>
                         <select name="taskSelector" id="taskSelector">
                             <?php if ($taskTypes && is_array($taskTypes)): ?>
 v                                <?php foreach ($taskTypes as $taskType) : ?>
@@ -333,34 +333,8 @@ v                                <?php foreach ($taskTypes as $taskType) : ?>
                     </form>
                 </div>
                 <div class="column">
-                    <label for="userSelector">Select user:</label>
-                    <select name="userSelector" id="userSelector">
-                        <?php if ($allUsersByTaskTypeAndDate && is_array($allUsersByTaskTypeAndDate) && count($allUsersByTaskTypeAndDate) > 0): ?>
-                            <?php foreach ($allUsersByTaskTypeAndDate as $userByTaskTypeAndDate) : ?>
-                                <?php 
-                                $userId = $userByTaskTypeAndDate["id"] ?? null;
-                                $userName = $userByTaskTypeAndDate["firstname"] . " " . $userByTaskTypeAndDate["lastname"] ?? '';
-                                ?>
-                                <option value="<?php echo htmlspecialchars($userName); ?>">
-                                    <?php echo htmlspecialchars($userName); ?>
-                                </option>
-                            <?php endforeach ?>
-                        <?php else: ?>
-                            <option>No users available</option>
-                        <?php endif; ?>
-                    </select>
-                </div>
-                <div class="column">
                     <label for="event_date">Event_date:</label>
                     <input type="date" name="event_date" id="event_date" placeholder="Event_date">
-                </div>
-                <div class="column">
-                    <label for="event_title">Event_title:</label>
-                    <input type="text" name="event_title" id="event_title" placeholder="Event_title">
-                </div>
-                <div class="column">
-                    <label for="event_description">Event_description:</label>
-                    <textarea name="event_description" id="event_description" placeholder="Event_description"></textarea>
                 </div>
                 <div class="row">
                     <div class="column">
@@ -416,6 +390,32 @@ v                                <?php foreach ($taskTypes as $taskType) : ?>
                             <p>20:00 - 21:00</p>
                         </div>
                     </div>
+                </div>
+                <div class="column">
+                    <label for="userSelector">Select user:</label>
+                    <select name="userSelector" id="userSelector">
+                        <?php if ($allUsersByTaskTypeAndDate && is_array($allUsersByTaskTypeAndDate) && count($allUsersByTaskTypeAndDate) > 0): ?>
+                            <?php foreach ($allUsersByTaskTypeAndDate as $userByTaskTypeAndDate) : ?>
+                                <?php 
+                                $userId = $userByTaskTypeAndDate["id"] ?? null;
+                                $userName = $userByTaskTypeAndDate["firstname"] . " " . $userByTaskTypeAndDate["lastname"] ?? '';
+                                ?>
+                                <option value="<?php echo htmlspecialchars($userName); ?>">
+                                    <?php echo htmlspecialchars($userName); ?>
+                                </option>
+                            <?php endforeach ?>
+                        <?php else: ?>
+                            <option>No users available</option>
+                        <?php endif; ?>
+                    </select>
+                </div>
+                <div class="column">
+                    <label for="event_title">Event_title:</label>
+                    <input type="text" name="event_title" id="event_title" placeholder="Event_title">
+                </div>
+                <div class="column">
+                    <label for="event_description">Event_description:</label>
+                    <textarea name="event_description" id="event_description" placeholder="Event_description"></textarea>
                 </div>
             </div>
             <div class="buttons">
