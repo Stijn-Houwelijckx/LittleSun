@@ -105,4 +105,17 @@ class Task {
             throw new Exception('Database error: Unable to retrieve tasks', 0, $e);
         }
     }
+
+    public static function mytasks(PDO $pdo, $user_id){
+        try {
+            $stmt = $pdo->prepare("SELECT tasktypes.task FROM tasktypes, user_tasks WHERE tasktypes.id = user_tasks.task_id AND tasktypes.status = 1 AND user_tasks.user_id = :user_id");
+            $stmt->bindParam(":user_id", $user_id);
+            $stmt->execute();
+            $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $tasks ?: [];
+        } catch (PDOException $e) {
+            error_log('Database error in getAllTasks(): ' . $e->getMessage());
+            throw new Exception('Database error: Unable to retrieve tasks', 0, $e);
+        }
+    }
 }

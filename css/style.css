@@ -55,6 +55,7 @@ h3 {
 }
 
 p,
+li,
 label,
 span,
 a,
@@ -565,9 +566,19 @@ button {
   min-width: fit-content;
   padding: 16px;
   background-color: rgb(230, 230, 230);
-
   border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
+.myTasks {
+  height: fit-content;
+  width: calc(100% - 32px);
+  min-width: fit-content;
+  padding: 16px;
+  background-color: rgb(230, 230, 230);
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -929,7 +940,8 @@ div.day p.calendarItem {
     padding-left: 144px;
   }
 
-  .dashboard .bento-item {
+  .dashboard .bento-item,
+  .myTasks {
     width: calc(33.333% - 32px);
   }
 }
@@ -955,7 +967,8 @@ div.day p.calendarItem {
     height: 100%;
   }
 
-  .dashboard .bento-item {
+  .dashboard .bento-item,
+  .myTasks {
     width: calc(25% - 32px);
   }
 }
