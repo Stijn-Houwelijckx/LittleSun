@@ -46,9 +46,6 @@ if (isset($_GET["employee"])) {
     }
 }
 
-
-
-
 $allTasks =  Task::getAllTasks($pdo);
 ?>
 

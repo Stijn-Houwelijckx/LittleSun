@@ -81,6 +81,17 @@ class Task {
         }
     }
 
+    public static function deleteUserTasks(PDO $pdo)
+    {
+        try {
+            $stmt = $pdo->prepare("DELETE FROM user_tasks, tasktypes WHERE tasktypes.id = user_tasks.task_id AND tasktypes.status = 0");
+            $stmt->execute();
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            throw new Exception('Database error: Unable to update read status');
+        }
+    }
+
     public static function removeTaskTypesFromUsers(PDO $pdo, $task_id)
     {
         try {

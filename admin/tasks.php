@@ -42,6 +42,7 @@ if (isset($_POST["deletetask"])) {
         $selectedTask = Task::getTaskById($pdo, $_POST["deletetask"]);
         Task::deleteTask($pdo, $_POST["deletetask"]);
         Task::removeTaskTypesFromUsers($pdo, $_POST["deletetask"]);
+        Task::deleteUserTasks($pdo);
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
     }
