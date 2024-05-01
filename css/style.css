@@ -472,20 +472,20 @@ button {
 }
 
 /* ---- usersAdmin ---- */
-#usersAdmin,
+/* #usersAdmin,
 #usersAdmin .users {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
-}
+} */
 
-#usersAdmin .users form .user,
+/* #usersAdmin .users form .user,
 #usersAdmin .users form .user .text {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
+} */
 
 #usersAdmin .users form .user .text .column {
   display: flex;
@@ -536,13 +536,22 @@ button {
   gap: 24px;
 }
 
-.employees {
+.employees,
+.users {
   width: 100%;
 }
 
 .employees .employee {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 8px;
+  align-items: center;
+}
+
+.users .user {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
   background-color: rgba(255, 255, 255, 0.6);
   padding: 8px;
   align-items: center;
@@ -560,7 +569,8 @@ button {
 }
 
 #hubworkers .hubs .hub:nth-child(even),
-.employees .employee:nth-child(even) {
+.employees .employee:nth-child(even),
+.users .user:nth-child(even) {
   background-color: var(--yellow);
   color: var(--black);
 }
