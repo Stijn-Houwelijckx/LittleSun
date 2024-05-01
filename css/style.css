@@ -618,7 +618,7 @@ button {
   margin-top: 16px;
 }
 
-.dashboard .time-off-popup .form-btns {
+.pop-up-overlay .form-btns {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -626,22 +626,24 @@ button {
   width: 100%;
 }
 
-.dashboard .time-off-popup .btn-container {
+.pop-up-overlay .btn-container {
   display: flex;
   flex-direction: row;
   gap: 16px;
   width: 100%;
 }
 
-.dashboard .time-off-popup .btn-approve {
+.pop-up-overlay .btn-approve {
   background-color: green;
   color: var(--white);
   width: 100%;
+  text-align: center;
 }
-.dashboard .time-off-popup .btn-decline {
+.pop-up-overlay .btn-decline {
   background-color: red;
   color: var(--white);
   width: 100%;
+  text-align: center;
 }
 
 .dashboard .request .request-label,
@@ -672,7 +674,8 @@ button {
   color: var(--white);
 }
 
-.dashboard .time-off-popup {
+.dashboard .time-off-popup,
+#hubLocationsAdmin .location-delete-popup {
   flex-direction: column;
   gap: 16px;
   background-color: var(--gray);

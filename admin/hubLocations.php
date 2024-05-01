@@ -13,11 +13,13 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
         $pdo = Db::getInstance();
         $user = User::getUserById($pdo, $_SESSION["user_id"]);
         $hubLocations = Location::getAll($pdo);
-        if (isset($_POST["delete"])) {
+        if (isset($_POST["locationDeleteId"])) {
+            var_dump($_POST["locationDeleteId"]);
             try {
-                foreach ($_POST["delete"] as $id => $value) {
-                    Location::deleteLocation($pdo, $id);
-                }
+                Location::deleteLocation($pdo, $_POST["locationDeleteId"]);
+                // foreach ($_POST["locationDeleteId"] as $id) {
+                //     Location::deleteLocation($pdo, $id);
+                // }
                 header("Location: {$_SERVER['PHP_SELF']}");
                 exit();
             } catch (Exception $e) {
@@ -59,7 +61,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
                 <p>No hub locations found</p>
             <?php endif; ?>
             <?php foreach ($hubLocations As $hubLocation) : ?>
-                <div class="hubLocation">
+                <div class="hubLocation" data-locationid="<?php echo $hubLocation["id"] ?>">
                     <div class="hubLocationControls">
                         <a href="editHubLocation.php?hubLocation=<?php echo $hubLocation["id"]; ?>">
                             <i class="fa fa-edit"></i>
@@ -71,47 +73,57 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
                         <h2><?php echo $hubLocation["name"] ?></h2>
                     </div>
                 </div>
-
-                <div class="popupIsManager">
+                <?php endforeach ?>
+            </div>
+            <div class="pop-up-overlay">
+                <div class="location-delete-popup">
+                    <button class="btn-close"><i class="fa fa-window-close-o"></i></button>
                     <p>Do you really want to delete this hublocation?</p>
-                    <div class="btns">
-                        <a href="#" class="close">No</a>
-                        <form action="" method="POST" id="deleteHublocation">
-                            <input type="text" name="delete[<?php echo $hubLocation["id"] ?>]" hidden value="<?php echo $hubLocation["id"] ?>>">
-                            <button type="submit" class="btn deleteHublocation">Yes</button>
-                        </form>
-                    </div>
+                <div class="row">
+                    <form class="form-btns" action="" method="post">
+                        <input type="hidden" name="locationDeleteId" value="">
+                        <div class="btn-container">
+                            <a href="#" class="btn btn-decline">No</a>
+                            <button type="submit" class="btn btn-approve" name="delete">Yes</button>
+                        </div>
+                    </form>
                 </div>
-            <?php endforeach ?>
-        </div>
+            </div>
         </div>
     </div>
 
     <script>
-        <?php if ($hubLocations != null): ?>
-            document.querySelectorAll(".hubLocation .remove").forEach(function(element) {
-                element.addEventListener("click", function (e) {
-                    // Verkrijg de ouder hubLocation van het verwijderen knopelement
-                    var hubLocation = e.target.closest(".hubLocation");
-                    
-                    // Verkrijg de bijbehorende popupIsManager voor deze hubLocation
-                    var popupIsManager = document.querySelector(".popupIsManager");
-                    
-                    // Toon de popup
-                    popupIsManager.style.display = "flex";
-                    
-                    // Voeg event listener toe aan de close knop van de popup
-                    popupIsManager.querySelector(".close").addEventListener("click", function (e) {
-                        // Verberg de popup
-                        popupIsManager.style.display = "none";
-                    });
-                });
-            });
+        const hubLocations = document.querySelectorAll(".hubLocation");
+        const removeBtns = document.querySelectorAll(".remove");
+        const popupOverlay = document.querySelector(".pop-up-overlay");
+        const popup = document.querySelector(".location-delete-popup");
+        const btnClose = document.querySelector(".btn-close");
+        const btnDecline = document.querySelector(".btn-decline");
+        const btnApprove = document.querySelector(".btn-approve");
 
-            document.querySelector("#deleteHublocation").addEventListener("click", function (e) {
-                document.querySelector("#deleteHublocation").submit();
+        removeBtns.forEach(function (removeBtn) {
+            removeBtn.addEventListener("click", function (e) {
+                popupOverlay.style.display = "block";
+                popup.style.display = "block";
+
+                const locationId = removeBtn.closest(".hubLocation").getAttribute("data-locationid");
+                popup.querySelector("input[name='locationDeleteId']").value = locationId;
             });
-        <?php endif; ?>
+        });
+
+        btnClose.addEventListener("click", function (e) {
+            popupOverlay.style.display = "none";
+        });
+
+        btnDecline.addEventListener("click", function (e) {
+            popupOverlay.style.display = "none";
+        });
+
+        btnApprove.addEventListener("click", function (e) {
+            popupOverlay.style.display = "none";
+        });
+
+        // ======================================================================================== //
 
         document.querySelector("#hubLocationsAdmin .search").addEventListener("keyup", function(e){
             let searchTerm = e.target.value.toLowerCase();
