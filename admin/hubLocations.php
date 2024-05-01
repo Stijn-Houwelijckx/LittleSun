@@ -14,7 +14,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
         $user = User::getUserById($pdo, $_SESSION["user_id"]);
         $hubLocations = Location::getAll($pdo);
         if (isset($_POST["delete"])) {
-            var_dump($_POST["delete"]);
             try {
                 foreach ($_POST["delete"] as $id => $value) {
                     Location::deleteLocation($pdo, $id);

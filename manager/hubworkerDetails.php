@@ -37,13 +37,9 @@ if (isset($_GET["employee"])) {
                 if (strpos($key, 'Task_') === 0) {
                     $taskId = intval($value);
                     $selectedTasks[] = $taskId;
-                    // Update task for user
-                    var_dump($employee_id);
-                    var_dump($taskId);
                     Task::addTaskToUser($pdo, $employee_id, $taskId);
                 }
             }
-            var_dump($selectedTasks);
         } catch (Exception $e) {
             error_log('Database error: ' . $e->getMessage());
         }
