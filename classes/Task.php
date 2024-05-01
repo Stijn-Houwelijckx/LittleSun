@@ -41,7 +41,7 @@ class Task {
     public static function linkTasksToUser(PDO $pdo, $user_id)
     {
         try {
-            $stmt = $pdo->prepare("INSERT INTO user_tasks (user_id, task_id) SELECT :user_id, id FROM tasktypes");
+            $stmt = $pdo->prepare("INSERT INTO user_tasks (user_id, task_id) SELECT :user_id, id FROM tasktypes WHERE status = 1");
             $stmt->bindParam(':user_id', $user_id);
 
             // check if the query was successful
