@@ -28,25 +28,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
     exit();
 }
 
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["deleteUser"])) {
-        try {
-            User::deleteUser($pdo, $_POST["deleteUser"]);
-        } catch (Exception $e) {
-            error_log('Database error: ' . $e->getMessage());
-        }
-    }
-    
-    if (isset($_POST["user_id"])) {
-        try {
-            $user_id = $_POST["user_id"];
-            $selectedUser = User::getUserById($pdo, $user_id);
-        } catch (Exception $e) {
-            error_log('Database error: ' . $e->getMessage());
-        }
-    }
-
     if (isset($_POST["firstname"])) {
         try {
             $user = new User();
@@ -68,19 +50,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    if (isset($_POST["changeTypeOfUser"])) {
+    if (isset($_POST["deleteUser"])) {
         try {
-            User::updateTypeOfUser($pdo, $_POST["user_id"], $_POST["changeTypeOfUser"]);
-            $selectedUser = User::getUserById($pdo, $_POST["user_id"]);
+            User::deleteUser($pdo, $_POST["deleteUser"]);
         } catch (Exception $e) {
             error_log('Database error: ' . $e->getMessage());
         }
     }
 }
 
-// $users = User::getAll($pdo);
-$employees = Employee::getAllEmployees($pdo);
-$managers = Manager::getAllManagers($pdo);
+$users = User::getAll($pdo);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -101,79 +80,67 @@ $managers = Manager::getAllManagers($pdo);
             <h1>users</h1>
             <a href="addHubManager.php" class="btn">+ Add</a>
         </div>
-        <form action="" id="userSelector" onchange="submitUserForm()" method="post">
-            <div class="column">
-                <label for="user_id">Select a user:</label>
-                <select name="user_id" id="user_id">
-                    <option value="" disabled <?php if ($selectedUser == null) echo "selected"; ?>>--- Managers ---</option>
-                    <?php foreach ($managers as $manager): ?>
-                        <option value="<?php echo $manager["id"] ?>" <?php if ($selectedUser != null && $manager["id"] == $selectedUser["id"]) echo "selected"; ?>>
-                            <?php echo htmlspecialchars($manager["firstname"]) . " " . htmlspecialchars($manager["lastname"]) ?>
-                        </option>
-                    <?php endforeach; ?>
-                    <option value="" disabled>--- Employees ---</option>
-                    <?php foreach ($employees as $employee): ?>
-                        <option value="<?php echo $employee["id"] ?>" <?php if ($selectedUser != null &&  $employee["id"] == $selectedUser["id"]) echo "selected"; ?>>
-                            <?php echo htmlspecialchars($employee["firstname"]) . " " . htmlspecialchars($employee["lastname"]) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-        </form>
         <div class="users">
-            <?php if (!empty($managers || $employees) && $selectedUser != null): ?>
+            <?php if (!empty($users)): ?>
                 <form action="" method="post" id="userForm">
-                    <div class="user">
-                        <div class="text">
-                            <div class="column">
-                                <label for="firstname">Firstname:</label>
-                                <input type="text" name="firstname" id="firstname" value="<?php echo htmlspecialchars($selectedUser["firstname"]); ?>">
-                            </div>
-                            <div class="column">
-                                <label for="lastname">Lastname:</label>
-                                <input type="text" name="lastname" id="lastname" value="<?php echo htmlspecialchars($selectedUser["lastname"]); ?>">
-                            </div>
-                            <div class="column">
-                                <label for="email">E-mail:</label>
-                                <input type="text" name="email" id="email" value="<?php echo htmlspecialchars($selectedUser["email"]); ?>">
-                            </div>
-                            <div class="column">
-                                <input type="hidden" name="user_id" id="user_id" value="<?php echo htmlspecialchars($selectedUser["id"]); ?>">
-                                <input type="hidden" name="typeOfUser" id="typeOfUser" value="<?php echo htmlspecialchars($selectedUser["typeOfUser"]); ?>">
-                            </div>
-                            <div class="column">
-                                <label for="password">Give new password if needed:</label>
-                                <input type="password" name="password" id="password" value="" placeholder="New password">
-                            </div>
+                    <?php foreach ($users As $user): ?>
+                        <div class="user">
+                            <p><?php echo $user["firstname"] ?></p>
+                            <p><?php echo $user["lastname"] ?></p>
+                            <p><?php echo $user["email"] ?></p>
+                            <p><?php echo $user["typeOfUser"] ?></p>
+                            <i class="fa fa-edit" onclick="openPopup('<?php echo $user['id']; ?>', '<?php echo $user['firstname']; ?>', '<?php echo $user['lastname']; ?>', '<?php echo $user["email"]; ?>')"></i>
+                            <i class="fa fa-trash" onclick="openDeletePopup('<?php echo $user['id']; ?>', '<?php echo $user['firstname']; ?>', '<?php echo $user['lastname']; ?>')"></i>
                         </div>
-                    </div>
-                    <div class="buttons">
-                        <button type="submit" class="btn">Save</button>
-                    </div>
+                    <?php endforeach ?>
                 </form>
-                <form action="" method="post" id="changeTypeOfUser">
-                    <div class="row">
-                        <label for="checkboxTypeOfUser">Manager:</label>
-                        <input type="checkbox" id="checkboxTypeOfUser" <?php if ($selectedUser["typeOfUser"] == "manager") echo "checked"; ?>>
-                        <input type="text" name="changeTypeOfUser" value="<?php echo ($selectedUser["typeOfUser"] == "manager")? "employee" : "manager" ?>" hidden>
-                        <input type="text" name="user_id" value="<?php echo $selectedUser["id"] ?>" hidden>
-                    </div>
-                </form>
-                <div class="popupIsManager">
-                    <p>Do you really want to delete this user?</p>
-                    <div class="btns">
-                        <a href="#" class="close">No</a>
-                        <form action="" method="POST">
-                            <input type="text" name="deletetask" hidden value="<?php echo $selectedUser["id"] ?>>">
-                            <button type="submit" class="btn deleteUser">Yes</button>
-                        </form>
-                    </div>
-                </div>
-                <button class="btn remove">Remove</button>
             <?php endif; ?>
         </div>
     </div>
 
+    <div id="editPopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <h2>Edit Employee</h2>
+            <form action="" method="post">
+                <div class="column">
+                    <label for="firstname">First Name:</label>
+                    <input type="text" name="firstname" id="firstname">
+                </div>
+                <div class="column">
+                    <label for="lastname">Last Name:</label>
+                    <input type="text" name="lastname" id="lastname">
+                </div>
+                <div class="column">
+                    <label for="email">Email:</label>
+                    <input type="text" name="email" id="email">
+                </div>
+                <div class="column">
+                    <label for="typeOfUser">Type of User:</label>
+                    <select name="typeOfUser" id="typeOfUser">
+                        <option value="admin">Admin</option>
+                        <option value="manager">Manager</option>
+                        <option value="employee">Employee</option>
+                    </select>
+                </div>
+                <input type="hidden" name="user_id" id="user_id">
+                <button type="submit" class="btn">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="deletePopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closeDeletePopup()">&times;</span>
+            <h2>Delete User</h2>
+            <p>Are you sure you want to delete user <span id="deleteUserFirstname"></span> <span id="deleteUserLastname"></span>?</p>
+            <form action="" method="post" id="deleteUserForm">
+                <input type="hidden" name="deleteUser" id="deleteUserId">
+                <button type="submit" class="btn">Yes, delete</button>
+                <button type="button" class="btn" onclick="closeDeletePopup()">Cancel</button>
+            </form>
+        </div>
+    </div>
 
     <script>
         function submitUserForm() {
@@ -189,22 +156,46 @@ $managers = Manager::getAllManagers($pdo);
 
         <?php if ($selectedUser != null): ?>
             document.querySelector("#checkboxTypeOfUser").addEventListener("change", function (e) {
-                // if (this.checked) {
-                    document.querySelector(".popupIsManager").style.display = "flex";
-                    document.querySelector(".popupIsManager .close").addEventListener("click", function (e) {
-                        document.querySelector(".popupIsManager").style.display = "none";
-                        document.querySelector("#checkboxTypeOfUser").checked ^= 1;
-                    });
-
-                    e.preventDefault();
-                // }
-
+                document.querySelector(".popupIsManager").style.display = "flex";
+                document.querySelector(".popupIsManager .close").addEventListener("click", function (e) {
+                    document.querySelector(".popupIsManager").style.display = "none";
+                    document.querySelector("#checkboxTypeOfUser").checked ^= 1;
+                });
+                e.preventDefault();
             });
-            <?php endif; ?>
+        <?php endif; ?>
             
-            document.querySelector(".deleteUser").addEventListener("click", function (e) {
-                console.log("ded");
-                document.querySelector("#changeTypeOfUser").submit();
-            });
-            </script>
+        document.querySelector(".deleteUser").addEventListener("click", function (e) {
+            document.querySelector("#changeTypeOfUser").submit();
+        });
+
+        function openPopup(id, firstname, lastname, email, typeOfUser) {
+            document.getElementById("user_id").value = id;
+            document.getElementById("firstname").value = firstname;
+            document.getElementById("lastname").value = lastname;
+            document.getElementById("email").value = email;
+            document.getElementById("typeOfUser").value = typeOfUser; // Stel het juiste type gebruiker in
+            document.getElementById("editPopup").style.display = "block";
+        }
+
+        function openDeletePopup(id, firstname, lastname) {
+            document.getElementById("deleteUserId").value = id;
+            document.getElementById("deleteUserFirstname").textContent = firstname;
+            document.getElementById("deleteUserLastname").textContent = lastname;
+            document.getElementById("deletePopup").style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("editPopup").style.display = "none";
+        }
+
+        function closeDeletePopup() {
+            document.getElementById("deletePopup").style.display = "none";
+        }
+
+        function saveChanges() {
+            // Voer hier code uit om wijzigingen op te slaan
+            closePopup();
+        }
+    </script>
 </body>
