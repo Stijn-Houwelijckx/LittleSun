@@ -27,25 +27,22 @@ if ($manager["typeOfUser"] != "manager") {
 
 $employee_id = isset($_GET["employee"]) ? intval($_GET["employee"]) : 0;
 
+$allTasks = Task::getAllTasks($pdo);
+
 if (isset($_POST["submitTask"])) {
     try {
-        $selectedTasks = [];
-        foreach ($_POST as $key => $value) {
-            if (strpos($key, 'Task_') === 0) {
-                $taskId = intval($value);
-                if ($taskId > 0) {
-                    $selectedTasks[] = $taskId;
-                    Task::assignTaskToUser($pdo, $employee_id, $taskId);
-                    var_dump($employee_id);
-                }
-            }
+        foreach ($allTasks as $task) {
+            $taskId = $task["id"];
+            $isAssigned = isset($_POST["Task_$taskId"]) ? 1 : 0;
+            Task::assignTaskToUser($pdo, $employee_id, $taskId, $isAssigned);
+
+            header("Location: hubworkers.php");
         }
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
     }
 }
 
-$allTasks = Task::getAllTasks($pdo);
 
 // Haal de taken op die de werknemer heeft
 $employeeTasks = Task::getTasksByEmployeeId($pdo, $employee_id);
@@ -70,7 +67,7 @@ $employeeTaskIds = array_column($employeeTasks, 'id');
 <body>
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="hubworkerDetails">
-        <h1>Mijn opdrachten</h1>
+        <h1>Assign tasks</h1>
         <div class="tasks">
             <form action="" method="post">
                 <?php foreach ($allTasks as $task): ?>

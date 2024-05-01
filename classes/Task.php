@@ -70,11 +70,13 @@ class Task {
         }
     }
 
-    public static function assignTaskToUser(PDO $pdo, $user_id, $task_id){
+    public static function assignTaskToUser(PDO $pdo, $user_id, $task_id, $is_assigned){
         try {
-            $stmt = $pdo->prepare("UPDATE user_tasks SET is_assigned = 1 WHERE user_id = :user_id AND task_id = :task_id");
+            $stmt = $pdo->prepare("UPDATE user_tasks SET is_assigned = :is_assigned WHERE user_id = :user_id AND task_id = :task_id");
             $stmt->bindParam(':task_id', $task_id, PDO::PARAM_INT);
             $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $stmt->bindParam(':is_assigned', $is_assigned, PDO::PARAM_INT);
+
             $stmt->execute();
             return true;
         } catch (PDOException $e) {
@@ -122,7 +124,7 @@ class Task {
 
     public static function mytasks(PDO $pdo, $user_id){
         try {
-            $stmt = $pdo->prepare("SELECT tasktypes.task FROM tasktypes, user_tasks WHERE tasktypes.id = user_tasks.task_id AND tasktypes.status = 1 AND user_tasks.user_id = :user_id");
+            $stmt = $pdo->prepare("SELECT tasktypes.task FROM tasktypes, user_tasks WHERE tasktypes.id = user_tasks.task_id AND user_tasks.user_id = :user_id AND user_tasks.is_assigned = 1");
             $stmt->bindParam(":user_id", $user_id);
             $stmt->execute();
             $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
