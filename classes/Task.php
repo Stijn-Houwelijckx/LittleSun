@@ -30,8 +30,11 @@ class Task {
         try {
             $stmt = $pdo->prepare("INSERT INTO taskTypes (task) VALUES (:task)");
             $stmt->bindParam(':task', $this->task);
+
             $stmt->execute();
-            return true;
+
+            // Return the ID of the inserted row
+            return $pdo->lastInsertId();
         } catch (PDOException $e) {
             error_log('Database error: ' . $e->getMessage());
             return false;
@@ -56,7 +59,18 @@ class Task {
         }
     }
 
-    public static function addTaskToUser(PDO $pdo, $user_id, $task_id){
+    public static function addTaskToAllUsers(PDO $pdo, $task_id) {
+        try {
+            $stmt = $pdo->prepare("INSERT INTO user_tasks (user_id, task_id) SELECT id, :task_id FROM users WHERE typeOfUser = 'employee'");
+            $stmt->bindParam(':task_id', $task_id);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            throw new Exception('Database error: Unable to update read status');
+        }
+    }
+
+    public static function assignTaskToUser(PDO $pdo, $user_id, $task_id){
         try {
             $stmt = $pdo->prepare("UPDATE user_tasks SET is_assigned = 1 WHERE user_id = :user_id AND task_id = :task_id");
             $stmt->bindParam(':task_id', $task_id, PDO::PARAM_INT);
@@ -64,7 +78,7 @@ class Task {
             $stmt->execute();
             return true;
         } catch (PDOException $e) {
-            error_log('Database error in addTaskToUser(): ' . $e->getMessage());
+            error_log('Database error in assignTaskToUser(): ' . $e->getMessage());
             throw new Exception('Database error: Unable to update user task', 0, $e);
         }
     }
@@ -81,18 +95,7 @@ class Task {
         }
     }
 
-    public static function deleteUserTasks(PDO $pdo)
-    {
-        try {
-            $stmt = $pdo->prepare("DELETE FROM user_tasks, tasktypes WHERE tasktypes.id = user_tasks.task_id AND tasktypes.status = 0");
-            $stmt->execute();
-        } catch (PDOException $e) {
-            error_log('Database error: ' . $e->getMessage());
-            throw new Exception('Database error: Unable to update read status');
-        }
-    }
-
-    public static function removeTaskTypesFromUsers(PDO $pdo, $task_id)
+    public static function removeTaskTypeFromUsers(PDO $pdo, $task_id)
     {
         try {
             $stmt = $pdo->prepare("DELETE FROM user_tasks WHERE task_id = :task_id;");

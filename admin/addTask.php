@@ -24,7 +24,8 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
         
             $task->setTask($_POST['taskName']);
         
-            $task->addTask($pdo);
+            $addedTaskId = $task->addTask($pdo);
+            Task::addTaskToAllUsers($pdo, $addedTaskId);
             header("Location: tasks.php");
         }
     } catch (Exception $e) {

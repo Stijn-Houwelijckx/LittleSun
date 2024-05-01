@@ -35,7 +35,7 @@ if (isset($_POST["submitTask"])) {
                 $taskId = intval($value);
                 if ($taskId > 0) {
                     $selectedTasks[] = $taskId;
-                    Task::addTaskToUser($pdo, $employee_id, $taskId);
+                    Task::assignTaskToUser($pdo, $employee_id, $taskId);
                     var_dump($employee_id);
                 }
             }
