@@ -17,9 +17,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
             var_dump($_POST["locationDeleteId"]);
             try {
                 Location::deleteLocation($pdo, $_POST["locationDeleteId"]);
-                // foreach ($_POST["locationDeleteId"] as $id) {
-                //     Location::deleteLocation($pdo, $id);
-                // }
                 header("Location: {$_SERVER['PHP_SELF']}");
                 exit();
             } catch (Exception $e) {
@@ -131,12 +128,9 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
 
             hubLocations.forEach(function(hubLocation) {
                 let hubName = hubLocation.querySelector("h2").textContent.toLowerCase();
-                // let hubCity = hubLocation.querySelector("p:nth-child(2)").textContent.toLowerCase();
-                // let hubCountry = hubLocation.querySelector("p:nth-child(3)").textContent.toLowerCase();
 
                 if (hubName.includes(searchTerm))
-                // || hubCity.includes(searchTerm) || hubCountry.includes(searchTerm)) 
-            {
+                {
                     hubLocation.style.display = "block";
                 } else {
                     hubLocation.style.display = "none";
