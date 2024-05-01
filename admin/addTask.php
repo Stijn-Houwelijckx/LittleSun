@@ -25,6 +25,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
             $task->setTask($_POST['taskName']);
         
             $task->addTask($pdo);
+            header("Location: tasks.php");
         }
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
