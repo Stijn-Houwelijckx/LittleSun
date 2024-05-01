@@ -536,6 +536,18 @@ button {
   gap: 24px;
 }
 
+.employees {
+  width: 100%;
+}
+
+.employees .employee {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 8px;
+  align-items: center;
+}
+
 #hubworkers .hubs .hub .btn {
   width: 80px;
 }
@@ -547,7 +559,8 @@ button {
   object-fit: cover;
 }
 
-#hubworkers .hubs .hub:nth-child(even) {
+#hubworkers .hubs .hub:nth-child(even),
+.employees .employee:nth-child(even) {
   background-color: var(--yellow);
   color: var(--black);
 }
