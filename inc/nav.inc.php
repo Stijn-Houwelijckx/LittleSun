@@ -122,6 +122,7 @@
     </div>
 </nav>
 <script>
+
     function executeOnMaxWidth1200(callback) {
         const maxWidthQuery = window.matchMedia("(max-width: 1200px)");
         if (maxWidthQuery.matches) {

@@ -203,7 +203,16 @@ button {
   opacity: 0.6;
   width: 24px;
 }
+.clockinbtn {
+  background-color: var(--yellow);
+  color: var(--black);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
 
+}
 .desktopNav .column .menu img.active,
 .desktopNav .column .settings img.active {
   opacity: 1;
