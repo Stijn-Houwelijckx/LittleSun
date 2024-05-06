@@ -145,7 +145,7 @@ $myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
         var startButton = document.getElementById("startButton"); // Referentie naar de knop
 
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "clockin.php", true);
+        xhr.open("POST", "clockin.php", true); // Zorg ervoor dat de URL overeenkomt met de locatie van het PHP-bestand
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4 && xhr.status == 200) {
@@ -159,7 +159,7 @@ $myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
                 document.getElementById("clockInInfo").innerHTML = xhr.responseText;
             }
         };
-        xhr.send("start_work=true");
+        xhr.send("start_work=" + (startButton.value === "Start Work" ? "true" : "false")); // Stuur de juiste waarde voor start_work mee
     });
 });
     </script>
