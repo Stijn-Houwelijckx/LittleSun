@@ -302,7 +302,7 @@ class User
     public static function getAll(PDO $pdo)
     {
         try {
-            $stmt = $pdo->prepare("SELECT * FROM users WHERE status = 1");
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE status = 1 ORDER BY typeOfUser");
             $stmt->execute();
             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $users ?: [];

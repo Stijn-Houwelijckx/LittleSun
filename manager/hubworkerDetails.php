@@ -12,48 +12,44 @@ ini_set('error_log', 'error.log');
 
 $current_page = 'hubworkers';
 
-$pdo = Db::getInstance();
-$manager = User::getUserById($pdo, $_SESSION["user_id"]);
-$selectedTask = Task::getTaskById($pdo, 1);
-
-if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
-    try {
-        $pdo = Db::getInstance();
-        $manager = User::getUserById($pdo, $_SESSION["user_id"]);
-    } catch (Exception $e) {
-        error_log('Database error: ' . $e->getMessage());
-    }
-} else {
+if (!isset($_SESSION["user_id"])) {
     header("Location: ../login.php?error=notLoggedIn");
     exit();
 }
 
-if (isset($_GET["employee"])) {
-    $employee_id = intval($_GET["employee"]);
-    if (isset($_POST["submitTask"])) {
-        try {
-            $selectedTasks = [];
-            foreach ($_POST as $key => $value) {
-                if (strpos($key, 'Task_') === 0) {
-                    $taskId = intval($value);
-                    $selectedTasks[] = $taskId;
-                    // Update task for user
-                    var_dump($employee_id);
-                    var_dump($taskId);
-                    Task::addTaskToUser($pdo, $employee_id, $taskId);
-                }
-            }
-            var_dump($selectedTasks);
-        } catch (Exception $e) {
-            error_log('Database error: ' . $e->getMessage());
+$pdo = Db::getInstance();
+$manager = User::getUserById($pdo, $_SESSION["user_id"]);
+
+if ($manager["typeOfUser"] != "manager") {
+    header("Location: ../login.php?error=notManager");
+    exit();
+}
+
+$employee_id = isset($_GET["employee"]) ? intval($_GET["employee"]) : 0;
+
+$allTasks = Task::getAllTasks($pdo);
+
+if (isset($_POST["submitTask"])) {
+    try {
+        foreach ($allTasks as $task) {
+            $taskId = $task["id"];
+            $isAssigned = isset($_POST["Task_$taskId"]) ? 1 : 0;
+            Task::assignTaskToUser($pdo, $employee_id, $taskId, $isAssigned);
+
+            header("Location: hubworkers.php");
         }
+    } catch (Exception $e) {
+        error_log('Database error: ' . $e->getMessage());
     }
 }
 
 
+// Haal de taken op die de werknemer heeft
+$employeeTasks = Task::getTasksByEmployeeId($pdo, $employee_id);
 
+// Bouw een array van taak-ID's die de werknemer heeft
+$employeeTaskIds = array_column($employeeTasks, 'id');
 
-$allTasks =  Task::getAllTasks($pdo);
 ?>
 
 <!DOCTYPE html>
@@ -71,16 +67,15 @@ $allTasks =  Task::getAllTasks($pdo);
 <body>
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="hubworkerDetails">
-        <h1>Mijn opdrachten</h1>
+        <h1>Assign tasks</h1>
         <div class="tasks">
             <form action="" method="post">
-                <?php foreach ($allTasks as $allTask): ?>
+                <?php foreach ($allTasks as $task): ?>
                     <div>
-                        <input type="checkbox" id="task_<?php echo $allTask["id"]; ?>" name="Task_<?php echo $allTask["id"]; ?>" value="<?php echo $allTask["id"]; ?>">
-                        <label for="task_<?php echo $allTask["id"]; ?>"><?php echo htmlspecialchars($allTask["task"]); ?></label>
+                        <input type="checkbox" id="task_<?php echo $task["id"]; ?>" name="Task_<?php echo $task["id"]; ?>" value="<?php echo $task["id"]; ?>" <?php if (in_array($task["id"], $employeeTaskIds)) echo 'checked'; ?>>
+                        <label for="task_<?php echo $task["id"]; ?>"><?php echo htmlspecialchars($task["task"]); ?></label>
                     </div>
                 <?php endforeach; ?>
-                <input type="text" hidden name="<?php echo $allTask["id"]; ?>">
                 <input type="submit" name="submitTask" class="btn" value="opslaan"></input>
             </form>
         </div>

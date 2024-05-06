@@ -2,6 +2,7 @@
 include_once (__DIR__ . "/classes/Db.php");
 include_once (__DIR__ . "/classes/User.php");
 include_once (__DIR__ . "/classes/TimeOffRequest.php");
+include_once (__DIR__ . "/classes/Task.php");
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -37,6 +38,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: dashboard.php");
     }
 }
+
+$myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
 ?>
 
 <!DOCTYPE html>
@@ -74,6 +77,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php endif ?>
                 <button class="btn bento-item-button">Request time off</button>
             </div>
+        </div>
+        <div class="myTasks">
+            <h2>My tasks</h2>
+            <?php if (count($myTasks) > 0) : ?>
+                <ul>
+                    <?php foreach ($myTasks as $c) : ?>
+                        <li><?php echo $c["task"]?></li>
+                    <?php endforeach ?>
+                </ul>
+            <?php endif ?>
+            <?php if (count($myTasks) == 0) : ?>
+                <p>You don't have tasktypes</p>
+            <?php endif ?>
         </div>
         <div class="pop-up-overlay">
             <div class="time-off-popup">

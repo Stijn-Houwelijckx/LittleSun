@@ -55,6 +55,7 @@ h3 {
 }
 
 p,
+li,
 label,
 span,
 a,
@@ -84,6 +85,12 @@ button {
   color: var(--black);
   border: none;
   border-radius: 8px;
+}
+
+.btn.remove {
+  border: 1px solid red;
+  background-color: rgba(255, 0, 0, 0.2);
+  color: red;
 }
 
 /* ---- desktopNav ---- */
@@ -474,20 +481,20 @@ button {
 }
 
 /* ---- usersAdmin ---- */
-#usersAdmin,
+/* #usersAdmin,
 #usersAdmin .users {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
-}
+} */
 
-#usersAdmin .users form .user,
+/* #usersAdmin .users form .user,
 #usersAdmin .users form .user .text {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
+} */
 
 #usersAdmin .users form .user .text .column {
   display: flex;
@@ -532,9 +539,31 @@ button {
 
 #hubworkers .hubs .hub {
   display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 8px;
+  gap: 24px;
+}
+
+.employees,
+.users {
+  width: 100%;
+}
+
+.employees .employee {
+  display: grid;
   grid-template-columns: repeat(4, 1fr);
   background-color: rgba(255, 255, 255, 0.6);
   padding: 8px;
+  align-items: center;
+}
+
+.users .user {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 8px;
+  align-items: center;
 }
 
 #hubworkers .hubs .hub .btn {
@@ -548,7 +577,9 @@ button {
   object-fit: cover;
 }
 
-#hubworkers .hubs .hub:nth-child(even) {
+#hubworkers .hubs .hub:nth-child(even),
+.employees .employee:nth-child(even),
+.users .user:nth-child(even) {
   background-color: var(--yellow);
   color: var(--black);
 }
@@ -568,9 +599,19 @@ button {
   min-width: fit-content;
   padding: 16px;
   background-color: rgb(230, 230, 230);
-
   border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
+.myTasks {
+  height: fit-content;
+  width: calc(100% - 32px);
+  min-width: fit-content;
+  padding: 16px;
+  background-color: rgb(230, 230, 230);
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -586,7 +627,7 @@ button {
   margin-top: 16px;
 }
 
-.dashboard .time-off-popup .form-btns {
+.pop-up-overlay .form-btns {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -594,22 +635,24 @@ button {
   width: 100%;
 }
 
-.dashboard .time-off-popup .btn-container {
+.pop-up-overlay .btn-container {
   display: flex;
   flex-direction: row;
   gap: 16px;
   width: 100%;
 }
 
-.dashboard .time-off-popup .btn-approve {
+.pop-up-overlay .btn-approve {
   background-color: green;
   color: var(--white);
   width: 100%;
+  text-align: center;
 }
-.dashboard .time-off-popup .btn-decline {
+.pop-up-overlay .btn-decline {
   background-color: red;
   color: var(--white);
   width: 100%;
+  text-align: center;
 }
 
 .dashboard .request .request-label,
@@ -640,7 +683,8 @@ button {
   color: var(--white);
 }
 
-.dashboard .time-off-popup {
+.dashboard .time-off-popup,
+#hubLocationsAdmin .location-delete-popup {
   flex-direction: column;
   gap: 16px;
   background-color: var(--gray);
@@ -932,7 +976,8 @@ div.day p.calendarItem {
     padding-left: 144px;
   }
 
-  .dashboard .bento-item {
+  .dashboard .bento-item,
+  .myTasks {
     width: calc(33.333% - 32px);
   }
 }
@@ -958,7 +1003,8 @@ div.day p.calendarItem {
     height: 100%;
   }
 
-  .dashboard .bento-item {
+  .dashboard .bento-item,
+  .myTasks {
     width: calc(25% - 32px);
   }
 }

@@ -20,48 +20,19 @@ if (!isset($_SESSION["user_id"]) || $manager["typeOfUser"] != "manager") {
     exit();
 }
 
-$users = Employee::getAllEmployeesByLocation($pdo, $manager["location_id"]);
-
-if (!empty($users)) {
-    $selectedUser = $users[0];
-} else {
-    $selectedUser = null;
-    $error = "No employees found";
-}   
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["id"])) {
-        try {
-            User::deleteUser($pdo, $_POST["id"]);
-            $selectedUser = User::getUserById($pdo, 0);
-        } catch (Exception $e) {
-            error_log('Database error: ' . $e->getMessage());
-        }
-    }
-
-    if (isset($_POST["user_id"])) {
-        try {
-            $user_id = $_POST["user_id"];
-            $selectedUser = User::getUserById($pdo, $user_id);
-
-        } catch (Exception $e) {
-            error_log('Database error: ' . $e->getMessage());
-        }
-    }
-
-    if (isset($_POST["firstname"])) {
-        try {
-            $user = new User();
-            $user->setFirstname($_POST['firstname']);
-            $user->setLastname($_POST['lastname']);
-            $user->setEmail($_POST['email']);
-            $user->updateUser($pdo, $_POST["user_id"], "employee");
-
-            $selectedUser = User::getUserById($pdo, $_POST["user_id"]);
-        } catch (Exception $e) {
-            error_log('Database error: ' . $e->getMessage());
-        }
+if (isset($_POST["firstname"])) {
+    try {
+        $user = new User();
+        $user->setFirstname($_POST['firstname']);
+        $user->setLastname($_POST['lastname']);
+        $user->setEmail($_POST['email']);
+        $user->updateUser($pdo, $_POST["user_id"], "employee");
+    } catch (Exception $e) {
+        error_log('Database error: ' . $e->getMessage());
     }
 }
+
+$users = Employee::getAllEmployeesByLocation($pdo, $manager["location_id"]);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -73,6 +44,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="../css/style.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.png">
+
+    <style>
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            top: 50%;
+            left: 50%
+        }
+
+        .popup-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .popup-content .column{
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .popup-content .column input{
+            border: 1px solid var(--black);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
@@ -87,50 +110,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p><?php echo $error; ?></p>
             <?php endif; ?>
         </div>
-        <?php if (!empty($users)): ?>
-            <form action="" id="userSelector" onchange="submitUserForm()" method="post">
-            <select name="user_id">
+        <div class="employees">
+            <?php if (!empty($users)): ?>
                 <?php foreach ($users as $user): ?>
-                    <option value="<?php echo $user["id"] ?>" <?php if ($user["id"] == $selectedUser["id"]) echo "selected"; ?>>
-                        <?php echo htmlspecialchars($user["firstname"]) . " " . htmlspecialchars($user["lastname"]) ?>
-                    </option>
+                    <div class="employee">
+                        <p><?php echo $user["firstname"] ?></p>
+                        <p><?php echo $user["lastname"] ?></p>
+                        <p><?php echo $user["email"] ?></p>
+                        <i class="fa fa-edit" onclick="openPopup('<?php echo $user['id']; ?>', '<?php echo $user['firstname']; ?>', '<?php echo $user['lastname']; ?>', '<?php echo $user["email"]; ?>')"></i>
+                    </div>
                 <?php endforeach; ?>
-            </select>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div id="editPopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <h2>Edit Employee</h2>
+            <form action="" method="post">
+                <div class="column">
+                    <label for="firstname">First Name:</label>
+                    <input type="text" name="firstname" id="firstname">
+                </div>
+                <div class="column">
+                    <label for="lastname">Last Name:</label>
+                    <input type="text" name="lastname" id="lastname">
+                </div>
+                <div class="column">
+                    <label for="email">Email:</label>
+                    <input type="text" name="email" id="email">
+                </div>
+                <input type="hidden" name="user_id" id="user_id">
+                <button type="submit" class="btn">Save</button>
             </form>
-            <div class="users">
-                <?php if (!empty($users)): ?>
-                    <form action="" method="post" id="userForm">
-                        <div class="user">
-                            <div class="text">
-                                <div class="column">
-                                <label for="firstname">Firstname:</label>
-                                <input type="text" name="firstname" id="firstname" value="<?php echo htmlspecialchars($selectedUser["firstname"]); ?>">
-                                </div>
-                                <div class="column">
-                                <label for="lastname">Lastname:</label>
-                                <input type="text" name="lastname" id="lastname" value="<?php echo htmlspecialchars($selectedUser["lastname"]); ?>">
-                                </div>
-                                <div class="column">
-                                <label for="email">E-mail:</label>
-                                <input type="text" name="email" id="email" value="<?php echo htmlspecialchars($selectedUser["email"]); ?>">
-                                </div>
-                                <div class="column">
-                                <input type="hidden" name="user_id" id="user_id" value="<?php echo htmlspecialchars($selectedUser["id"]); ?>">
-                            </div>
-                        </div>
-                        <div class="buttons">
-                            <button type="submit" class="btn">Save</button>
-                        </div>
-                    </form>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
+        </div>
     </div>
 
 
     <script>
         function submitUserForm() {
             document.getElementById("userSelector").submit();
+        }
+
+        function openPopup(id, firstname, lastname, email) {
+            document.getElementById("user_id").value = id;
+            document.getElementById("firstname").value = firstname;
+            document.getElementById("lastname").value = lastname;
+            document.getElementById("email").value = email;
+            document.getElementById("editPopup").style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("editPopup").style.display = "none";
+        }
+
+        function saveChanges() {
+            // Voer hier code uit om wijzigingen op te slaan
+            closePopup();
         }
     </script>
 

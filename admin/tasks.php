@@ -41,7 +41,7 @@ if (isset($_POST["deletetask"])) {
     try {
         $selectedTask = Task::getTaskById($pdo, $_POST["deletetask"]);
         Task::deleteTask($pdo, $_POST["deletetask"]);
-        Task::removeTaskTypesFromUsers($pdo, $_POST["deletetask"]);
+        Task::removeTaskTypeFromUsers($pdo, $_POST["deletetask"]);
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
     }
@@ -72,7 +72,7 @@ $allTasks =  Task::getAllTasks($pdo);
             <select name="task_select" onchange=submitTaskForm()>
                 <option value="" disabled selected>--- Tasks ---</option>
                 <?php foreach ($allTasks as $task): ?>
-                    <option value="<?php echo $task["id"]; ?>" <?php if ($task["id"] == $selectedTask["id"]) echo "selected"; ?>>
+                    <option value="<?php echo $task["id"]; ?>" <?php if ($task["id"] == $selectedTask) echo "selected"; ?>>
                         <?php echo htmlspecialchars($task["task"]); ?>
                     </option>
                 <?php endforeach; ?>
@@ -83,8 +83,8 @@ $allTasks =  Task::getAllTasks($pdo);
             <p>Do you really want to delete this task?</p>
             <div class="btns">
                 <a href="#" class="close">No</a>
-                <form action="" method="POST">
-                    <input type="text" name="deletetask" hidden value="<?php echo $selectedTask["id"] ?>>">
+                <form action="" method="POST" id="deleteTaskFromUser">
+                    <input type="text" name="deletetask" hidden value="<?php echo $selectedTask; ?>">
                     <button type="submit" class="btn deleteTask">Yes</button>
                 </form>
             </div>
@@ -108,7 +108,7 @@ $allTasks =  Task::getAllTasks($pdo);
         });
 
         document.querySelector(".deleteTask").addEventListener("click", function (e) {
-            document.querySelector("#changeTypeOfUser").submit();
+            document.querySelector("#deleteTaskFromUser").submit();
         });
     </script>
 </body>

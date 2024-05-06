@@ -30,6 +30,26 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
 
 $employees = Employee::getAllEmployeesByLocation($pdo, $manager["location_id"]);
 $allTasks =  Task::getAllTasks($pdo);
+$myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
+
+// Haal de locatie van de ingelogde manager op
+$managerLocationId = $manager["location_id"];
+
+// Haal alle werknemers op die bij dezelfde locatie als de manager zijn
+$employees = Employee::getAllEmployeesByLocation($pdo, $managerLocationId);
+
+// Maak een array aan om de taken van alle werknemers op te slaan
+$allEmployeeTasks = array();
+
+// Loop door alle werknemers en haal hun taken op
+foreach ($employees as $employee) {
+    $employeeId = $employee["id"];
+    // Haal taken op voor de specifieke werknemer
+    $employeeTasks = Task::mytasks($pdo, $employeeId);
+    // Voeg de taken toe aan de array, gebruik de werknemer-ID als sleutel
+    $allEmployeeTasks[$employeeId] = $employeeTasks;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -49,11 +69,28 @@ $allTasks =  Task::getAllTasks($pdo);
     <div id="hubworkers">
         <h1>Employees at my hublocation</h1>
         <div class="hubs">
-            <?php foreach ($employees As $employee) : ?>
+            <?php foreach ($employees as $employee) : ?>
                 <div class="hub">
-                    <img src="../assets/images/<?php echo $employee["profileImg"]?>" alt="profileImg">
-                    <p><?php echo $employee["firstname"]?></p>
-                    <p><?php echo $employee["lastname"]?></p>
+                    <img src="../assets/images/<?php echo $employee["profileImg"] ?>" alt="profileImg">
+                    <p><?php echo $employee["firstname"] ?></p>
+                    <p><?php echo $employee["lastname"] ?></p>
+                    <?php
+                    // Haal taken op voor deze werknemer
+                    $employeeId = $employee["id"];
+                    $employeeTasks = $allEmployeeTasks[$employeeId];
+                    ?>
+                    <?php if (count($employeeTasks) > 0) : ?>
+                        <p>
+                            <?php 
+                            // Maak een array van alle taaknamen
+                            $taskNames = array_column($employeeTasks, 'task');
+                            // Voeg de taaknamen samen tot één string met een komma ertussen
+                            echo implode(', ', $taskNames);
+                            ?>
+                        </p>
+                    <?php else : ?>
+                        <p>This employee doesn't have any tasks</p>
+                    <?php endif ?>
                     <a class="btn" href="hubworkerDetails.php?employee=<?php echo $employee["id"]; ?>">Assign task</a>     
                 </div>
             <?php endforeach ?>
