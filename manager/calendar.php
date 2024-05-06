@@ -33,22 +33,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
 
 $selectedUser = User::getUserById($pdo, 1);
 
-if (isset($_POST['taskSelector'])) {
-    unset($_SESSION['selectedTaskId']);
-    $_SESSION['selectedTaskId'] = $_POST['taskSelector'];
-}
-
-if (isset($_POST['userSelector'])) {
-    $_SESSION['selectedUserId'] = $_POST['userSelector'];
-}
-
-if (isset($_SESSION['selectedTaskId'])){
-    $selectedTaskId = intval($_SESSION['selectedTaskId']) ?? 1;
-    $selectedTask = Task::getTaskById($pdo, $selectedTaskId);
-    $allUsersByTaskTypeAndDate = CalendarItem::getAllUsersByTaskTypeAndEventDate($pdo, $selectedTaskId);
-}
-
-
 if (isset($_POST['event_date'], $_POST['event_title'], $_POST['event_description'], $_POST['start_time'], $_POST['end_time'])) {
     $calendarItem = new CalendarItem;
     try {
@@ -319,11 +303,12 @@ $taskTypes = Task::getAllTasks($pdo);
             <div class="text">
                 <div class="column">
                     <form id="taskSelectorForm" method="post" action="">
-                        <label for="taskSelector">Selecteer tasktype:</label>
+                        <label for="taskSelector">Select task:</label>
                         <select name="taskSelector" id="taskSelector">
                             <?php if ($taskTypes && is_array($taskTypes)): ?>
+                                <option value="" disabled selected>--- select task ---</option>
 v                                <?php foreach ($taskTypes as $taskType) : ?>
-                                    <option value="<?php echo $taskType["id"]; ?>" <?php if ($selectedTaskId === $taskType["id"]) echo "selected"; ?>>
+                                    <option value="<?php echo $taskType["id"]; ?>">
                                         <?php echo htmlspecialchars($taskType["id"]); ?>
                                     </option>
                                 <?php endforeach ?>                            <?php else: ?>
@@ -335,6 +320,24 @@ v                                <?php foreach ($taskTypes as $taskType) : ?>
                 <div class="column">
                     <label for="event_date">Event_date:</label>
                     <input type="date" name="event_date" id="event_date" placeholder="Event_date">
+                </div>
+                <div class="column">
+                    <label for="userSelector">Select user:</label>
+                    <select name="userSelector" id="userSelector">
+                        <?php if ($allUsersByTaskTypeAndDate && is_array($allUsersByTaskTypeAndDate) && count($allUsersByTaskTypeAndDate) > 0): ?>
+                            <?php foreach ($allUsersByTaskTypeAndDate as $userByTaskTypeAndDate) : ?>
+                                <?php 
+                                    $userId = $userByTaskTypeAndDate["id"] ?? null;
+                                    $userName = $userByTaskTypeAndDate["firstname"] . " " . $userByTaskTypeAndDate["lastname"] ?? '';
+                                ?>
+                                <option value="<?php echo htmlspecialchars($userName); ?>">
+                                    <?php echo htmlspecialchars($userName); ?>
+                                </option>
+                            <?php endforeach ?>
+                        <?php else: ?>
+                            <option>No users available</option>
+                        <?php endif; ?>
+                    </select>
                 </div>
                 <div class="row">
                     <div class="column">
@@ -392,24 +395,6 @@ v                                <?php foreach ($taskTypes as $taskType) : ?>
                     </div>
                 </div>
                 <div class="column">
-                    <label for="userSelector">Select user:</label>
-                    <select name="userSelector" id="userSelector">
-                        <?php if ($allUsersByTaskTypeAndDate && is_array($allUsersByTaskTypeAndDate) && count($allUsersByTaskTypeAndDate) > 0): ?>
-                            <?php foreach ($allUsersByTaskTypeAndDate as $userByTaskTypeAndDate) : ?>
-                                <?php 
-                                $userId = $userByTaskTypeAndDate["id"] ?? null;
-                                $userName = $userByTaskTypeAndDate["firstname"] . " " . $userByTaskTypeAndDate["lastname"] ?? '';
-                                ?>
-                                <option value="<?php echo htmlspecialchars($userName); ?>">
-                                    <?php echo htmlspecialchars($userName); ?>
-                                </option>
-                            <?php endforeach ?>
-                        <?php else: ?>
-                            <option>No users available</option>
-                        <?php endif; ?>
-                    </select>
-                </div>
-                <div class="column">
                     <label for="event_title">Event_title:</label>
                     <input type="text" name="event_title" id="event_title" placeholder="Event_title">
                 </div>
@@ -453,34 +438,8 @@ v                                <?php foreach ($taskTypes as $taskType) : ?>
     </script>
     <script>const groupedCalendarItems = <?php echo json_encode($groupedCalendarItems); ?>;
     </script>
-    <script>
-        document.getElementById('taskSelector').addEventListener('change', function () {
-            var taskId = this.value;
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'get_users_by_task.php');
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    var userSelector = document.getElementById('userSelector');
-                    userSelector.innerHTML = '';
-                    var response = JSON.parse(xhr.responseText);
-                    response.users.forEach(function(user) {
-                        var option = document.createElement('option');
-                        option.value = user.id;
-                        option.textContent = user.name;
-                        userSelector.appendChild(option);
-                    });
-                } else {
-                    console.log('Request failed. Returned status of ' + xhr.status);
-                }
-            };
-            xhr.send('taskId=' + taskId);
-        });
-        document.querySelector("#taskSelector").addEventListener("change", function(e) {
-            var form = this.closest('form');
-            form.submit();
-        });
-    </script>
+       
+    <script src="../javascript/calendar.js"></script>
 </body>
 </html>
 

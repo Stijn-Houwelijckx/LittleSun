@@ -146,7 +146,6 @@ class CalendarItem
     public function setEnd_time($end_time)
     {
         $this->end_time = $end_time;
-
         return $this;
     }    
 
