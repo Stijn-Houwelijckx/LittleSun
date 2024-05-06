@@ -79,7 +79,7 @@ $myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
             </div>
         </div>
     <div class="bento-item">
-        <h2 class="bento-item-title">Clock In</h2>
+        <h2 class="bento-item-title">Clock In /Clock Out</h2>
             <div id="clockInForm">
                 <input class="btn bento-item-button" type="button" id="startButton" value="Start Work">
             </div>
