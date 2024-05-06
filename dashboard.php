@@ -140,18 +140,28 @@ $myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
             popupOverlay.style.display = "none";
             popup.style.display = "none";
         });
-        document.getElementById("startButton").addEventListener("click", function() {
+        document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("startButton").addEventListener("click", function() {
+        var startButton = document.getElementById("startButton"); // Referentie naar de knop
+
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "clockin.php", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4 && xhr.status == 200) {
+                // Update de innerHTML van de knop naar "End Work" of "Start Work" afhankelijk van de huidige tekst
+                startButton.value = startButton.value === "Start Work" ? "End Work" : "Start Work";
+
+                // Toggle de 'clock-out' klasse van de knop
+                startButton.classList.toggle("clock-out");
+
+                // Update de informatie naast de knop
                 document.getElementById("clockInInfo").innerHTML = xhr.responseText;
             }
         };
         xhr.send("start_work=true");
     });
-
+});
     </script>
 </body>
 </html>
