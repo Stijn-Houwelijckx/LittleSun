@@ -26,6 +26,9 @@
             <div class="role">
                 <p><?php echo $role ?></p>
             </div>
+            <form action="clockin.php" method="post">
+        <input type="submit" name="start_work" value="Start Work">
+    </form>
         </div>
         <div class="menu">
             <?php if ($role == "admin") : ?>
