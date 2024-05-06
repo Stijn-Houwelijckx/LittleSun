@@ -78,6 +78,13 @@ $myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
                 <button class="btn bento-item-button">Request time off</button>
             </div>
         </div>
+    <div class="bento-item">
+        <h2 class="bento-item-title">Clock In</h2>
+            <div id="clockInForm">
+                <input class="btn bento-item-button" type="button" id="startButton" value="Start Work">
+            </div>
+        <div id="clockInInfo"></div>
+    </div>
         <div class="myTasks">
             <h2>My tasks</h2>
             <?php if (count($myTasks) > 0) : ?>
@@ -133,6 +140,18 @@ $myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
             popupOverlay.style.display = "none";
             popup.style.display = "none";
         });
+        document.getElementById("startButton").addEventListener("click", function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "clockin.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                document.getElementById("clockInInfo").innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send("start_work=true");
+    });
+
     </script>
 </body>
 </html>
