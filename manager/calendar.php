@@ -302,95 +302,97 @@ $taskTypes = Task::getAllTasks($pdo);
         <form action="" method="post" id="addCalendarItem">
             <div class="text">
                 <div class="column">
-                    <form id="taskSelectorForm" method="post" action="">
-                        <label for="taskSelector">Select task:</label>
-                        <select name="taskSelector" id="taskSelector">
-                            <?php if ($taskTypes && is_array($taskTypes)): ?>
-                                <option value="" disabled selected>--- select task ---</option>
-v                                <?php foreach ($taskTypes as $taskType) : ?>
-                                    <option value="<?php echo $taskType["id"]; ?>">
-                                        <?php echo htmlspecialchars($taskType["id"]); ?>
-                                    </option>
-                                <?php endforeach ?>                            <?php else: ?>
-                                <option>Geen taken beschikbaar</option>
-                            <?php endif; ?>
-                        </select>
-                    </form>
-                </div>
-                <div class="column">
-                    <label for="event_date">Event_date:</label>
-                    <input type="date" name="event_date" id="event_date" placeholder="Event_date">
+                    <label for="eventDatePicker">Event_date:</label>
+                    <input type="date" name="eventDatePicker" id="eventDatePicker" placeholder="Event_date">
                 </div>
                 <div class="column">
                     <label for="userSelector">Select user:</label>
-                    <select name="userSelector" id="userSelector">
-                        <?php if ($allUsersByTaskTypeAndDate && is_array($allUsersByTaskTypeAndDate) && count($allUsersByTaskTypeAndDate) > 0): ?>
-                            <?php foreach ($allUsersByTaskTypeAndDate as $userByTaskTypeAndDate) : ?>
-                                <?php 
-                                    $userId = $userByTaskTypeAndDate["id"] ?? null;
-                                    $userName = $userByTaskTypeAndDate["firstname"] . " " . $userByTaskTypeAndDate["lastname"] ?? '';
-                                ?>
-                                <option value="<?php echo htmlspecialchars($userName); ?>">
-                                    <?php echo htmlspecialchars($userName); ?>
+                    <select name="userSelector" id="userSelector" disabled>
+                        <?php //if ($allEmployeesByLocation && is_array($allEmployeesByLocation)): ?>
+                            <option value="" disabled selected>--- select user ---</option>
+                            <?php //foreach ($allEmployeesByLocation as $employee) : ?>
+                                <!-- <option value="<?php //echo $employee["id"]; ?>"> -->
+                                    <?php //echo htmlspecialchars($employee["firstname"] . " " . $employee["lastname"]); ?>
                                 </option>
-                            <?php endforeach ?>
-                        <?php else: ?>
-                            <option>No users available</option>
-                        <?php endif; ?>
+                            <?php //endforeach ?>
+                        <?php //else: ?>
+                            <!-- <option disabled selected>No users available</option> -->
+                        <?php //endif; ?>
+                    </select>
+                </div>
+                <div class="column">
+                    <label for="taskSelector">Select task:</label>
+                    <select name="taskSelector" id="taskSelector" disabled>
+                        <?php //if ($taskTypes && is_array($taskTypes)): ?>
+                            <option value="" disabled selected>--- select task ---</option>
+v                                <?php //foreach ($taskTypes as $taskType) : ?>
+                                <!-- <option value="<?php //echo $taskType["id"]; ?>"> -->
+                                    <?php //echo htmlspecialchars($taskType["task"]); ?>
+                                <!-- </option> -->
+                            <?php //endforeach ?>                            
+                        <?php //else: ?>
+                            <!-- <option>No tasks available</option> -->
+                        <?php //endif; ?>
                     </select>
                 </div>
                 <div class="row">
                     <div class="column">
-                        <label for="timeslot">Timeslots:</label>
+                        <!-- If timeslots get changed, the query for Employee::getEmployeesByAvailability
+                        needs to change too to work with the new timeslots -->
+                        <p>Timeslots:</p>
                         <div>
-                            <input type="checkbox" value="08:00 - 09:00">
-                            <p>08:00 - 09:00</p>
+                            <input type="checkbox" name="timeslot_1" class="timeslot" id="timeslot_1" value="08:00 - 09:00" disabled>
+                            <label for="timeslot_1">08:00 - 09:00</label>
                         </div>
                         <div>
-                            <input type="checkbox" value="09:00 - 10:00">
-                            <p>09:00 - 10:00</p>
+                            <input type="checkbox" name="timeslot_2" class="timeslot" id="timeslot_2" value="09:00 - 10:00" disabled>
+                            <label for="timeslot_2">09:00 - 10:00</label>
                         </div>
                         <div>
-                            <input type="checkbox" value="10:00 - 11:00">
-                            <p>10:00 - 11:00</p>
+                            <input type="checkbox" name="timeslot_3" class="timeslot" id="timeslot_3" value="10:00 - 11:00" disabled>
+                            <label for="timeslot_3">10:00 - 11:00</label>
                         </div>
                         <div>
-                            <input type="checkbox" value="11:00 - 12:00">
-                            <p>11:00 - 12:00</p>
+                            <input type="checkbox" name="timeslot_4" class="timeslot" id="timeslot_4" value="11:00 - 12:00" disabled>
+                            <label for="timeslot_4">11:00 - 12:00</label>
                         </div>
                         <div>
-                            <input type="checkbox" value="12:00 - 13:00">
-                            <p>12:00 - 13:00</p>
+                            <input type="checkbox" name="timeslot_5" class="timeslot" id="timeslot_5" value="12:00 - 13:00" disabled>
+                            <label for="timeslot_5">12:00 - 13:00</label>
                         </div>
                         <div>
-                            <input type="checkbox" value="13:00 - 14:00">
-                            <p>13:00 - 14:00</p>
+                            <input type="checkbox" name="timeslot_6" class="timeslot" id="timeslot_6" value="13:00 - 14:00" disabled>
+                            <label for="timeslot_6">13:00 - 14:00</label>
                         </div>
                     </div>
                     <div class="column">
                         <div>
-                            <input type="checkbox" value="14:00 - 15:00">
-                            <p>14:00 - 15:00</p>
+                            <input type="checkbox" name="timeslot_7" class="timeslot" id="timeslot_7" value="14:00 - 15:00" disabled>
+                            <label for="timeslot_7">14:00 - 15:00</label>
                         </div>
                         <div>
-                            <input type="checkbox" value="15:00 - 16:00">
-                            <p>15:00 - 16:00</p>
+                            <input type="checkbox" name="timeslot_8" class="timeslot" id="timeslot_8" value="15:00 - 16:00" disabled>
+                            <label for="timeslot_8">15:00 - 16:00</label>
                         </div>
                         <div>
-                            <input type="checkbox" value="16:00 - 17:00">
-                            <p>17:00 - 18:00</p>
+                            <input type="checkbox" name="timeslot_9" class="timeslot" id="timeslot_9" value="16:00 - 17:00" disabled>
+                            <label for="timeslot_9">16:00 - 17:00</label>
                         </div>
                         <div>
-                            <input type="checkbox" value="18:00 - 19:00">
-                            <p>18:00 - 19:00</p>
+                            <input type="checkbox" name="timeslot_10" class="timeslot" id="timeslot_10" value="17:00 - 18:00" disabled>
+                            <label for="timeslot_10">17:00 - 18:00</label>
                         </div>
                         <div>
-                            <input type="checkbox" value="19:00 - 20:00">
-                            <p>19:00 - 20:00</p>
+                            <input type="checkbox" name="timeslot_11" class="timeslot" id="timeslot_11" value="18:00 - 19:00" disabled>
+                            <label for="timeslot_11">18:00 - 19:00</label>
                         </div>
                         <div>
-                            <input type="checkbox" value="20:00 - 21:00">
-                            <p>20:00 - 21:00</p>
+                            <input type="checkbox" name="timeslot_12" class="timeslot" id="timeslot_12" value="19:00 - 20:00" disabled>
+                            <label for="timeslot_12">19:00 - 20:00</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" name="timeslot_13" class="timeslot" id="timeslot_13" value="20:00 - 21:00" disabled>
+                            <label for="timeslot_13">20:00 - 21:00</label>
                         </div>
                     </div>
                 </div>
@@ -411,7 +413,7 @@ v                                <?php foreach ($taskTypes as $taskType) : ?>
 
     <input type="hidden" id="currentDateInput" value="<?php echo $today->format('Y-m-d'); ?>">
 
-    <script src="calendar.js"></script>
+    <script src="../javascript/calendar.js"></script>
     <script>    
         <?php if ($_GET["view"] == "daily"): ?>
             document.querySelector(".dailyview").style.display = "flex";
@@ -439,7 +441,7 @@ v                                <?php foreach ($taskTypes as $taskType) : ?>
     <script>const groupedCalendarItems = <?php echo json_encode($groupedCalendarItems); ?>;
     </script>
        
-    <script src="../javascript/calendar.js"></script>
+    <script src="../javascript/addCalendarItem.js"></script>
 </body>
 </html>
 

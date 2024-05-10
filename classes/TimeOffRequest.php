@@ -132,7 +132,26 @@ class TimeOffRequest {
             $stmt = $pdo->prepare("SELECT * FROM time_off_requests WHERE user_id = :user_id");
             $stmt->bindParam(':user_id', $user_id);
             $stmt->execute();
-            return $stmt->fetchAll();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public static function getTimeOffDatesByUserIdAndDate (PDO $pdo, $user_id, $date)
+    {
+        try {
+            $stmt = $pdo->prepare("SELECT start_date, end_date FROM time_off_requests WHERE user_id = :user_id AND (DATE(start_date) = :date1 OR DATE(end_date) = :date2) AND status = 'Approved'");
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':date1', $date);
+            $stmt->bindParam(':date2', $date);
+            $stmt->execute();
+
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // If there is a result, return the result, otherwise return false
+            return $result ?: false;
         } catch (PDOException $e) {
             error_log('Database error: ' . $e->getMessage());
             return false;
@@ -165,7 +184,7 @@ class TimeOffRequest {
             $stmt->execute();
             
             // Return all pending requests or false if there are no pending requests
-            return $stmt->fetchAll() ?: false;
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: false;
         } catch (PDOException $e) {
             error_log('Database error: ' . $e->getMessage());
             return false;

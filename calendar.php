@@ -142,22 +142,22 @@ foreach ($myCalendarItems as $calendarItem) {
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const currentMonth = <?php echo $currentMonth; ?>;
-        const prevMonthBtn = document.getElementById('prevMonth');
-        const nextMonthBtn = document.getElementById('nextMonth');
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentMonth = <?php echo $currentMonth; ?>;
+            const prevMonthBtn = document.getElementById('prevMonth');
+            const nextMonthBtn = document.getElementById('nextMonth');
 
-        prevMonthBtn.addEventListener('click', function () {
-            const newMonth = currentMonth <= 1 ? 12 : currentMonth - 1;
-            window.location.href = `?month=${newMonth}`;
-        });
+            prevMonthBtn.addEventListener('click', function () {
+                const newMonth = currentMonth <= 1 ? 12 : currentMonth - 1;
+                window.location.href = `?month=${newMonth}`;
+            });
 
-        nextMonthBtn.addEventListener('click', function () {
-            const newMonth = currentMonth >= 12 ? 1 : currentMonth + 1;
-            window.location.href = `?month=${newMonth}`;
+            nextMonthBtn.addEventListener('click', function () {
+                const newMonth = currentMonth >= 12 ? 1 : currentMonth + 1;
+                window.location.href = `?month=${newMonth}`;
+            });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
 
