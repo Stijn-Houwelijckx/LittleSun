@@ -2,11 +2,13 @@
 // dashboard.php
 
 // Include necessary classes
-include_once (__DIR__ . "/classes/Db.php");
-include_once (__DIR__ . "/classes/User.php");
-include_once (__DIR__ . "/classes/TimeOffRequest.php");
-include_once (__DIR__ . "/classes/Task.php");
-include_once (__DIR__ . "/classes/TimeTracker.php");
+include_once (__DIR__ . "../../classes/Db.php");
+include_once (__DIR__ . "../../classes/User.php");
+include_once (__DIR__ . "../../classes/Manager.php");
+include_once (__DIR__ . "../../classes/Employee.php");
+include_once (__DIR__ . "../../classes/TimeOffRequest.php");
+include_once (__DIR__ . "../../classes/Task.php");
+include_once (__DIR__ . "../../classes/TimeTracker.php");
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -20,7 +22,7 @@ $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
 
 // Redirect to login page if user is not logged in or not an employee
-if (!isset($_SESSION["user_id"]) || $user["typeOfUser"] != "employee") {
+if (!isset($_SESSION["user_id"]) || $user["typeOfUser"] != "manager") {
     header("Location: login.php?notLoggedIn=true");
     exit();
 }

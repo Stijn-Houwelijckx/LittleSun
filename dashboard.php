@@ -80,13 +80,13 @@ $myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
                 <button class="btn bento-item-button">Request time off</button>
             </div>
         </div>
-    <div class="bento-item">
-        <h2 class="bento-item-title">Clock In /Clock Out</h2>
-            <div id="clockInForm">
-                <input class="btn bento-item-button" type="button" id="startButton" value="Start Work">
-            </div>
-        <div id="clockInInfo"></div>
-    </div>
+        <div class="bento-item">
+            <h2 class="bento-item-title">Clock In /Clock Out</h2>
+                <div id="clockInForm">
+                    <input class="btn bento-item-button" type="button" id="startButton" value="Start Work">
+                </div>
+            <div id="clockInInfo"></div>
+        </div>
         <div class="myTasks">
             <h2>My tasks</h2>
             <?php if (count($myTasks) > 0) : ?>
