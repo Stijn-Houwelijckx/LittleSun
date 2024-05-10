@@ -1,9 +1,15 @@
 <?php
+include_once (__DIR__ . "../../classes/Db.php");
+include_once (__DIR__ . "../../classes/User.php");
+include_once (__DIR__ . "../../classes/Employee.php");
+include_once (__DIR__ . "../../classes/Task.php");
+include_once (__DIR__ . "../../classes/CalendarItem.php");
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['taskId'])) {
     // Store the selected task ID in the session
     $_SESSION['selectedTaskId'] = $_POST['taskId'];
+    $allUsersByTaskTypeAndDate = CalendarItem::getAllUsersByTaskTypeAndEventDate($pdo, $_SESSION['selectedTaskId']);
 
     // Optionally, you can perform additional actions here, such as validating the task ID or logging the action
 
@@ -17,4 +23,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['taskId'])) {
     echo json_encode($response);
     exit;
 }
+
 ?>
