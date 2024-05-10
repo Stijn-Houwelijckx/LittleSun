@@ -1,4 +1,3 @@
-// dailyview
 document.addEventListener("DOMContentLoaded", function () {
   const prevDayBtn = document.getElementById("prevDay");
   const nextDayBtn = document.getElementById("nextDay");
@@ -46,16 +45,17 @@ document.addEventListener("DOMContentLoaded", function () {
       groupedCalendarItems[dayKey] &&
       groupedCalendarItems[dayKey].length > 0
     ) {
-      groupedCalendarItems[dayKey].forEach((item, index) => {
-        const red = (index * 70) % 256;
-        const green = (index * 120) % 256;
-        const blue = (index * 170) % 256;
+      groupedCalendarItems[dayKey].forEach((item) => {
+        const userId = item.user_id; // Gebruik de gebruikers-ID om de kleur te bepalen
+        const red = (userId * 70) % 256;
+        const green = (userId * 120) % 256;
+        const blue = (userId * 170) % 256;
         const itemColor = `rgb(${red}, ${green}, ${blue})`;
 
         const p = document.createElement("p");
         p.className = "calendarItem";
         p.style.backgroundColor = itemColor;
-        p.textContent = `${item.start_time} - ${item.event_description}`;
+        p.textContent = `${item.start_time} - ${item.end_time} : ${item.task}`;
 
         dayContainer.appendChild(p);
       });
@@ -66,7 +66,3 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 });
-
-// weeklyview
-
-// monthlyview

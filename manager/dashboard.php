@@ -1,4 +1,7 @@
 <?php
+include_once (__DIR__ . "../../classes/Db.php");
+include_once (__DIR__ . "../../classes/User.php");
+include_once (__DIR__ . "../../classes/TimeOffRequest.php");
 // dashboard.php
 
 // Include necessary classes
@@ -21,96 +24,138 @@ $current_page = 'home';
 $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
 
-// Redirect to login page if user is not logged in or not an employee
-if (!isset($_SESSION["user_id"]) || $user["typeOfUser"] != "manager") {
-    header("Location: login.php?notLoggedIn=true");
+if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
+    try {
+        $pdo = Db::getInstance();
+        $user = User::getUserById($pdo, $_SESSION["user_id"]);
+
+        $timeOffRequests = TimeOffRequest::getAllPendingRequests($pdo, $user["location_id"]);
+
+        if (isset($_POST["approve"])) {
+            $requestId = $_POST["requestId"];
+            $managerComment = $_POST["managerComment"];
+
+            TimeOffRequest::updateRequestStatus($pdo, $requestId, "Approved", $managerComment);
+
+            header("Location: dashboard.php");
+        }
+        
+        if (isset($_POST["decline"])) {
+            $requestId = $_POST["requestId"];
+            $managerComment = $_POST["managerComment"];
+            
+            TimeOffRequest::updateRequestStatus($pdo, $requestId, "Declined", $managerComment);
+
+            header("Location: dashboard.php");
+        }
+    } catch (Exception $e) {
+        error_log('Database error: ' . $e->getMessage());
+    }
+} else {
+    header("Location: ../login.php?error=notLoggedManager");
     exit();
 }
-
-$userRequests = TimeOffRequest::getRequestsByUserId($pdo, $user["id"]);
-
-// Process time off request form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["reason"]) && isset($_POST["startdate"]) && isset($_POST["enddate"])) {
-        $timeOffRequest = new TimeOffRequest();
-
-        $timeOffRequest->setStart_date($_POST["startdate"]);
-        $timeOffRequest->setEnd_date($_POST["enddate"]);
-        $timeOffRequest->setReason($_POST["reason"]);
-        if (isset($_POST["description"])) {
-            $timeOffRequest->setDescription($_POST["description"]);
-        }
-
-        $timeOffRequest->submitRequest($pdo, $user["id"]);
-
-        header("Location: dashboard.php");
-    }
-}
-
-$myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LittleSun</title>
-    <link rel="stylesheet" href="css/style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../css/style.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="icon" type="image/x-icon" href="assets/images/favicon.png">
+    <link rel="icon" type="image/x-icon" href="../assets/images/favicon.png">
 </head>
 
 <body>
-    <?php include_once ('inc/nav.inc.php'); ?>
-    
+    <?php include_once ('../inc/nav.inc.php'); ?>
+
     <div class="dashboard">
         <div class="bento-grid">
             <div class="bento-item">
-                <h2 class="bento-item-title">Request time off</h2>
-                <!-- Time off request section -->
+                <h2 class="bento-item-title">Time off requests</h2>
+                <?php if (!empty($timeOffRequests)) : ?>
+                    <?php foreach ($timeOffRequests as $request) : ?>
+                        <div class="request" data-requestid="<?php echo $request["id"] ?>">
+                            <p class="request-creator"><span class="request-label">Employee:</span> <?php echo $request["firstname"] . " " . $request["lastname"] ?></p>
+                            <p class="request-reason"><span class="request-label">Reason:</span> <?php echo $request["reason"] ?></p>
+                            <p class="request-date-time"><span class="request-label">When:</span> <?php echo $request["start_date"] . " - " . $request["end_date"] ?></p>
+                            <button class="btn">See request</button>
+                        </div>
+                    <?php endforeach ?>
+                <?php endif ?>
+                <?php if (empty($timeOffRequests)) : ?>
+                    <p>There are no time off requests</p>
+                <?php endif ?>
             </div>
-            <div class="bento-item">
-                <h2 class="bento-item-title">Clock In /Clock Out</h2>
-                <div id="clockInForm">
-                    <input class="btn bento-item-button" type="button" id="startButton" value="Start Work">
-                </div>
-                <div id="clockInInfo"></div>
-            </div>
-        </div>
-        <div class="myTasks">
-            <h2>My tasks</h2>
-            <!-- My tasks section -->
         </div>
         <div class="pop-up-overlay">
             <div class="time-off-popup">
-                <!-- Time off request popup -->
+                <button class="btn-close"><i class="fa fa-window-close-o"></i></button>
+                <p class="request-creator"><span class="request-label">Employee:</span></p>
+                <p class="request-reason"><span class="request-label">Reason:</span></p>
+                <p class="request-date-time"><span class="request-label">When:</span></p>
+                <p class="request-description"><span class="request-label">Description:</span></p>
+                <div class="row">
+                    <form class="form-btns" action="" method="post">
+                        <input type="hidden" name="requestId" value="">
+                        <label for="managerComment">Comment:</label>
+                        <input type="text" name="managerComment" id="managerComment">
+                        <div class="btn-container">
+                            <button class="btn btn-decline" name="decline">Decline</button>
+                            <button class="btn btn-approve" name="approve">Approve</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-
-    <script>
-        // Clock In / Clock Out functionality
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("startButton").addEventListener("click", function() {
-                var startButton = document.getElementById("startButton"); // Reference to the button
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", "clockin.php", true); // Make sure the URL matches the location of the PHP file
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        // Update the innerHTML of the button to "End Work" or "Start Work" depending on the current text
-                        startButton.value = startButton.value === "Start Work" ? "End Work" : "Start Work";
-                        // Toggle the 'clock-out' class of the button
-                        startButton.classList.toggle("clock-out");
-                        // Update the information next to the button
-                        document.getElementById("clockInInfo").innerHTML = xhr.responseText;
-                    }
-                };
-                // Send the correct value for start_work
-                xhr.send("start_work=" + (startButton.value === "Start Work" ? "true" : "false"));
-            });
-        });
-    </script>
 </body>
+
+<script>
+    const requests = document.querySelectorAll(".request");
+    const popupOverlay = document.querySelector(".pop-up-overlay");
+    const popup = document.querySelector(".time-off-popup");
+    const btnClose = document.querySelector(".btn-close");
+    const btnDecline = document.querySelector(".btn-decline");
+    const btnApprove = document.querySelector(".btn-approve");
+    <?php
+        echo 'const timeOffRequests = ' . json_encode($timeOffRequests) . ';';
+    ?>
+
+    // Update the JavaScript code to fill the popup with the selected user's time-off request details
+    requests.forEach(request => {
+        request.addEventListener("click", function (e) {
+            const requestId = request.getAttribute("data-requestid");
+            const selectedRequest = timeOffRequests.find(request => request.id === parseInt(requestId));
+
+            if (selectedRequest) {
+                const popupContent = document.querySelector(".time-off-popup");
+                popupContent.querySelector(".request-creator").innerHTML = "<span class='request-label'>Employee:</span> " + selectedRequest.firstname + " " + selectedRequest.lastname;
+                popupContent.querySelector(".request-reason").innerHTML = "<span class='request-label'>Reason:</span> " + selectedRequest.reason;
+                popupContent.querySelector(".request-date-time").innerHTML = "<span class='request-label'>When:</span> " + selectedRequest.start_date + " - " + selectedRequest.end_date;
+                popupContent.querySelector(".request-description").innerHTML = "<span class='request-label'>Description:</span> " + selectedRequest.description;
+                popupContent.querySelector("input[name='requestId']").value = requestId;
+
+                // Display the popup
+                popupOverlay.style.display = "block";
+            }
+        });
+    });
+
+    btnClose.addEventListener("click", function (e) {
+        popupOverlay.style.display = "none";
+    });
+
+    btnDecline.addEventListener("click", function (e) {
+        popupOverlay.style.display = "none";
+    });
+
+    btnApprove.addEventListener("click", function (e) {
+        popupOverlay.style.display = "none";
+    });
+</script>
+
 </html>

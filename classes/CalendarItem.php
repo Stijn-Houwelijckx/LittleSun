@@ -149,11 +149,16 @@ class CalendarItem
         return $this;
     }    
 
-    public function addCalendarItem(PDO $pdo, $user_id): int|bool
+    public function addCalendarItem(PDO $pdo, $user_id, $task_id, $selectedTimeslots): int|bool
     {
         try {
-            $stmt = $pdo->prepare("INSERT INTO calendar (user_id, event_date, event_title, event_description, event_location, start_time, end_time) VALUES (:user_id, :event_date, :event_title, :event_description, :event_location, :start_time, :end_time)");
+            // Selecteer het eerste en laatste geselecteerde timeslot als start- en eindtijd
+            $this->start_time = reset($selectedTimeslots);
+            $this->end_time = explode(' - ', end($selectedTimeslots))[1]; // Het tweede deel is het eindtijdgedeelte
+
+            $stmt = $pdo->prepare("INSERT INTO calendar (user_id, task_id, event_date, event_title, event_description, event_location, start_time, end_time) VALUES (:user_id, :task_id, :event_date, :event_title, :event_description, :event_location, :start_time, :end_time)");
             $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':task_id', $task_id);
             $stmt->bindParam(':event_date', $this->event_date);
             $stmt->bindParam(':event_title', $this->event_title);
             $stmt->bindParam(':event_description', $this->event_description);
@@ -171,17 +176,20 @@ class CalendarItem
             error_log('Database error: ' . $e->getMessage());
             return false;
         }
-    }    
+    }
+     
 
-    public static function getAllEmployees(PDO $pdo, $location_id)
+    public static function getAllCalenderItems(PDO $pdo, $location_id)
     {
         try {
-            $stmt = $pdo->prepare("SELECT DISTINCT calendar.* 
-            FROM calendar, users, user_locations 
-            WHERE calendar.user_id = users.id
+            $stmt = $pdo->prepare("SELECT DISTINCT calendar.*, tasktypes.task
+            FROM calendar, users, user_locations, tasktypes
+            WHERE tasktypes.id = calendar.task_id
+            AND calendar.user_id = users.id
             AND users.id = user_locations.user_id
             AND users.typeOfUser = 'employee'
-            AND user_locations.location_id = :location_id;
+            AND user_locations.location_id = :location_id
+            ORDER BY calendar.start_time ASC
             ");
             $stmt->bindParam(':location_id', $location_id);
             $stmt->execute();
