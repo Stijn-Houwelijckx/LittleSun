@@ -1,34 +1,72 @@
-document.getElementById("taskSelector").addEventListener("change", function () {
-  var taskId = this.value;
-  var formData = new FormData();
-  formData.append("taskId", taskId);
+// dailyview
+document.addEventListener("DOMContentLoaded", function () {
+  const prevDayBtn = document.getElementById("prevDay");
+  const nextDayBtn = document.getElementById("nextDay");
+  const currentDateElement = document.getElementById("currentDate");
+  const currentDayElement = document.getElementById("currentDay");
+  const currentDateInput = document.getElementById("currentDateInput");
 
-  fetch("../ajax/store_selected_task_id.php", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      console.log("Task ID stored in session:", result);
-      // AJAX-verzoek om de lijst met gebruikers op te halen op basis van de geselecteerde taak-ID
-      // fetch("../ajax/get_users_by_task.php?taskId=" + taskId)
-      //   .then((response) => response.json())
-      //   .then((data) => {
-      //     // Bijwerken van de gebruikersdropdown met de ontvangen lijst met gebruikers
-      //     var userSelector = document.getElementById("userSelector");
-      //     userSelector.innerHTML = ""; // Leegmaken van de gebruikersdropdown
-      //     data.users.forEach(function (user) {
-      //       var option = document.createElement("option");
-      //       option.value = user.id;
-      //       option.textContent = user.name;
-      //       userSelector.appendChild(option);
-      //     });
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error fetching users:", error);
-      //   });
-    })
-    .catch((error) => {
-      console.error("Error storing task ID:", error);
+  let currentDate = new Date(currentDateInput.value);
+
+  prevDayBtn.addEventListener("click", function () {
+    currentDate.setDate(currentDate.getDate() - 1);
+    updateDay(currentDate);
+  });
+
+  nextDayBtn.addEventListener("click", function () {
+    currentDate.setDate(currentDate.getDate() + 1);
+    updateDay(currentDate);
+  });
+
+  function updateDay(date) {
+    const formattedDate = date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
     });
+    const formattedDay = date.toLocaleDateString("en-GB", { weekday: "long" });
+
+    currentDateElement.textContent = formattedDate;
+    currentDayElement.textContent = formattedDay;
+
+    // Bijwerken van de hele 'day' div
+    const dayNumber = date.getDate();
+    const newDayElement = document.querySelector(".day p");
+    newDayElement.textContent = dayNumber < 10 ? "0" + dayNumber : dayNumber;
+    const dayKey = date.toISOString().split("T")[0]; // Converteer naar 'YYYY-MM-DD' formaat
+    const dayContainer = document.getElementById("dayItems");
+
+    // Verwijder bestaande items
+    while (dayContainer.firstChild) {
+      dayContainer.removeChild(dayContainer.firstChild);
+    }
+
+    // Voeg nieuwe items toe voor de geselecteerde dag
+    if (
+      groupedCalendarItems[dayKey] &&
+      groupedCalendarItems[dayKey].length > 0
+    ) {
+      groupedCalendarItems[dayKey].forEach((item, index) => {
+        const red = (index * 70) % 256;
+        const green = (index * 120) % 256;
+        const blue = (index * 170) % 256;
+        const itemColor = `rgb(${red}, ${green}, ${blue})`;
+
+        const p = document.createElement("p");
+        p.className = "calendarItem";
+        p.style.backgroundColor = itemColor;
+        p.textContent = `${item.start_time} - ${item.event_description}`;
+
+        dayContainer.appendChild(p);
+      });
+    } else {
+      const p = document.createElement("p");
+      p.textContent = "No calendar items for this day.";
+      dayContainer.appendChild(p);
+    }
+  }
 });
+
+// weeklyview
+
+// monthlyview
