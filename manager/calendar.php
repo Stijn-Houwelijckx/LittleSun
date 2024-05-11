@@ -112,6 +112,7 @@ $taskTypes = Task::getAllTasks($pdo);
     <link rel="stylesheet" href="../css/style.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.png">
+    <script src="../javascript/calendar.js"></script>
 </head>
 
 <body>
@@ -155,11 +156,11 @@ $taskTypes = Task::getAllTasks($pdo);
                                     $itemColor = $userColors[$userId];
                                 ?>
                                 <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
-                                <?php $time = strtotime($item["start_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
-                                - 
-                                <?php $time = strtotime($item["end_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
-                                :
-                                <?php echo $item["task"] ?>
+                                    <?php $time = strtotime($item["start_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
+                                    - 
+                                    <?php $time = strtotime($item["end_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
+                                    :
+                                    <?php echo $item["task"] ?>
                                 </p>
                             <?php endforeach; ?>
                         <?php else: ?>
@@ -183,9 +184,9 @@ $taskTypes = Task::getAllTasks($pdo);
         </div>
         <div class="weeklyview">
             <div id="top">
-                <i class="fa fa-angle-left" id="prevWeek"></i>
+                <i class="fa fa-angle-left" id="prevWeekButton"></i>
                 <div>
-                    <h2>
+                    <h2 class="thisWeek">
                         <?php 
                             $today = new DateTime();
                             $startDate = clone $today;
@@ -195,6 +196,7 @@ $taskTypes = Task::getAllTasks($pdo);
                             echo $startDate->format('d F Y') . ' - ' . $endDate->format('d F Y');
                         ?>
                     </h2>
+                    <h2 id="currentWeek"></h2>
                 </div>
                 <i class="fa fa-angle-right" id="nextWeek"></i>
             </div>
@@ -226,8 +228,16 @@ $taskTypes = Task::getAllTasks($pdo);
                             <p><?php echo $startDate->format('d'); ?></p>
                             <?php if (isset($groupedCalendarItems[$dayKey])): ?>
                                 <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
+                                    <?php 
+                                        $userId = $item["user_id"];
+                                        $itemColor = $userColors[$userId]; // Kleur van de gebruiker
+                                    ?>
                                     <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
-                                        <?php echo $item["start_time"] ?> - <?php echo $item ?>
+                                        <?php $time = strtotime($item["start_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
+                                        - 
+                                        <?php $time = strtotime($item["end_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
+                                        :
+                                        <?php echo $item["task"] ?>
                                     </p>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -236,6 +246,18 @@ $taskTypes = Task::getAllTasks($pdo);
                         $startDate->modify('+1 day');
                     }
                 ?>
+            </div>
+            <div class="legenda">
+                <?php foreach ($allEmployeesByLocation as $employee): ?>
+                    <?php 
+                        $userId = $employee["id"];
+                        $userColor = $userColors[$userId];
+                    ?>
+                    <div class="employee">
+                        <p class="color" style="background-color: <?php echo $userColor; ?>"></p>
+                        <p><?php echo $employee["firstname"] . " " . $employee["lastname"]?></p>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
         <div class="monthlyview">   
@@ -269,16 +291,29 @@ $taskTypes = Task::getAllTasks($pdo);
                         <p><?php echo $date->format('d'); ?></p>
                         <?php if (isset($groupedCalendarItems[$dayKey])): ?>
                             <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
+                                <?php 
+                                    $userId = $item["user_id"];
+                                    $itemColor = $userColors[$userId]; // Kleur van de gebruiker
+                                ?>
                                 <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
-                                    <?php echo $item["start_time"] ?> - <?php echo $item ?>
+                                    <?php $time = strtotime($item["start_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
+                                    - 
+                                    <?php $time = strtotime($item["end_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
+                                    :
+                                    <?php echo $item["task"] ?>
                                 </p>
                             <?php endforeach; ?>
+
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>
             <div class="legenda">
-                <?php foreach ($allEmployeesByLocation as $index => $employee): ?>
+                <?php foreach ($allEmployeesByLocation as $index => $employee) : ?>
+                    <?php 
+                        $userId = $employee["id"];
+                        $userColor = $userColors[$userId];
+                    ?>
                     <div class="employee">
                         <p class="color" style="background-color: <?php echo $userColor; ?>"></p>
                         <p><?php echo $employee["firstname"] . " " . $employee["lastname"]?></p>
@@ -409,7 +444,6 @@ $taskTypes = Task::getAllTasks($pdo);
     </script>
     <script>const groupedCalendarItems = <?php echo json_encode($groupedCalendarItems); ?>;
     </script>
-    <script src="../javascript/calendar.js"></script>
     <script src="../javascript/addCalendarItem.js"></script>
 </body>
 </html>
