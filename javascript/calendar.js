@@ -79,14 +79,13 @@ document.addEventListener("DOMContentLoaded", function () {
   prevWeekBtn.addEventListener("click", function () {
     document.querySelector(".thisWeek").style.display = "none";
     currentWeekStartDate.setDate(currentWeekStartDate.getDate() - 7);
-    updateWeek(currentWeekStartDate, groupedCalendarItems);
+    updateWeek(currentWeekStartDate);
   });
 
   nextWeekBtn.addEventListener("click", function () {
     document.querySelector(".thisWeek").style.display = "none";
     currentWeekStartDate.setDate(currentWeekStartDate.getDate() + 7);
-    updateWeek(currentWeekStartDate, groupedCalendarItems);
-    console.log(groupedCalendarItems);
+    updateWeek(currentWeekStartDate);
   });
 
   function getCurrentWeekStartDate() {
@@ -96,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return new Date(currentDate.setDate(currentDate.getDate() + difference));
   }
 
-  function updateWeek(startDate, groupedCalendarItems) {
+  function updateWeek(startDate) {
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const dayElements = document.querySelectorAll("#week .day");
     let currentDate = new Date(startDate);
@@ -134,10 +133,10 @@ document.addEventListener("DOMContentLoaded", function () {
       dayParagraph.textContent = dayNumber;
       dayElement.appendChild(dayParagraph);
 
-      // Voeg kalenderitems toe aan het dagelement voor de huidige dag
+      console.log(groupedCalendarItems[currentDayKey]);
       if (groupedCalendarItems[currentDayKey]) {
         groupedCalendarItems[currentDayKey].forEach((item) => {
-          const userId = item.user_id; // Gebruik de gebruikers-ID om de kleur te bepalen
+          const userId = item.user_id;
           const red = (userId * 70) % 256;
           const green = (userId * 120) % 256;
           const blue = (userId * 170) % 256;
@@ -151,9 +150,8 @@ document.addEventListener("DOMContentLoaded", function () {
           dayElement.appendChild(calendarItemElement);
         });
       } else {
-        const p = document.createElement("p");
-        p.textContent = "No calendar items for this day.";
-        dayElement.appendChild(p);
+        const noItemElement = document.createElement("p");
+        dayElement.appendChild(noItemElement);
       }
 
       // Verplaats naar de volgende dag
@@ -212,6 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .toString()
         .padStart(2, "0")}-${i.toString().padStart(2, "0")}`;
 
+      console.log(groupedCalendarItems[currentDayKey]);
       if (groupedCalendarItems[currentDayKey]) {
         groupedCalendarItems[currentDayKey].forEach((item) => {
           const userId = item.user_id;

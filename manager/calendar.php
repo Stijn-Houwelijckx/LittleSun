@@ -91,7 +91,6 @@ foreach ($allDaysThisMonth as $day) {
     }
 }
 
-
 foreach ($allCalendarItems as $calendarItem) {
     $date = new DateTime($calendarItem["event_date"]);
     $day = $date->format('Y-m-d');
@@ -242,10 +241,9 @@ $taskTypes = Task::getAllTasks($pdo);
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
-                <?php 
+                    <?php 
                         $startDate->modify('+1 day');
-                    }
-                ?>
+                    } ?>
             </div>
             <div class="legenda">
                 <?php foreach ($allEmployeesByLocation as $employee): ?>
