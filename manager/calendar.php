@@ -146,7 +146,7 @@ $taskTypes = Task::getAllTasks($pdo);
                     $dayKey = $startDate->format('Y-m-d');
                     $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
                 ?>
-                <div class="day" style="min-height: <?php echo $totalItems * 30 + 250 ?>px;">
+                <div class="p" style="min-height: <?php echo $totalItems * 30 + 250 ?>px;">
                     <p><?php echo $startDate->format('d'); ?></p>
                     <div id="dayItems">
                         <?php if (isset($groupedCalendarItems[$dayKey]) && !empty($groupedCalendarItems[$dayKey])): ?>
@@ -264,22 +264,12 @@ $taskTypes = Task::getAllTasks($pdo);
             <div id="top">
                 <i class="fa fa-angle-left" id="prevMonth"></i>
                 <div>
-                    <h2><?php echo date('F', strtotime('2000-' . $currentMonth . '-01')); ?></h2>
-                    <h2>-</h2>
-                    <h2><?php echo $currentYear; ?></h2>
+                    <h2 class="thisMonth"><?php echo date('F', strtotime('2000-' . $currentMonth . '-01')); ?> <?php echo $currentYear; ?></h2>
+                    <h2 id="currentMonth"></h2>
                 </div>
                 <i class="fa fa-angle-right" id="nextMonth"></i>
             </div>
-            <div id="days">
-                <h3>Mon</h3>
-                <h3>Tue</h3>
-                <h3>Wed</h3>
-                <h3>Thu</h3>
-                <h3>Fri</h3>
-                <h3>Sat</h3>
-                <h3>Sun</h3>
-            </div>
-            <div id="month">
+            <div id="monthItems"> <!-- Voeg deze container toe -->
                 <?php foreach ($allDaysThisMonth as $day): ?>
                     <?php 
                         $date = new DateTime($day); 
@@ -287,7 +277,7 @@ $taskTypes = Task::getAllTasks($pdo);
                         $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
                     ?>
                     <div class="day" style="min-height: <?php echo $totalItems * 30 + 100 ?>px;">
-                        <input type="hidden" id="currentDateInput" value="<?php echo $today->format('Y-m-d'); ?>">
+                        <input type="hidden" class="currentDateInput" value="<?php echo $dayKey; ?>"> <!-- Gebruik een klasse in plaats van een id -->
                         <p><?php echo $date->format('d'); ?></p>
                         <?php if (isset($groupedCalendarItems[$dayKey])): ?>
                             <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
@@ -303,7 +293,6 @@ $taskTypes = Task::getAllTasks($pdo);
                                     <?php echo $item["task"] ?>
                                 </p>
                             <?php endforeach; ?>
-
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>

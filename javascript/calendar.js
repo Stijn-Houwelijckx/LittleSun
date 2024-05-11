@@ -79,13 +79,14 @@ document.addEventListener("DOMContentLoaded", function () {
   prevWeekBtn.addEventListener("click", function () {
     document.querySelector(".thisWeek").style.display = "none";
     currentWeekStartDate.setDate(currentWeekStartDate.getDate() - 7);
-    updateWeek(currentWeekStartDate);
+    updateWeek(currentWeekStartDate, groupedCalendarItems);
   });
 
   nextWeekBtn.addEventListener("click", function () {
     document.querySelector(".thisWeek").style.display = "none";
     currentWeekStartDate.setDate(currentWeekStartDate.getDate() + 7);
-    updateWeek(currentWeekStartDate);
+    updateWeek(currentWeekStartDate, groupedCalendarItems);
+    console.log(groupedCalendarItems);
   });
 
   function getCurrentWeekStartDate() {
@@ -95,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return new Date(currentDate.setDate(currentDate.getDate() + difference));
   }
 
-  function updateWeek(startDate) {
+  function updateWeek(startDate, groupedCalendarItems) {
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const dayElements = document.querySelectorAll("#week .day");
     let currentDate = new Date(startDate);
@@ -119,29 +120,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
     dayElements.forEach((dayElement, index) => {
       const dayNumber = currentDate.getDate();
-      const dayOfWeek = daysOfWeek[currentDate.getDay()]; // Bepaal de naam van de dag van de week (bijv. "Mon", "Tue", enz.)
       const currentDayKey = currentDate.toLocaleDateString("en-GB", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
       });
 
-      // Update de tekstinhoud van het dagelement met de dag van de maand
-      const dayParagraph = dayElement.querySelector("p");
-      dayParagraph.textContent = dayNumber;
-
       // Wis de inhoud van het dagelement voordat nieuwe kalenderitems worden toegevoegd
-      dayElement.innerHTML = `<p>${dayNumber}</p>`;
+      dayElement.innerHTML = "";
+
+      // Update de tekstinhoud van het dagelement met de dag van de maand
+      const dayParagraph = document.createElement("p");
+      dayParagraph.textContent = dayNumber;
+      dayElement.appendChild(dayParagraph);
 
       // Voeg kalenderitems toe aan het dagelement voor de huidige dag
       if (groupedCalendarItems[currentDayKey]) {
         groupedCalendarItems[currentDayKey].forEach((item) => {
+          const userId = item.user_id; // Gebruik de gebruikers-ID om de kleur te bepalen
+          const red = (userId * 70) % 256;
+          const green = (userId * 120) % 256;
+          const blue = (userId * 170) % 256;
+          const itemColor = `rgb(${red}, ${green}, ${blue})`;
+
           const calendarItemElement = document.createElement("p");
           calendarItemElement.className = "calendarItem";
-          calendarItemElement.style.backgroundColor = item.color; // Stel de achtergrondkleur van het kalenderitem in op basis van de gebruiker
+          calendarItemElement.style.backgroundColor = itemColor;
           calendarItemElement.textContent = `${item.startTime} - ${item.endTime}: ${item.task}`;
+
           dayElement.appendChild(calendarItemElement);
         });
+      } else {
+        const p = document.createElement("p");
+        p.textContent = "No calendar items for this day.";
+        dayElement.appendChild(p);
       }
 
       // Verplaats naar de volgende dag
@@ -159,11 +171,13 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentMonth = new Date();
 
   prevMonthBtn.addEventListener("click", function () {
+    document.querySelector(".thisMonth").style.display = "none";
     currentMonth.setMonth(currentMonth.getMonth() - 1);
     updateMonth(currentMonth);
   });
 
   nextMonthBtn.addEventListener("click", function () {
+    document.querySelector(".thisMonth").style.display = "none";
     currentMonth.setMonth(currentMonth.getMonth() + 1);
     updateMonth(currentMonth);
   });
@@ -176,7 +190,54 @@ document.addEventListener("DOMContentLoaded", function () {
 
     currentMonthElement.textContent = formattedMonth;
 
+    const daysInMonth = getDaysInMonth(
+      month.getFullYear(),
+      month.getMonth() + 1
+    );
+
     // Voeg hier de logica toe om de weergave van de maand te updaten
-    // Dit omvat het bijwerken van de kalenderitems voor elke dag van de maand
+    const dayContainer = document.getElementById("monthItems");
+    dayContainer.innerHTML = ""; // Wis de inhoud van de container voordat nieuwe items worden toegevoegd
+
+    for (let i = 1; i <= daysInMonth; i++) {
+      const dayElement = document.createElement("div");
+      dayElement.className = "day";
+
+      const dayNumber = document.createElement("p");
+      dayNumber.textContent = i < 10 ? "0" + i : i;
+      dayElement.appendChild(dayNumber);
+
+      // Voeg kalenderitems toe aan het dagelement voor de huidige dag
+      const currentDayKey = `${month.getFullYear()}-${(month.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}-${i.toString().padStart(2, "0")}`;
+
+      if (groupedCalendarItems[currentDayKey]) {
+        groupedCalendarItems[currentDayKey].forEach((item) => {
+          const userId = item.user_id;
+          const red = (userId * 70) % 256;
+          const green = (userId * 120) % 256;
+          const blue = (userId * 170) % 256;
+          const itemColor = `rgb(${red}, ${green}, ${blue})`;
+
+          const calendarItemElement = document.createElement("p");
+          calendarItemElement.className = "calendarItem";
+          calendarItemElement.style.backgroundColor = itemColor;
+          calendarItemElement.textContent = `${item.startTime} - ${item.endTime}: ${item.task}`;
+
+          dayElement.appendChild(calendarItemElement);
+        });
+      } else {
+        const noItemElement = document.createElement("p");
+        dayElement.appendChild(noItemElement);
+      }
+
+      dayContainer.appendChild(dayElement);
+    }
+  }
+
+  // Functie om het aantal dagen in een maand te krijgen
+  function getDaysInMonth(year, month) {
+    return new Date(year, month, 0).getDate();
   }
 });
