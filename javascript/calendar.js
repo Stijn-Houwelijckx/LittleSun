@@ -160,7 +160,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// monthlyview
 document.addEventListener("DOMContentLoaded", function () {
   const prevMonthBtn = document.getElementById("prevMonth");
   const nextMonthBtn = document.getElementById("nextMonth");
@@ -194,8 +193,8 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     // Voeg hier de logica toe om de weergave van de maand te updaten
-    const dayContainer = document.getElementById("monthItems");
-    dayContainer.innerHTML = ""; // Wis de inhoud van de container voordat nieuwe items worden toegevoegd
+    const monthContainer = document.getElementById("monthItems");
+    monthContainer.innerHTML = ""; // Wis de inhoud van de container voordat nieuwe items worden toegevoegd
 
     for (let i = 1; i <= daysInMonth; i++) {
       const dayElement = document.createElement("div");
@@ -205,33 +204,32 @@ document.addEventListener("DOMContentLoaded", function () {
       dayNumber.textContent = i < 10 ? "0" + i : i;
       dayElement.appendChild(dayNumber);
 
-      // Voeg kalenderitems toe aan het dagelement voor de huidige dag
       const currentDayKey = `${month.getFullYear()}-${(month.getMonth() + 1)
         .toString()
         .padStart(2, "0")}-${i.toString().padStart(2, "0")}`;
 
-      console.log(groupedCalendarItems[currentDayKey]);
-      if (groupedCalendarItems[currentDayKey]) {
+      // Voeg kalenderitems toe aan het dagelement voor de huidige dag
+      if (
+        groupedCalendarItems[currentDayKey] &&
+        groupedCalendarItems[currentDayKey].length > 0
+      ) {
         groupedCalendarItems[currentDayKey].forEach((item) => {
-          const userId = item.user_id;
+          const userId = item.user_id; // Gebruik de gebruikers-ID om de kleur te bepalen
           const red = (userId * 70) % 256;
           const green = (userId * 120) % 256;
           const blue = (userId * 170) % 256;
           const itemColor = `rgb(${red}, ${green}, ${blue})`;
 
-          const calendarItemElement = document.createElement("p");
-          calendarItemElement.className = "calendarItem";
-          calendarItemElement.style.backgroundColor = itemColor;
-          calendarItemElement.textContent = `${item.startTime} - ${item.endTime}: ${item.task}`;
+          const p = document.createElement("p");
+          p.className = "calendarItem";
+          p.style.backgroundColor = itemColor;
+          p.textContent = `${item.start_time} - ${item.end_time} : ${item.task}`;
 
-          dayElement.appendChild(calendarItemElement);
+          dayElement.appendChild(p);
         });
-      } else {
-        const noItemElement = document.createElement("p");
-        dayElement.appendChild(noItemElement);
       }
 
-      dayContainer.appendChild(dayElement);
+      monthContainer.appendChild(dayElement);
     }
   }
 
