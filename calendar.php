@@ -85,7 +85,6 @@ $taskTypes = Task::getAllTasks($pdo);
             <a href="calendar.php?view=daily" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "daily" ? "active" : ""; } ?> daily">Daily</a>
             <a href="calendar.php?view=weekly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "weekly" ? "active" : ""; } ?> weekly">Weekly</a>
             <a href="calendar.php?view=monthly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "monthly" ? "active" : ""; } ?> monthly">Monthly</a>
-            <a href="" class="btn big">+ Add agendaItem</a>  
         </div>  
         <div class="dailyview">
             <div id="top">
@@ -114,11 +113,7 @@ $taskTypes = Task::getAllTasks($pdo);
                     <div id="dayItems">
                         <?php if (isset($groupedCalendarItems[$dayKey]) && !empty($groupedCalendarItems[$dayKey])): ?>
                             <?php foreach ($groupedCalendarItems[$dayKey] as $item): ?>
-                                <?php 
-                                    $userId = $item["user_id"];
-                                    $itemColor = $userColors[$userId];
-                                ?>
-                                <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
+                                <p class="calendarItem">
                                     <?php $time = strtotime($item["start_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
                                     - 
                                     <?php $time = strtotime($item["end_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>

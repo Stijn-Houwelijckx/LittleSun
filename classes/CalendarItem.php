@@ -204,9 +204,10 @@ class CalendarItem
 
     public static function getMyCalendarAsEmployee(PDO $pdo, $user_id){
         try {
-            $stmt = $pdo->prepare("SELECT DISTINCT calendar.* 
-            FROM calendar, users 
-            WHERE calendar.user_id = :user_id
+            $stmt = $pdo->prepare("SELECT DISTINCT calendar.*, tasktypes.task
+            FROM calendar, users, tasktypes
+            WHERE tasktypes.id = calendar.task_id
+            AND calendar.user_id = :user_id
             ");
             $stmt->bindParam(':user_id', $user_id);
             $stmt->execute();
