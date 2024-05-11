@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const nextDayBtn = document.getElementById("nextDay");
   const currentDateElement = document.getElementById("currentDate");
   const currentDayElement = document.getElementById("currentDay");
-  const currentDateInput = document.getElementById("currentDateInput");
+  const currentDateInput = document.querySelector(".currentDateInput");
 
   let currentDate = new Date(currentDateInput.value);
 
@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
     newDayElement.textContent = dayNumber < 10 ? "0" + dayNumber : dayNumber;
     const dayKey = date.toISOString().split("T")[0]; // Converteer naar 'YYYY-MM-DD' formaat
     const dayContainer = document.getElementById("dayItems");
-
     // Verwijder bestaande items
     while (dayContainer.firstChild) {
       dayContainer.removeChild(dayContainer.firstChild);
@@ -56,7 +55,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const p = document.createElement("p");
         p.className = "calendarItem";
         p.style.backgroundColor = itemColor;
-        p.textContent = `${item.start_time} - ${item.end_time} : ${item.task}`;
+        p.textContent = `${item.start_time.slice(
+          0,
+          -3
+        )} - ${item.end_time.slice(0, -3)} : ${item.task}`;
 
         dayContainer.appendChild(p);
       });
@@ -75,6 +77,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const currentWeekElement = document.getElementById("currentWeek");
 
   let currentWeekStartDate = getCurrentWeekStartDate();
+
+  // Vullen van de groupedCalendarItems voor de huidige week
+  updateGroupedCalendarItems(currentWeekStartDate);
 
   prevWeekBtn.addEventListener("click", function () {
     document.querySelector(".thisWeek").style.display = "none";
@@ -95,14 +100,30 @@ document.addEventListener("DOMContentLoaded", function () {
     return new Date(currentDate.setDate(currentDate.getDate() + difference));
   }
 
+  function updateGroupedCalendarItems(startDate) {
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    let currentDate = new Date(startDate);
+
+    // Vullen van groupedCalendarItems voor elke dag van de week
+    for (let i = 0; i < 7; i++) {
+      const currentDayKey = currentDate.toLocaleDateString("en-GB", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+
+      currentDate.setDate(currentDate.getDate() + 1); // Naar de volgende dag gaan
+    }
+  }
+
   function updateWeek(startDate) {
     const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const dayElements = document.querySelectorAll("#week .day");
     let currentDate = new Date(startDate);
     let endDate = new Date(currentDate);
-    endDate.setDate(endDate.getDate() + 6); // Bereken de einddatum van de week
+    endDate.setDate(endDate.getDate() + 6); // Calculate the end date of the week
 
-    // Update de h2 met de start- en einddatums van de week
+    // Update the h2 with the start and end dates of the week
     const formattedStartDate = currentDate.toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "long",
@@ -118,22 +139,24 @@ document.addEventListener("DOMContentLoaded", function () {
     currentWeekElement.textContent = `${formattedStartDate} - ${formattedEndDate}`;
 
     dayElements.forEach((dayElement, index) => {
-      const dayNumber = currentDate.getDate();
-      const currentDayKey = currentDate.toLocaleDateString("en-GB", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const day = currentDate.getDate();
 
-      // Wis de inhoud van het dagelement voordat nieuwe kalenderitems worden toegevoegd
+      const currentDayKey = `${year}-${String(month).padStart(2, "0")}-${String(
+        day
+      ).padStart(2, "0")}`;
+
+      console.log(currentDayKey); // Output: "2024-05-11" (if currentDate is May 11, 2024)
+
+      // Clear the content of the day element before adding new calendar items
       dayElement.innerHTML = "";
 
-      // Update de tekstinhoud van het dagelement met de dag van de maand
+      // Update the text content of the day element with the day of the month
       const dayParagraph = document.createElement("p");
-      dayParagraph.textContent = dayNumber;
+      dayParagraph.textContent = day;
       dayElement.appendChild(dayParagraph);
 
-      console.log(groupedCalendarItems[currentDayKey]);
       if (groupedCalendarItems[currentDayKey]) {
         groupedCalendarItems[currentDayKey].forEach((item) => {
           const userId = item.user_id;
@@ -145,16 +168,16 @@ document.addEventListener("DOMContentLoaded", function () {
           const calendarItemElement = document.createElement("p");
           calendarItemElement.className = "calendarItem";
           calendarItemElement.style.backgroundColor = itemColor;
-          calendarItemElement.textContent = `${item.startTime} - ${item.endTime}: ${item.task}`;
+          calendarItemElement.textContent = `${item.start_time.slice(
+            0,
+            -3
+          )} - ${item.end_time.slice(0, -3)} : ${item.task}`;
 
           dayElement.appendChild(calendarItemElement);
         });
-      } else {
-        const noItemElement = document.createElement("p");
-        dayElement.appendChild(noItemElement);
       }
 
-      // Verplaats naar de volgende dag
+      // Move to the next day
       currentDate.setDate(currentDate.getDate() + 1);
     });
   }
@@ -223,7 +246,10 @@ document.addEventListener("DOMContentLoaded", function () {
           const p = document.createElement("p");
           p.className = "calendarItem";
           p.style.backgroundColor = itemColor;
-          p.textContent = `${item.start_time} - ${item.end_time} : ${item.task}`;
+          p.textContent = `${item.start_time.slice(
+            0,
+            -3
+          )} - ${item.end_time.slice(0, -3)} : ${item.task}`;
 
           dayElement.appendChild(p);
         });

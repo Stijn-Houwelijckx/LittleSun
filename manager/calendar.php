@@ -429,8 +429,10 @@ $taskTypes = Task::getAllTasks($pdo);
             });
         });
     </script>
-    <script>const groupedCalendarItems = <?php echo json_encode($groupedCalendarItems); ?>;
-    </script>
+<script>
+  const groupedCalendarItems = <?php echo json_encode($groupedCalendarItems); ?>;
+</script>
+
     <script src="../javascript/addCalendarItem.js"></script>
 </body>
 </html>

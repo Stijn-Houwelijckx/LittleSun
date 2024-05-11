@@ -108,7 +108,7 @@ $taskTypes = Task::getAllTasks($pdo);
                     $dayKey = $startDate->format('Y-m-d');
                     $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
                 ?>
-                <div class="day" style="min-height: <?php echo $totalItems * 30 + 250 ?>px;">
+                <div class="day" style="min-height: <?php echo $totfalItems * 30 + 250 ?>px;">
                     <p><?php echo $startDate->format('d'); ?></p>
                     <div id="dayItems">
                         <?php if (isset($groupedCalendarItems[$dayKey]) && !empty($groupedCalendarItems[$dayKey])): ?>
