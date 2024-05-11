@@ -152,9 +152,10 @@ class CalendarItem
     public function addCalendarItem(PDO $pdo, $user_id, $task_id, $selectedTimeslots): int|bool
     {
         try {
+            
             // Selecteer het eerste en laatste geselecteerde timeslot als start- en eindtijd
-            $this->start_time = reset($selectedTimeslots);
-            $this->end_time = explode(' - ', end($selectedTimeslots))[1]; // Het tweede deel is het eindtijdgedeelte
+            $this->start_time = explode(' - ', reset($selectedTimeslots))[0];
+            $this->end_time = explode(' - ', end($selectedTimeslots))[1];
 
             $stmt = $pdo->prepare("INSERT INTO calendar (user_id, task_id, event_date, event_title, event_description, event_location, start_time, end_time) VALUES (:user_id, :task_id, :event_date, :event_title, :event_description, :event_location, :start_time, :end_time)");
             $stmt->bindParam(':user_id', $user_id);
