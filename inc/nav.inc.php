@@ -1,6 +1,7 @@
 <?php 
-    include_once (__DIR__ . "../../classes/User.php");
     include_once (__DIR__ . "../../classes/Db.php");
+    include_once (__DIR__ . "../../classes/User.php");
+    include_once (__DIR__ . "../../classes/TimeOffRequest.php");
 
 
     $pdo = Db::getInstance();
@@ -14,6 +15,8 @@
     } else {
         $pathExtention = "";
     }
+
+    $numberOfRequests = TimeOffRequest::numberOfRequests($pdo);
 ?>  
 
 <nav class="desktopNav">
@@ -61,7 +64,8 @@
 
             <?php if ($role == "manager") : ?>
                 <a href="dashboard.php">
-                    <div>
+                    <div class="container">
+                        <p class="numberOfRequests"><?php echo $numberOfRequests["row_count"] ?></p>
                         <img class="<?php echo ($current_page == 'home') ? 'homeItem active' : 'homeItem'; ?>"
                             src="../assets/icons/Home.svg" alt="home">
                         <p>Home</p>
@@ -177,6 +181,7 @@
                 pTags.forEach(pTag => {
                     pTag.style.display = "flex";
                 });
+                document.querySelector(".numberOfRequests").style.left = "88px";
             } else {
                 desktopNav.style.width = "180px";
                 desktopNavLogo.style.backgroundImage = "url('assets/images/favicon.png')"; // return to the original logo
@@ -184,6 +189,8 @@
                 pTags.forEach(pTag => {
                     pTag.style.display = "none";
                 });
+                document.querySelector(".numberOfRequests").style.left = "20px";
+                document.querySelector(".numberOfRequests").style.display = "flex";
             }
             isOpen = !isOpen;
         });

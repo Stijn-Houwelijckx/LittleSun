@@ -112,6 +112,25 @@ button {
   z-index: 999;
 }
 
+.container {
+  position: relative;
+}
+
+.numberOfRequests {
+  position: absolute;
+  top: -20px;
+  left: 20px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff; /* Pas dit naar wens aan */
+  color: white; /* Pas dit naar wens aan */
+  padding: 8px; /* Pas dit naar wens aan */
+  border-radius: 50%; /* Als je een cirkel wilt, anders verwijder deze regel */
+}
+
 .open-desktopNav {
   animation: slideInDesktopNav 0.5s forwards; /* Start de keyframe-animatie om het menu in te schuiven */
 }
@@ -201,6 +220,10 @@ button {
 .desktopNav .column .settings div p {
   display: none;
   color: var(--black);
+}
+
+.desktopNav .column .menu div .numberOfRequests {
+  display: flex;
 }
 
 .desktopNav .column .menu img,
@@ -546,6 +569,7 @@ button {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   background-color: rgba(255, 255, 255, 0.6);
+  align-items: center;
   padding: 8px;
   gap: 24px;
 }
@@ -553,6 +577,9 @@ button {
 .employees,
 .users {
   width: 100%;
+  display: flex; /* Flex container maken */
+  flex-direction: column;
+  justify-content: center; /* Horizontaal centreren */
 }
 
 .employees .employee {
@@ -561,6 +588,7 @@ button {
   background-color: rgba(255, 255, 255, 0.6);
   padding: 8px;
   align-items: center;
+  justify-content: center; /* Horizontale uitlijning binnen de grid */
 }
 
 .users .user {
