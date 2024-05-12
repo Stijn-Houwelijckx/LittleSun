@@ -165,7 +165,7 @@
     executeOnMinWidth1200(function () {
         let navIcon = document.querySelector(".desktopNav .center i");
         let desktopNav = document.querySelector(".desktopNav");
-        let pTags = document.querySelectorAll(".desktopNav .column div div p");
+        let pTags = document.querySelectorAll(".desktopNav .column .menu div p");
         let desktopNavLogo = document.querySelector(".desktopNav .column .top .logo");
         let isOpen = false;
 
@@ -178,7 +178,7 @@
                     pTag.style.display = "flex";
                 });
             } else {
-                desktopNav.style.width = "120px";
+                desktopNav.style.width = "180px";
                 desktopNavLogo.style.backgroundImage = "url('assets/images/favicon.png')"; // return to the original logo
                 desktopNavLogo.style.width = "48px";
                 pTags.forEach(pTag => {
