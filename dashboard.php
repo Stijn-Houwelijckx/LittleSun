@@ -3,6 +3,7 @@ include_once (__DIR__ . "/classes/Db.php");
 include_once (__DIR__ . "/classes/User.php");
 include_once (__DIR__ . "/classes/TimeOffRequest.php");
 include_once (__DIR__ . "/classes/Task.php");
+include_once (__DIR__ . "/classes/TimeTracker.php");
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -42,6 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
+
+$timeTracker = TimeTracker::getActiveTimeTracker($pdo, $_SESSION["user_id"]);
 ?>
 
 <!DOCTYPE html>
@@ -80,12 +83,25 @@ $myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
                 <button class="btn bento-item-button">Request time off</button>
             </div>
         </div>
-        <div class="bento-item">
+        <!-- <div class="bento-item">
             <h2 class="bento-item-title">Clock In /Clock Out</h2>
                 <div id="clockInForm">
                     <input class="btn bento-item-button" type="button" id="startButton" value="Start Work">
                 </div>
-            <div id="clockInInfo"></div>
+        </div> -->
+        <div class="bento-item">
+            <h2 class="bento-item-title" id="time-tracker-title"><?php echo $timeTracker? "Clock Out" : "Clock In"; ?></h2>
+
+            <button class="btn bento-item-button" id="clockInButton" style="display: <?php echo $timeTracker? "none" : "block";  ?>">Start Work</button>
+            <button class="btn bento-item-button" id="clockOutButton" style="display: <?php echo $timeTracker && $timeTracker["end_time"] == null? "block" : "none";  ?>;">End Work</button>
+            
+            <div id="time-tracker-info">
+                <?php if ($timeTracker) : ?>
+                    <?php if ($timeTracker["end_time"] == null) : ?>
+                        <p id="clockInInfo">You clocked in at: <?php echo $timeTracker["start_time"] ?></p>
+                    <?php endif ?>
+                <?php endif ?>
+            </div>
         </div>
         <div class="myTasks">
             <h2>My tasks</h2>
@@ -146,28 +162,30 @@ $myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
         });
 
         // Clock In / Clock Out functionality
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("startButton").addEventListener("click", function() {
-                var startButton = document.getElementById("startButton"); // Reference to the button
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     document.getElementById("startButton").addEventListener("click", function() {
+        //         var startButton = document.getElementById("startButton"); // Reference to the button
 
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", "clockin.php", true); // Make sure the URL matches the location of the PHP file
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        // Update the innerHTML of the button to "End Work" or "Start Work" depending on the current text
-                        startButton.value = startButton.value === "Start Work" ? "End Work" : "Start Work";
+        //         var xhr = new XMLHttpRequest();
+        //         xhr.open("POST", "clockin.php", true); // Make sure the URL matches the location of the PHP file
+        //         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        //         xhr.onreadystatechange = function() {
+        //             if (xhr.readyState == 4 && xhr.status == 200) {
+        //                 // Update the innerHTML of the button to "End Work" or "Start Work" depending on the current text
+        //                 startButton.value = startButton.value === "Start Work" ? "End Work" : "Start Work";
 
-                        // Toggle the 'clock-out' class of the button
-                        startButton.classList.toggle("clock-out");
+        //                 // Toggle the 'clock-out' class of the button
+        //                 startButton.classList.toggle("clock-out");
 
-                        // Update the information next to the button
-                        document.getElementById("clockInInfo").innerHTML = xhr.responseText;
-                    }
-                };
-                xhr.send("start_work=" + (startButton.value === "Start Work" ? "true" : "false")); // Send the correct value for start_work
-            });
-        });
+        //                 // Update the information next to the button
+        //                 document.getElementById("clockInInfo").innerHTML = xhr.responseText;
+        //             }
+        //         };
+        //         xhr.send("start_work=" + (startButton.value === "Start Work" ? "true" : "false")); // Send the correct value for start_work
+        //     });
+        // });
     </script>
+    
+    <script src="javascript/timeTracker.js"></script>
 </body>
 </html>
