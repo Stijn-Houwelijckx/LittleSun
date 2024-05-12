@@ -195,7 +195,4 @@
             isOpen = !isOpen;
         });
     });
-
-
-
 </script>
