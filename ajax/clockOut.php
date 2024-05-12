@@ -41,7 +41,7 @@ if (isset($_POST)) {
         $minutes = floor(($worked_time % 3600) / 60);
         $secondes = $worked_time % 60;
 
-        $worked_time = $hours . " hours and " . $minutes . " minutes and " . $secondes . " seconds.";
+        $worked_time = $hours . " hours and " . $minutes . " minutes and " . $secondes . ($secondes == 1 ? " second" : " seconds");
                 
         $response = [
             "status" => "success",
