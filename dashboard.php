@@ -66,7 +66,13 @@ $myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
                     <?php foreach ($userRequests as $request) : ?>
                         <div class="request">
                             <p class="request-reason"><span class="request-label">Reason:</span> <?php echo $request["reason"] ?></p>
-                            <p class="request-date-time"><span class="request-label">When:</span> <?php echo $request["start_date"] . " - " . $request["end_date"] ?></p>
+                            <p class="request-date-time"><span class="request-label">When:</span> 
+                                <?php
+                                    $start_date = date("F jS Y H:i", strtotime($request["start_date"]));
+                                    $end_date = date("F jS Y H:i", strtotime($request["end_date"]));
+                                    echo $start_date . " - " . $end_date;
+                                ?>
+                            </p>
                             <p class="request-status"><span class="request-label">Status:</span> <span class="request-status-text request-status-<?php echo strtolower($request["status"]) ?>"><?php echo $request["status"] ?></span></p>
                             <?php if($request["status"] != "Pending"): ?>
                                 <p class="request-comment"><span class="request-label">Manager comment:</span> <?php echo $request["managerComment"] ?></p>
