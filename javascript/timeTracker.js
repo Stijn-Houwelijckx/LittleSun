@@ -72,7 +72,8 @@ clockOutButton.addEventListener("click", function () {
 
         // Show the total hours worked
         const totalTime = document.createElement("p");
-        totalTime.innerHTML = "Total worked: " + result.fullworktime + " today";
+        totalTime.innerHTML =
+          "Total worked time: " + result.fullworktime + " today";
         timeTrackerInfo.appendChild(totalTime);
 
         // Show overtime

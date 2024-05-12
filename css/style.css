@@ -809,6 +809,11 @@ button {
   width: 100%;
 }
 
+#calendar .fa-angle-left,
+#calendar .fa-angle-right {
+  cursor: pointer;
+}
+
 .weeklyview #week {
   display: grid;
   grid-template-columns: repeat(7, 1fr);

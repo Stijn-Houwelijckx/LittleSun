@@ -73,14 +73,14 @@ if (isset($_POST)) {
         $response = [
             "status" => "success",
             "clockOutTime" => $clockOutTime,
-            "plannedWorkTime" => $plannedWorkTime['total_time'], // Assuming this is in the format HH:MM:SS
             "workedTime" => $worked_time_string,
-            "workedTimeHours" => $workedTime,
-            "plannedWorkHours" => $plannedWorkTime['total_time'],
             "overtime" => $overtime,
-            "plannedWorkSeconds" => $plannedWorkSeconds,
-            "totalWorkSeconds" => $totalWorkSeconds,
             "fullworktime" => $fullWorkedTime["worked_time"],
+            "plannedWorkTime" => $plannedWorkTime['total_time'], // For debugging purposes
+            "workedTimeHours" => $workedTime, // For debugging purposes
+            "plannedWorkHours" => $plannedWorkTime['total_time'], // For debugging purposes
+            "plannedWorkSeconds" => $plannedWorkSeconds, // For debugging purposes
+            "totalWorkSeconds" => $totalWorkSeconds, // For debugging purposes
         ];
     } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
