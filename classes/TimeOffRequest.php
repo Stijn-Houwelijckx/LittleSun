@@ -190,17 +190,4 @@ class TimeOffRequest {
             return false;
         }
     }
-
-    public static function numberOfRequests(PDO $pdo){
-        try {
-            $stmt = $pdo->prepare("SELECT COUNT(*) AS row_count FROM time_off_requests WHERE status = 'Pending'");
-            $stmt->execute();
-            
-            // Return all pending requests or false if there are no pending requests
-            return $stmt->fetch(PDO::FETCH_ASSOC) ?: false;
-        } catch (PDOException $e) {
-            error_log('Database error: ' . $e->getMessage());
-            return false;
-        }
-    }
 }

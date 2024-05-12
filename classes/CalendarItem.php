@@ -239,4 +239,22 @@ class CalendarItem
         }
     }
     
+    public static function getPlannedWorkTimeByUserIdAndDate(PDO $pdo, $user_id, $date){
+        try {
+            $stmt = $pdo->prepare("
+                SELECT SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND, start_time, end_time))) as total_time
+                FROM calendar
+                WHERE user_id = :user_id
+                AND event_date = :date
+            ");
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':date', $date);
+            $stmt->execute();
+            $hours = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $hours ?: [];
+        } catch (PDOException $e) {
+            error_log('Database error in getPlannedWorkHoursByUserIdAndDate(): ' . $e->getMessage());
+            throw new Exception('Database error: Unable to retrieve hours');
+        }
+    }
 }

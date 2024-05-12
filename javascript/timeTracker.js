@@ -70,6 +70,16 @@ clockOutButton.addEventListener("click", function () {
         workedTime.innerHTML = "You worked for: " + result.workedTime;
         timeTrackerInfo.appendChild(workedTime);
 
+        // Show the total hours worked
+        const totalTime = document.createElement("p");
+        totalTime.innerHTML = "Total worked: " + result.fullworktime + " today";
+        timeTrackerInfo.appendChild(totalTime);
+
+        // Show overtime
+        const overtime = document.createElement("p");
+        overtime.innerHTML = "Overtime: " + result.overtime + " hours";
+        timeTrackerInfo.appendChild(overtime);
+
         // Hide the clock out button
         clockOutButton.style.display = "none";
 

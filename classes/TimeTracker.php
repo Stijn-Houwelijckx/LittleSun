@@ -107,6 +107,17 @@ class TimeTracker {
         }
     }
 
+    public static function getWorkedTimeByUserIdAndDate($pdo, $user_id, $date) {
+        try {
+            $stmt = $pdo->prepare("SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time)))) AS worked_time FROM time_tracker WHERE user_id = :user_id AND DATE(start_time) = :date");
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':date', $date);
+            $stmt->execute();
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            return "Error: " . $e->getMessage();
+        }
+    }
 
     public static function clockIn($pdo, $user_id) {
         try {
@@ -132,6 +143,21 @@ class TimeTracker {
             $stmt->execute();
 
             return date('Y-m-d H:i:s');
+        } catch (PDOException $e) {
+            return "Error: " . $e->getMessage();
+        }
+    }
+
+    public static function saveOvertime($pdo, $user_id, $timetracker_id, $overtime) {
+        try {
+            $stmt = $pdo->prepare("UPDATE time_tracker SET overtime = :overtime WHERE user_id = :user_id AND id = :timetracker_id");
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':timetracker_id', $timetracker_id);
+            $stmt->bindParam(':overtime', $overtime);
+
+            $stmt->execute();
+
+            return "Overtime set to: " . $overtime;
         } catch (PDOException $e) {
             return "Error: " . $e->getMessage();
         }

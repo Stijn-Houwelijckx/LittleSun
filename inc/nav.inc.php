@@ -16,7 +16,13 @@
         $pathExtention = "";
     }
 
-    $numberOfRequests = TimeOffRequest::numberOfRequests($pdo);
+    $pendingRequests = TimeOffRequest::getAllPendingRequests($pdo, $user["location_id"]);
+
+    if ($pendingRequests) {
+        $numberOfRequests = count($pendingRequests);
+    } else {
+        $numberOfRequests = 0;
+    }
 ?>  
 
 <nav class="desktopNav">
@@ -65,7 +71,9 @@
             <?php if ($role == "manager") : ?>
                 <a href="dashboard.php">
                     <div class="container">
-                        <p class="numberOfRequests"><?php echo $numberOfRequests["row_count"] ?></p>
+                        <?php if ($numberOfRequests > 0) : ?>
+                            <p class="numberOfRequests"><?php echo $numberOfRequests ?></p>
+                        <?php endif ?>
                         <img class="<?php echo ($current_page == 'home') ? 'homeItem active' : 'homeItem'; ?>"
                             src="../assets/icons/Home.svg" alt="home">
                         <p>Home</p>

@@ -4,6 +4,7 @@ include_once (__DIR__ . "/classes/User.php");
 include_once (__DIR__ . "/classes/TimeOffRequest.php");
 include_once (__DIR__ . "/classes/Task.php");
 include_once (__DIR__ . "/classes/TimeTracker.php");
+include_once (__DIR__ . "/classes/CalendarItem.php");
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -45,6 +46,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $myTasks = Task::mytasks($pdo, $_SESSION["user_id"]);
 
 $timeTracker = TimeTracker::getActiveTimeTracker($pdo, $_SESSION["user_id"]);
+
+$plannedWorkHours = CalendarItem::getPlannedWorkTimeByUserIdAndDate($pdo, $_SESSION["user_id"], date("Y-m-d"));
 ?>
 
 <!DOCTYPE html>
@@ -97,6 +100,11 @@ $timeTracker = TimeTracker::getActiveTimeTracker($pdo, $_SESSION["user_id"]);
         </div> -->
         <div class="bento-item">
             <h2 class="bento-item-title" id="time-tracker-title"><?php echo $timeTracker? "Clock Out" : "Clock In"; ?></h2>
+            <?php if ($plannedWorkHours["total_time"]) : ?>
+                <p id="plannedWorkHours">Planned work hours today: <?php echo $plannedWorkHours["total_time"] ?></p>
+            <?php else : ?>
+                <p id="plannedWorkHours">No planned work hours for today</p>
+            <?php endif ?>
 
             <button class="btn bento-item-button" id="clockInButton" style="display: <?php echo $timeTracker? "none" : "block";  ?>">Start Work</button>
             <button class="btn bento-item-button" id="clockOutButton" style="display: <?php echo $timeTracker && $timeTracker["end_time"] == null? "block" : "none";  ?>;">End Work</button>

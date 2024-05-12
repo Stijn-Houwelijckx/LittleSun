@@ -31,22 +31,56 @@ if (isset($_POST)) {
 
         // Calculate worked time
         $lastTimeTracker = TimeTracker::getLastTimeTrackerByUserId($pdo, $_SESSION["user_id"]);
-
+        $fullWorkedTime = TimeTracker::getWorkedTimeByUserIdAndDate($pdo, $_SESSION["user_id"], date("Y-m-d"));
+        
         $start_time = strtotime($lastTimeTracker["start_time"]);
         $end_time = strtotime($lastTimeTracker["end_time"]);
+        
+        $worked_time_seconds = $end_time - $start_time;
+        
+        $hours = floor($worked_time_seconds / 3600);
+        $minutes = floor(($worked_time_seconds % 3600) / 60);
+        $seconds = $worked_time_seconds % 60;
+        
+        $worked_time_string = $hours . " hours, " . $minutes . " minutes and " . $seconds . ($seconds == 1 ? " second" : " seconds");
+        
+        $workedTime = sprintf("%02d:%02d:%02d", $hours, $minutes, $seconds);
+        
+        $plannedWorkTime = CalendarItem::getPlannedWorkTimeByUserIdAndDate($pdo, $_SESSION["user_id"], date("Y-m-d"));
+        $plannedWorkHours = $plannedWorkTime['total_time']; // Assuming this is in the format HH:MM:SS
+        $plannedWorkSeconds = strtotime($plannedWorkHours) - strtotime('TODAY');
+        
+        $totalWorkSeconds = strtotime($fullWorkedTime["worked_time"]) - strtotime('TODAY'); // Convert the time string to seconds
+        
+        if ($plannedWorkTime['total_time'] != null) {
+            if ($totalWorkSeconds > $plannedWorkSeconds) {
+                $overtimeSeconds = $totalWorkSeconds - $plannedWorkSeconds;
+                $overtimeHours = floor($overtimeSeconds / 3600);
+                $overtimeMinutes = floor(($overtimeSeconds % 3600) / 60);
+                $overtimeSeconds = $overtimeSeconds % 60;
+                $overtime = sprintf("%02d:%02d:%02d", $overtimeHours, $overtimeMinutes, $overtimeSeconds);
+            
+                TimeTracker::saveOvertime($pdo, $_SESSION["user_id"], $lastTimeTracker["id"], $overtime);
+            } else {
+                $overtime = "00:00:00"; // No overtime
+            
+                TimeTracker::saveOvertime($pdo, $_SESSION["user_id"], $lastTimeTracker["id"], $overtime);
+            }
+        } else {
+            $overtime = $fullWorkedTime["worked_time"];
+        }
 
-        $worked_time = $end_time - $start_time;
-
-        $hours = floor($worked_time / 3600);
-        $minutes = floor(($worked_time % 3600) / 60);
-        $secondes = $worked_time % 60;
-
-        $worked_time = $hours . " hours and " . $minutes . " minutes and " . $secondes . ($secondes == 1 ? " second" : " seconds");
-                
         $response = [
             "status" => "success",
             "clockOutTime" => $clockOutTime,
-            "workedTime" => $worked_time
+            "plannedWorkTime" => $plannedWorkTime['total_time'], // Assuming this is in the format HH:MM:SS
+            "workedTime" => $worked_time_string,
+            "workedTimeHours" => $workedTime,
+            "plannedWorkHours" => $plannedWorkTime['total_time'],
+            "overtime" => $overtime,
+            "plannedWorkSeconds" => $plannedWorkSeconds,
+            "totalWorkSeconds" => $totalWorkSeconds,
+            "fullworktime" => $fullWorkedTime["worked_time"],
         ];
     } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());

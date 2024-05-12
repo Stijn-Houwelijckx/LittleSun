@@ -120,15 +120,16 @@ button {
   position: absolute;
   top: -20px;
   left: 20px;
-  width: 18px;
-  height: 18px;
+  width: 10px;
+  height: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fff; /* Pas dit naar wens aan */
-  color: white; /* Pas dit naar wens aan */
-  padding: 8px; /* Pas dit naar wens aan */
-  border-radius: 50%; /* Als je een cirkel wilt, anders verwijder deze regel */
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  padding: 8px;
+  border-radius: 50%;
 }
 
 .open-desktopNav {
