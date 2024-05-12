@@ -92,12 +92,6 @@ $plannedWorkHours = CalendarItem::getPlannedWorkTimeByUserIdAndDate($pdo, $_SESS
                 <button class="btn bento-item-button">Request time off</button>
             </div>
         </div>
-        <!-- <div class="bento-item">
-            <h2 class="bento-item-title">Clock In /Clock Out</h2>
-                <div id="clockInForm">
-                    <input class="btn bento-item-button" type="button" id="startButton" value="Start Work">
-                </div>
-        </div> -->
         <div class="bento-item">
             <h2 class="bento-item-title" id="time-tracker-title"><?php echo $timeTracker? "Clock Out" : "Clock In"; ?></h2>
             <?php if ($plannedWorkHours["total_time"]) : ?>
@@ -174,30 +168,6 @@ $plannedWorkHours = CalendarItem::getPlannedWorkTimeByUserIdAndDate($pdo, $_SESS
             popupOverlay.style.display = "none";
             popup.style.display = "none";
         });
-
-        // Clock In / Clock Out functionality
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     document.getElementById("startButton").addEventListener("click", function() {
-        //         var startButton = document.getElementById("startButton"); // Reference to the button
-
-        //         var xhr = new XMLHttpRequest();
-        //         xhr.open("POST", "clockin.php", true); // Make sure the URL matches the location of the PHP file
-        //         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        //         xhr.onreadystatechange = function() {
-        //             if (xhr.readyState == 4 && xhr.status == 200) {
-        //                 // Update the innerHTML of the button to "End Work" or "Start Work" depending on the current text
-        //                 startButton.value = startButton.value === "Start Work" ? "End Work" : "Start Work";
-
-        //                 // Toggle the 'clock-out' class of the button
-        //                 startButton.classList.toggle("clock-out");
-
-        //                 // Update the information next to the button
-        //                 document.getElementById("clockInInfo").innerHTML = xhr.responseText;
-        //             }
-        //         };
-        //         xhr.send("start_work=" + (startButton.value === "Start Work" ? "true" : "false")); // Send the correct value for start_work
-        //     });
-        // });
     </script>
     
     <script src="javascript/timeTracker.js"></script>
