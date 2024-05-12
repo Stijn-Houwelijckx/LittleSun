@@ -81,7 +81,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
                         <div class="request" data-requestid="<?php echo $request["id"] ?>">
                             <p class="request-creator"><span class="request-label">Employee:</span> <?php echo $request["firstname"] . " " . $request["lastname"] ?></p>
                             <p class="request-reason"><span class="request-label">Reason:</span> <?php echo $request["reason"] ?></p>
-                            <p class="request-date-time"><span class="request-label">When:</span> <?php echo $request["start_date"] . " - " . $request["end_date"] ?></p>
+                            <p class="request-date-time"><span class="request-label">When:</span> <?php echo date("F jS Y H:i", strtotime($request["start_date"])) . " - " . date("F jS Y H:i", strtotime($request["end_date"])) ?></p>
                             <button class="btn">See request</button>
                         </div>
                     <?php endforeach ?>
