@@ -90,4 +90,13 @@ class SickLeave {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    public static function getSickLeaveByUserIdAndDate(PDO $pdo, $user_id, $date)
+    {
+        $stmt = $pdo->prepare("SELECT * FROM sick_leave WHERE user_id = :user_id AND :date BETWEEN start_date AND end_date AND status = 1 LIMIT 1");
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':date', $date);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
 }
