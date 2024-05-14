@@ -627,8 +627,21 @@ button {
   padding: 16px;
 }
 
-.dashboard .bento-item {
+.dashboard .bento-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* .dashboard .bento-grid .bento-grid-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
   height: fit-content;
+} */
+
+.dashboard .bento-item {
+  height: 100%;
   width: calc(100% - 32px);
   min-width: fit-content;
   padding: 16px;
@@ -690,7 +703,8 @@ button {
 }
 
 .dashboard .request .request-label,
-.dashboard .time-off-popup .request-label {
+.dashboard .time-off-popup .request-label,
+.dashboard .sick-leave-popup .request-label {
   font-weight: bold;
 }
 
@@ -718,6 +732,7 @@ button {
 }
 
 .dashboard .time-off-popup,
+.dashboard .sick-leave-popup,
 #hubLocationsAdmin .location-delete-popup {
   flex-direction: column;
   gap: 16px;
