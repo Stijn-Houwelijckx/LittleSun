@@ -99,4 +99,22 @@ class SickLeave {
         $stmt->execute();
         return $stmt->fetch();
     }
+
+    public static function getTotalSickTimeByUserId(PDO $pdo, $user_id)
+    {
+        $stmt = $pdo->prepare("SELECT SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND, start_date, end_date))) as total_time
+        FROM sick_leave
+        WHERE user_id = :user_id AND status = 1
+        ");
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // If there are no results, return 00:00:00 in total_time
+        if ($result['total_time'] == null) {
+            return ['total_time' => '00:00:00'];
+        } else {
+            return $result;
+        }
+    }
 }

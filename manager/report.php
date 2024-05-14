@@ -8,6 +8,7 @@ include_once (__DIR__ . "../../classes/TimeOffRequest.php");
 include_once (__DIR__ . "../../classes/Task.php");
 include_once (__DIR__ . "../../classes/TimeTracker.php");
 include_once (__DIR__ . "../../classes/CalendarItem.php");
+include_once (__DIR__ . "../../classes/SickLeave.php");
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -71,6 +72,19 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
                             $plannedTime = CalendarItem::getPlannedWorkTimeByUserId($pdo, $employee["id"]);
                             $workedTime = TimeTracker::getWorkedTimeByUserId($pdo, $employee["id"]);
                             $timeOff = TimeOffRequest::getTimeOffByUserId($pdo, $employee["id"]);
+
+                            // Calculate overtime
+                            $plannedTimeInSeconds = strtotime($plannedTime["total_time"]);
+                            $workedTimeInSeconds = strtotime($workedTime["total_time"]);
+                            
+                            if ($workedTimeInSeconds > $plannedTimeInSeconds) {
+                                $overtime = $workedTimeInSeconds - $plannedTimeInSeconds;
+                            } else {
+                                $overtime = 0;
+                            }
+
+                            // Get sick time
+                            $sickTime = SickLeave::getTotalSickTimeByUserId($pdo, $employee["id"]);
                         ?>
 
                         <div class="table-row">
@@ -78,8 +92,8 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
                             <div class="table-data"><?php echo htmlspecialchars($plannedTime["total_time"]); ?></div>
                             <div class="table-data"><?php echo htmlspecialchars($workedTime["total_time"]); ?></div>
                             <div class="table-data"><?php echo htmlspecialchars($timeOff["total_time"]); ?></div>
-                            <div class="table-data">3</div>
-                            <div class="table-data">3</div>
+                            <div class="table-data"><?php echo date('H:i:s', $overtime); ?></div>
+                            <div class="table-data"><?php echo htmlspecialchars($sickTime["total_time"]); ?></div>
                         </div>
                     <?php endforeach; ?>
                 </div>
