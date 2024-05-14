@@ -4,6 +4,7 @@ include_once (__DIR__ . "../../classes/User.php");
 include_once (__DIR__ . "../../classes/Employee.php");
 include_once (__DIR__ . "../../classes/Task.php");
 include_once (__DIR__ . "../../classes/CalendarItem.php");
+include_once (__DIR__ . "../../classes/SickLeave.php");
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -160,6 +161,17 @@ $taskTypes = Task::getAllTasks($pdo);
                                     <?php $time = strtotime($item["end_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
                                     :
                                     <?php echo $item["task"] ?>
+
+                                    <?php
+                                        // If sick, show the sick leave
+
+                                        $eventDateTime = new DateTime($item["event_date"] . " " . $item["start_time"]);
+
+                                        $sickLeave = SickLeave::getSickLeaveByUserIdAndDate($pdo, $item["user_id"], $eventDateTime->format("Y-m-d H:i:s"));
+                                        if ($sickLeave) {
+                                            echo "<span style='color: white;'> - Sick leave: " . $sickLeave["reason"] . "</span>";
+                                        }
+                                    ?>
                                 </p>
                             <?php endforeach; ?>
                         <?php else: ?>

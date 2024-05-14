@@ -190,4 +190,26 @@ class TimeOffRequest {
             return false;
         }
     }
+
+    public static function getTimeOffByUserId (PDO $pdo, $user_id)
+    {
+        try {
+            $stmt = $pdo->prepare("SELECT SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND, start_date, end_date))) as total_time
+            FROM time_off_requests
+            WHERE user_id = :user_id AND status = 'Approved'
+            ");
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // If there are no results, return 00:00:00 in total_time
+            if ($result['total_time'] == null) {
+                return ['total_time' => '00:00:00'];
+            } else {
+                return $result;
+            }
+        } catch (PDOException $e) {
+            return "Error: " . $e->getMessage();
+        }
+    }
 }

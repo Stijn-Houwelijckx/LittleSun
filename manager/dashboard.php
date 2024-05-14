@@ -1,9 +1,4 @@
 <?php
-include_once (__DIR__ . "../../classes/Db.php");
-include_once (__DIR__ . "../../classes/User.php");
-include_once (__DIR__ . "../../classes/TimeOffRequest.php");
-// dashboard.php
-
 // Include necessary classes
 include_once (__DIR__ . "../../classes/Db.php");
 include_once (__DIR__ . "../../classes/User.php");
@@ -25,6 +20,8 @@ $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);
 
 if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
+    $allEmployeesByLocation = Employee::getAllEmployeesByLocation($pdo, $user["location_id"]);
+
     try {
         $pdo = Db::getInstance();
         $user = User::getUserById($pdo, $_SESSION["user_id"]);
@@ -74,21 +71,40 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
 
     <div class="dashboard">
         <div class="bento-grid">
-            <div class="bento-item">
-                <h2 class="bento-item-title">Time off requests</h2>
-                <?php if (!empty($timeOffRequests)) : ?>
-                    <?php foreach ($timeOffRequests as $request) : ?>
-                        <div class="request" data-requestid="<?php echo $request["id"] ?>">
-                            <p class="request-creator"><span class="request-label">Employee:</span> <?php echo $request["firstname"] . " " . $request["lastname"] ?></p>
-                            <p class="request-reason"><span class="request-label">Reason:</span> <?php echo $request["reason"] ?></p>
-                            <p class="request-date-time"><span class="request-label">When:</span> <?php echo date("F jS Y H:i", strtotime($request["start_date"])) . " - " . date("F jS Y H:i", strtotime($request["end_date"])) ?></p>
-                            <button class="btn">See request</button>
-                        </div>
-                    <?php endforeach ?>
-                <?php endif ?>
-                <?php if (empty($timeOffRequests)) : ?>
-                    <p>There are no time off requests</p>
-                <?php endif ?>
+            <div class="bento-grid-row">
+                <div class="bento-item">
+                    <h2 class="bento-item-title">Time off requests</h2>
+                    <?php if (!empty($timeOffRequests)) : ?>
+                        <?php foreach ($timeOffRequests as $request) : ?>
+                            <div class="request" data-requestid="<?php echo $request["id"] ?>">
+                                <p class="request-creator"><span class="request-label">Employee:</span> <?php echo $request["firstname"] . " " . $request["lastname"] ?></p>
+                                <p class="request-reason"><span class="request-label">Reason:</span> <?php echo $request["reason"] ?></p>
+                                <p class="request-date-time"><span class="request-label">When:</span> <?php echo date("F jS Y H:i", strtotime($request["start_date"])) . " - " . date("F jS Y H:i", strtotime($request["end_date"])) ?></p>
+                                <button class="btn">See request</button>
+                            </div>
+                        <?php endforeach ?>
+                    <?php endif ?>
+                    <?php if (empty($timeOffRequests)) : ?>
+                        <p>There are no time off requests</p>
+                    <?php endif ?>
+                </div>
+                <div class="bento-item">
+                    <h2 class="bento-item-title">Reports</h2>
+                    <!-- <a href="report.php" class="btn">Generate report</a> -->
+
+                    <div class="column">
+                        <label for="userSelector">Select user (select no user for all users):</label>
+                        <select name="userSelector" id="userSelector">
+                            <option value="" disabled selected>--- select user ---</option>
+                            <?php foreach ($allEmployeesByLocation as $employee) : ?>
+                                <option value="<?php echo $employee["id"] ?>"><?php echo $employee["firstname"] . " " . $employee["lastname"] ?></option>
+                            <?php endforeach ?>
+                        </select>
+                        <p>Select no user if you want to generate a report about all users.</p>
+                    </div>
+
+                    <button class="report-btn btn">Generate report</button>
+                </div>
             </div>
         </div>
         <div class="pop-up-overlay">
@@ -155,6 +171,20 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
 
     btnApprove.addEventListener("click", function (e) {
         popupOverlay.style.display = "none";
+    });
+
+    // Update the JavaScript code to send the selected user's ID to the report.php page
+    const userSelector = document.querySelector("#userSelector");
+    const reportBtn = document.querySelector(".report-btn");
+
+    reportBtn.addEventListener("click", function (e) {
+        const selectedUserId = userSelector.value;
+
+        if (selectedUserId) {
+            window.location.href = `report.php?userId=${selectedUserId}`;
+        } else {
+            window.location.href = `report.php`;
+        }
     });
 </script>
 

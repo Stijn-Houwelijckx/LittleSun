@@ -1,6 +1,19 @@
 <?php
 class Employee extends User
 {
+    public static function getEmployeeById(PDO $pdo, $user_id)
+    {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :user_id AND typeOfUser = 'employee' AND status = 1");
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
     public static function getAllEmployees(PDO $pdo)
     {
         try {

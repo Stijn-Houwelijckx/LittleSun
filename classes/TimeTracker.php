@@ -107,6 +107,24 @@ class TimeTracker {
         }
     }
 
+    public static function getWorkedTimeByUserId($pdo, $user_id) {
+        try {
+            $stmt = $pdo->prepare("SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time)))) AS total_time FROM time_tracker WHERE user_id = :user_id");
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->execute();
+            $result = $stmt->fetch();
+
+            // If there are no results, return 00:00:00 in total_time
+            if ($result['total_time'] == null) {
+                return ['total_time' => '00:00:00'];
+            } else {
+                return $result;
+            }
+        } catch (PDOException $e) {
+            return "Error: " . $e->getMessage();
+        }
+    }
+
     public static function getWorkedTimeByUserIdAndDate($pdo, $user_id, $date) {
         try {
             $stmt = $pdo->prepare("SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time)))) AS worked_time FROM time_tracker WHERE user_id = :user_id AND DATE(start_time) = :date");
@@ -158,6 +176,17 @@ class TimeTracker {
             $stmt->execute();
 
             return "Overtime set to: " . $overtime;
+        } catch (PDOException $e) {
+            return "Error: " . $e->getMessage();
+        }
+    }
+
+    public static function getOvertimeByUserId($pdo, $user_id) {
+        try {
+            $stmt = $pdo->prepare("SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(overtime))) AS total_overtime FROM time_tracker WHERE user_id = :user_id");
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->execute();
+            return $stmt->fetch();
         } catch (PDOException $e) {
             return "Error: " . $e->getMessage();
         }

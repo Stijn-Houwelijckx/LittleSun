@@ -633,12 +633,18 @@ button {
   gap: 16px;
 }
 
-/* .dashboard .bento-grid .bento-grid-row {
+.dashboard .bento-grid .bento-grid-row {
   display: flex;
   flex-direction: row;
   gap: 16px;
   height: fit-content;
-} */
+}
+
+.dashboard .bento-item .column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
 .dashboard .bento-item {
   height: 100%;
@@ -650,6 +656,10 @@ button {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.bento-grid .bento-item .btn {
+  text-align: center;
 }
 
 .myTasks {
@@ -999,6 +1009,70 @@ div.day p.calendarItem {
   display: flex;
   flex-direction: row;
   gap: 8px;
+}
+
+/* Reports */
+
+.report-container {
+  display: flex;
+  padding-right: 16px;
+
+  font-family: "Outfit", sans-serif;
+}
+
+.report-container .table {
+  width: 100%;
+  border: 1px solid #eeeeee;
+}
+
+.report-container .table-header {
+  display: flex;
+  width: 100%;
+  background: var(--darkYellow);
+  padding: 18px 0;
+}
+
+.report-container .table-row {
+  display: flex;
+  width: 100%;
+  padding: 18px 0;
+}
+.report-container .table-row:nth-of-type(odd) {
+  background: #dfdfdf;
+}
+
+.report-container .table-data,
+.header__item {
+  flex: 1 1 20%;
+  text-align: center;
+}
+
+.report-container .header__item {
+  text-transform: uppercase;
+}
+
+.report-container .filter__link {
+  color: white;
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.report-container .filter__link::after {
+  content: "";
+  position: absolute;
+  right: -18px;
+  color: white;
+  font-size: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.report-container .filter__link.desc::after {
+  content: "(desc)";
+}
+.report-container .filter__link.asc::after {
+  content: "(asc)";
 }
 
 @media (min-width: 800px) {
