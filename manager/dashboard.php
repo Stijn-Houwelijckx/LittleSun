@@ -88,23 +88,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
                         <p>There are no time off requests</p>
                     <?php endif ?>
                 </div>
-                <div class="bento-item">
-                    <h2 class="bento-item-title">Reports</h2>
-                    <!-- <a href="report.php" class="btn">Generate report</a> -->
-
-                    <div class="column">
-                        <label for="userSelector">Select user (select no user for all users):</label>
-                        <select name="userSelector" id="userSelector">
-                            <option value="" disabled selected>--- select user ---</option>
-                            <?php foreach ($allEmployeesByLocation as $employee) : ?>
-                                <option value="<?php echo $employee["id"] ?>"><?php echo $employee["firstname"] . " " . $employee["lastname"] ?></option>
-                            <?php endforeach ?>
-                        </select>
-                        <p>Select no user if you want to generate a report about all users.</p>
-                    </div>
-
-                    <button class="report-btn btn">Generate report</button>
-                </div>
             </div>
         </div>
         <div class="pop-up-overlay">
