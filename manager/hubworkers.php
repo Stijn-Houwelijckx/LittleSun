@@ -67,7 +67,10 @@ foreach ($employees as $employee) {
 <body>
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="hubworkers">
-        <h1>Employees at my hublocation</h1>
+        <div class="row">
+            <h1>Employees at my hublocation</h1>
+            <a href="addEmployee.php" class="btn">+ Add</a>
+        </div>
         <div class="hubs">
             <?php foreach ($employees as $employee) : ?>
                 <div class="hub">
@@ -93,7 +96,7 @@ foreach ($employees as $employee) {
                     <?php else : ?>
                         <p>This employee doesn't have any tasks</p>
                     <?php endif ?>
-                    <a class="btn" href="hubworkerDetails.php?employee=<?php echo $employee["id"]; ?>">Assign task</a>     
+                    <a class="btn" href="hubworkerDetails.php?employee=<?php echo $employee["id"]; ?>">Edit user</a>     
                 </div>
             <?php endforeach ?>
         </div>

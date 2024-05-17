@@ -26,11 +26,18 @@ if ($manager["typeOfUser"] != "manager") {
     exit();
 }
 
-$employee_id = isset($_GET["employee"]) ? intval($_GET["employee"]) : 0;
-var_dump($employee_id);
+// $employee_id = isset($_GET["employee"]) ? intval($_GET["employee"]) : 0;
+
+if (isset($_GET["employee"]) && $_GET["employee"] > 0) {
+    $employee_id = intval($_GET["employee"]);
+    // var_dump($employee_id);
+} else {
+    header("Location: hubworkers.php?error=invalidEmployee");
+    exit();
+}
 
 // Fetch user details based on employee_id
-$user = User::getUserById($pdo, $employee_id);
+$employee = User::getUserById($pdo, $employee_id);
 
 if (isset($_POST["firstname"])) {
     try {
@@ -39,12 +46,14 @@ if (isset($_POST["firstname"])) {
         $user->setLastname($_POST['lastname']);
         $user->setEmail($_POST['email']);
         $user->updateUser($pdo, $_POST["user_id"], "employee");
+
+        $employee = User::getUserById($pdo, $employee_id);
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
     }
 }
 
-if (!$user) {
+if (!$employee) {
     header("Location: hubworkers.php?error=invalidEmployee");
     exit();
 }
@@ -90,6 +99,25 @@ $employeeTaskIds = array_column($employeeTasks, 'id');
     <div id="hubworkerDetails">
         <h1>Edit hubworker</h1>
         <div class="elements">
+            <div class="editEmployee">
+                <h2>Edit Employee</h2>
+                <form action="" method="post">
+                    <div class="column">
+                        <label for="firstname">First Name:</label>
+                        <input type="text" name="firstname" id="firstname" value="<?php echo htmlspecialchars($employee['firstname']); ?>">
+                    </div>
+                    <div class="column">
+                        <label for="lastname">Last Name:</label>
+                        <input type="text" name="lastname" id="lastname" value="<?php echo htmlspecialchars($employee['lastname']); ?>">
+                    </div>
+                    <div class="column">
+                        <label for="email">Email:</label>
+                        <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($employee['email']); ?>">
+                    </div>
+                    <input type="hidden" name="user_id" id="user_id" value="<?php echo htmlspecialchars($employee['id']); ?>">
+                    <button type="submit" class="btn">Save</button>
+                </form>
+            </div>
             <div class="tasks">
                 <h2>Tasks</h2>
                 <form action="" method="post">
@@ -100,25 +128,6 @@ $employeeTaskIds = array_column($employeeTasks, 'id');
                         </div>
                     <?php endforeach; ?>
                     <input type="submit" name="submitTask" class="btn" value="Save"></input>
-                </form>
-            </div>
-            <div class="editEmployee">
-                <h2>Edit Employee</h2>
-                <form action="" method="post">
-                    <div class="column">
-                        <label for="firstname">First Name:</label>
-                        <input type="text" name="firstname" id="firstname" value="<?php echo htmlspecialchars($user['firstname']); ?>">
-                    </div>
-                    <div class="column">
-                        <label for="lastname">Last Name:</label>
-                        <input type="text" name="lastname" id="lastname" value="<?php echo htmlspecialchars($user['lastname']); ?>">
-                    </div>
-                    <div class="column">
-                        <label for="email">Email:</label>
-                        <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['email']); ?>">
-                    </div>
-                    <input type="hidden" name="user_id" id="user_id">
-                    <button type="submit" class="btn">Save</button>
                 </form>
             </div>
         </div>

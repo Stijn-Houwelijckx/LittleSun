@@ -408,8 +408,10 @@ button {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-between;
-  padding-right: 200px;
+  /* justify-content: space-between; */
+
+  gap: 200px;
+  /* padding-right: 200px; */
 }
 
 #hubworkerDetails .tasks,
@@ -425,6 +427,9 @@ button {
   flex-direction: column;
   align-items: flex-start;
   gap: 16px;
+
+  justify-content: space-between;
+  height: 100%;
 }
 
 #hubworkerDetails .editEmployee form .column {
@@ -435,6 +440,7 @@ button {
 
 #hubLocationsAdmin .row,
 #usersAdmin .row,
+#hubworkers .row,
 .dashboard .row {
   display: flex;
   flex-direction: row;
@@ -637,7 +643,7 @@ button {
 }
 
 #hubworkers .hubs .hub .btn {
-  width: 80px;
+  width: fit-content;
 }
 #hubworkers .hubs .hub img {
   width: 32px;

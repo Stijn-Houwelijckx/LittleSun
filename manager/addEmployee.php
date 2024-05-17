@@ -40,7 +40,8 @@ if (isset($_POST['firstname'], $_POST['lastname'], $_POST['email'], $_POST['pass
         if ($newUserId) {
             $user->addToLocation($pdo, $newUserId);
             Task::linkTasksToUser($pdo, $newUserId); // Link tasks to the new user
-            header("Location: employees.php");
+            // header("Location: employees.php");
+            header("Location: hubworkers.php");
             exit();
         }
     } catch (PDOException $e) {

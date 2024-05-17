@@ -79,13 +79,6 @@
                         <p>Home</p>
                     </div>
                 </a>
-                <a href="employees.php">
-                    <div>
-                        <img class="<?php echo ($current_page == 'employees') ? 'usersItem active' : 'usersItem'; ?>"
-                            src="../assets/icons/users.svg" alt="users">
-                        <p>Employees</p>
-                    </div>
-                </a>
                 <a href="hubworkers.php">
                     <div>
                         <img class="<?php echo ($current_page == 'hubworkers') ? 'usersItem active' : 'usersItem'; ?>"
