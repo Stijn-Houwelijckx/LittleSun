@@ -6,9 +6,36 @@ include_once (__DIR__ . "../../classes/Task.php");
 include_once (__DIR__ . "../../classes/CalendarItem.php");
 include_once (__DIR__ . "../../classes/SickLeave.php");
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('error_log', 'error.log');
+// Zet error reporting om ongewenste meldingen uit te schakelen
+error_reporting(0);
+
+// Fetch users by availability AJAX
+if (isset($_POST['eventDatePicker'])) {
+    // Fetch users
+}
+
+// Fetch tasks by user AJAX
+if (isset($_POST['userSelector'])) {
+    // Fetch tasks
+}
+
+// Validate event form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $errors = [];
+
+    // Check if the required fields are filled out
+    if (empty($_POST['eventDatePicker']) || empty($_POST['userSelector']) || empty($_POST['taskSelector']) || empty($_POST['timeslots'])) {
+        $errors[] = "You didn't fill out all the fields.";
+    }
+
+    // If there are no errors, process the input
+    if (empty($errors)) {
+        // Process form submission
+    } else {
+        // Display errors
+        
+    }
+}
 
 session_start();
 
@@ -43,11 +70,11 @@ if (isset($_POST['eventDatePicker'], $_POST['event_title'], $_POST['event_descri
         $event_title = $_POST['event_title'];
         $event_description = $_POST['event_description'];
         
-        $selectedTimeslots = $_POST['timeslots']; // Haal de geselecteerde tijdsloten op
-        $calendarItem->setEvent_date($event_date);
-        $calendarItem->setEvent_title($event_title);
-        $calendarItem->setEvent_description($event_description);
-        $calendarItem->setEvent_location($manager["location_id"]);
+        $selectedTimeslots = $_POST['timeslots'] ?? []; // Haal de geselecteerde tijdsloten op
+        $calendarItem->setEvent_date($event_date) ?? null;
+        $calendarItem->setEvent_title($event_title) ?? null;
+        $calendarItem->setEvent_description($event_description) ?? null;
+        $calendarItem->setEvent_location($manager["location_id"]) ?? null;
 
         $newCalendaritem = $calendarItem->addCalendarItem($pdo, $employeeId, $taskId, $selectedTimeslots);
     } catch (PDOException $e) {
@@ -100,6 +127,9 @@ foreach ($allCalendarItems as $calendarItem) {
 
 
 $taskTypes = Task::getAllTasks($pdo);
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -118,12 +148,23 @@ $taskTypes = Task::getAllTasks($pdo);
 <body>
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="calendar">
-        <div class="btns">
-            <a href="calendar.php?view=daily" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "daily" ? "active" : ""; } ?> daily">Daily</a>
-            <a href="calendar.php?view=weekly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "weekly" ? "active" : ""; } ?> weekly">Weekly</a>
-            <a href="calendar.php?view=monthly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "monthly" ? "active" : ""; } ?> monthly">Monthly</a>
-            <a href="" class="btn big">+ Add agendaItem</a>  
-        </div>  
+    <div class="btns">
+    <a href="calendar.php?view=daily" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "daily" ? "active" : ""; } ?> daily">Daily</a>
+    <a href="calendar.php?view=weekly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "weekly" ? "active" : ""; } ?> weekly">Weekly</a>
+    <a href="calendar.php?view=monthly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "monthly" ? "active" : ""; } ?> monthly">Monthly</a>
+    <a href="" class="btn big">+ Add agendaItem</a>  
+
+    <?php
+    // Check if there are any errors to display
+    if (!empty($errors)) {
+        // Display errors within the btns div
+        foreach ($errors as $error) {
+            echo "<div class='error-message'>$error</div>";
+        }
+    }
+    ?>
+</div>
+ 
         <div class="dailyview">
             <div id="top">
                 <i class="fa fa-angle-left" id="prevDay"></i>
@@ -322,98 +363,101 @@ $taskTypes = Task::getAllTasks($pdo);
         </div>
     </div>
     <div class="popupAddCalendarItem">
-        <i class="fa fa-plus"></i>
-        <form action="" method="post" id="addCalendarItem">
-            <div class="text">
+    <i class="fa fa-plus"></i>
+    <form action="" method="post" id="addCalendarItem">
+        <div class="text">
+            <div class="column">
+                <label for="eventDatePicker">Event_date:</label>
+                <input type="date" name="eventDatePicker" id="eventDatePicker" placeholder="Event_date">
+            </div>
+            <div class="column">
+                <label for="userSelector">Select user:</label>
+                <select name="userSelector" id="userSelector" disabled>
+                    <option value="" disabled selected>--- select user ---</option>
+                </select>
+            </div>
+            <div class="column">
+                <label for="taskSelector">Select task:</label>
+                <select name="taskSelector" id="taskSelector" disabled>
+                    <option value="" disabled selected>--- select task ---</option>
+                </select>
+            </div>
+            <div class="row">
                 <div class="column">
-                    <label for="eventDatePicker">Event_date:</label>
-                    <input type="date" name="eventDatePicker" id="eventDatePicker" placeholder="Event_date">
-                </div>
-                <div class="column">
-                    <label for="userSelector">Select user:</label>
-                    <select name="userSelector" id="userSelector" disabled>
-                        <option value="" disabled selected>--- select user ---</option>
-                    </select>
-                </div>
-                <div class="column">
-                    <label for="taskSelector">Select task:</label>
-                    <select name="taskSelector" id="taskSelector" disabled>
-                        <option value="" disabled selected>--- select task ---</option>
-                    </select>
-                </div>
-                <div class="row">
-                    <div class="column">
-                        <p>Timeslots:</p>
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_1" value="08:00 - 09:00" disabled>
-                            <label for="timeslot_1">08:00 - 09:00</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_2" value="09:00 - 10:00" disabled>
-                            <label for="timeslot_2">09:00 - 10:00</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_3" value="10:00 - 11:00" disabled>
-                            <label for="timeslot_3">10:00 - 11:00</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_4" value="11:00 - 12:00" disabled>
-                            <label for="timeslot_4">11:00 - 12:00</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_5" value="12:00 - 13:00" disabled>
-                            <label for="timeslot_5">12:00 - 13:00</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_6" value="13:00 - 14:00" disabled>
-                            <label for="timeslot_6">13:00 - 14:00</label>
-                        </div>
+                    <p>Timeslots:</p>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_1" value="08:00 - 09:00" disabled>
+                        <label for="timeslot_1">08:00 - 09:00</label>
                     </div>
-                    <div class="column">
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_7" value="14:00 - 15:00" disabled>
-                            <label for="timeslot_7">14:00 - 15:00</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_8" value="15:00 - 16:00" disabled>
-                            <label for="timeslot_8">15:00 - 16:00</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_9" value="16:00 - 17:00" disabled>
-                            <label for="timeslot_9">16:00 - 17:00</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_10" value="17:00 - 18:00" disabled>
-                            <label for="timeslot_10">17:00 - 18:00</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_11" value="18:00 - 19:00" disabled>
-                            <label for="timeslot_11">18:00 - 19:00</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_12" value="19:00 - 20:00" disabled>
-                            <label for="timeslot_12">19:00 - 20:00</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_13" value="20:00 - 21:00" disabled>
-                            <label for="timeslot_13">20:00 - 21:00</label>
-                        </div>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_2" value="09:00 - 10:00" disabled>
+                        <label for="timeslot_2">09:00 - 10:00</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_3" value="10:00 - 11:00" disabled>
+                        <label for="timeslot_3">10:00 - 11:00</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_4" value="11:00 - 12:00" disabled>
+                        <label for="timeslot_4">11:00 - 12:00</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_5" value="12:00 - 13:00" disabled>
+                        <label for="timeslot_5">12:00 - 13:00</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_6" value="13:00 - 14:00" disabled>
+                        <label for="timeslot_6">13:00 - 14:00</label>
                     </div>
                 </div>
                 <div class="column">
-                    <label for="event_title">Event_title:</label>
-                    <input type="text" name="event_title" id="event_title" placeholder="Event_title">
-                </div>
-                <div class="column">
-                    <label for="event_description">Event_description:</label>
-                    <textarea name="event_description" id="event_description" placeholder="Event_description"></textarea>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_7" value="14:00 - 15:00" disabled>
+                        <label for="timeslot_7">14:00 - 15:00</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_8" value="15:00 - 16:00" disabled>
+                        <label for="timeslot_8">15:00 - 16:00</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_9" value="16:00 - 17:00" disabled>
+                        <label for="timeslot_9">16:00 - 17:00</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_10" value="17:00 - 18:00" disabled>
+                        <label for="timeslot_10">17:00 - 18:00</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_11" value="18:00 - 19:00" disabled>
+                        <label for="timeslot_11">18:00 - 19:00</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_12" value="19:00 - 20:00" disabled>
+                        <label for="timeslot_12">19:00 - 20:00</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="timeslots[]" class="timeslot" id="timeslot_13" value="20:00 - 21:00" disabled>
+                        <label for="timeslot_13">20:00 - 21:00</label>
+                    </div>
                 </div>
             </div>
-            <div class="buttons">
-                <button type="submit" class="btn">Save</button>
+            <div class="column">
+                <label for="event_title">Event_title:</label>
+                <input type="text" name="event_title" id="event_title" placeholder="Event_title">
             </div>
-        </form>
-    </div>
+            <div class="column">
+                <label for="event_description">Event_description:</label>
+                <textarea name="event_description" id="event_description" placeholder="Event_description"></textarea>
+            </div>
+        </div>
+        <div class="buttons">
+            <button type="submit" class="btn">Save</button>
+        </div>
+        <div class="error-message" id="errorMessage" style="color: red; display: none;"></div>
+    </form>
+</div>
+
+
 
     <input type="hidden" id="currentDateInput" value="<?php echo $today->format('Y-m-d'); ?>">
 

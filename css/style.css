@@ -23,7 +23,10 @@
   font-family: "Outfit";
   src: url("../assets/fonts/Outfit-VariableFont_wght.ttf");
 }
-
+.error-message {
+  font-family: "Outfit", sans-serif;
+  color: red;
+}
 body {
   background-color: var(--offWhite);
   margin: 0;
@@ -874,6 +877,8 @@ button {
   justify-content: space-between;
   align-items: center;
 }
+
+
 
 #calendar #top div {
   display: flex;
