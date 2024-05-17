@@ -100,11 +100,11 @@
                         <p>Calendar</p>
                     </div>
                 </a>
-                <a href="rapports.php">
+                <a href="reports.php">
                     <div>
-                        <img class="<?php echo ($current_page == 'rapports') ? 'rapportsItem active' : 'rapportsItem'; ?>"
-                            src="../assets/icons/rapport.svg" alt="rapport">
-                        <p>Rapporten</p>
+                        <img class="<?php echo ($current_page == 'reports') ? 'reportsItem active' : 'reportsItem'; ?>"
+                            src="../assets/icons/report.svg" alt="report">
+                        <p>Reports</p>
                     </div>
                 </a>
             <?php endif ?>

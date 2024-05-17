@@ -14,7 +14,7 @@ ini_set('error_log', 'error.log');
 
 session_start();
 
-$current_page = 'home';
+$current_page = 'reports';
 
 $pdo = Db::getInstance();
 $user = User::getUserById($pdo, $_SESSION["user_id"]);

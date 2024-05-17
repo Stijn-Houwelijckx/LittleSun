@@ -99,7 +99,7 @@ $employeeTaskIds = array_column($employeeTasks, 'id');
                             <label for="task_<?php echo $task["id"]; ?>"><?php echo htmlspecialchars($task["task"]); ?></label>
                         </div>
                     <?php endforeach; ?>
-                    <input type="submit" name="submitTask" class="btn" value="opslaan"></input>
+                    <input type="submit" name="submitTask" class="btn" value="Save"></input>
                 </form>
             </div>
             <div class="editEmployee">
