@@ -23,37 +23,53 @@ if (!isset($_SESSION["user_id"]) || $manager["typeOfUser"] != "admin") {
 
 $locations = Location::getAll($pdo);
 
-if (isset($_POST['firstname'], $_POST['lastname'], $_POST['email'], $_POST['password'])){
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = new User;
 
     try {
         $firstname = $_POST['firstname'];
         $lastname = $_POST['lastname'];
-        $email = $_POST['email'];
+        $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
         $password = $_POST['password'];
         $location_id = $_POST['locations'];
-    
-        $user->setFirstname($firstname);
-        $user->setLastname($lastname);
-        $user->setEmail($email);
-        $user->setPassword($password);
-        $user->setLocation_id($location_id);
-    
-        $newUserId = $user->addUser($pdo, "manager");
-        
-        if ($newUserId) {
-            $user->addToLocation($pdo, $newUserId);
-            header("Location: users.php");
-            exit();
+
+        // Validation for special characters in first name and last name
+        if (containsSpecialChars($firstname) || containsSpecialChars($lastname)) {
+            $error = "Special characters are not allowed in first name or last name.";
+        } elseif (!$email) {
+            $error = "Email should be a valid email address.";
+        } else {
+            $user->setFirstname($firstname);
+            $user->setLastname($lastname);
+            $user->setEmail($email);
+            $user->setPassword($password);
+            $user->setLocation_id($location_id);
+
+            $newUserId = $user->addUser($pdo, "manager");
+
+            if ($newUserId) {
+                $user->addToLocation($pdo, $newUserId);
+                header("Location: users.php");
+                exit();
+            }
         }
     } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
+    } catch (Exception $e) {
+        $error = $e->getMessage();
     }
 }
+
+// Function to check if the string contains special characters
+function containsSpecialChars($str) {
+    return preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]/', $str);
+}
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -62,6 +78,7 @@ if (isset($_POST['firstname'], $_POST['lastname'], $_POST['email'], $_POST['pass
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.png">
 </head>
+
 <body>
     <?php include_once ('../inc/nav.inc.php'); ?>
     <div id="usersAdmin">
@@ -99,6 +116,9 @@ if (isset($_POST['firstname'], $_POST['lastname'], $_POST['email'], $_POST['pass
                         </div>
                     </div>
                 </div>
+                <?php if (isset($error)): ?>
+                    <p class="error"><?php echo $error; ?></p>
+                <?php endif; ?>
                 <div class="buttons">
                     <button type="submit" class="btn">Add manager</button>
                 </div>
@@ -106,4 +126,5 @@ if (isset($_POST['firstname'], $_POST['lastname'], $_POST['email'], $_POST['pass
         </div>
     </div>
 </body>
+
 </html>

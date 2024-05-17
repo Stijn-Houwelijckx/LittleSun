@@ -1,4 +1,3 @@
-// dailyview
 document.addEventListener("DOMContentLoaded", function () {
   const prevDayBtn = document.getElementById("prevDay");
   const nextDayBtn = document.getElementById("nextDay");
@@ -31,8 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Bijwerken van de hele 'day' div
     const dayNumber = date.getDate();
-    const newDayElement = document.querySelector(".day p");
-    newDayElement.textContent = dayNumber < 10 ? "0" + dayNumber : dayNumber;
     const dayKey = date.toISOString().split("T")[0]; // Converteer naar 'YYYY-MM-DD' formaat
     const dayContainer = document.getElementById("dayItems");
     // Verwijder bestaande items

@@ -28,15 +28,15 @@ if (isset($_POST['firstname'], $_POST['lastname'], $_POST['email'], $_POST['pass
         $lastname = $_POST['lastname'];
         $email = $_POST['email'];
         $password = $_POST['password'];
-    
+
         $user->setFirstname($firstname);
         $user->setLastname($lastname);
         $user->setEmail($email);
         $user->setPassword($password);
         $user->setLocation_id($manager["location_id"]);
-    
+
         $newUserId = $user->addUser($pdo, "employee");
-        
+
         if ($newUserId) {
             $user->addToLocation($pdo, $newUserId);
             Task::linkTasksToUser($pdo, $newUserId); // Link tasks to the new user
@@ -45,6 +45,8 @@ if (isset($_POST['firstname'], $_POST['lastname'], $_POST['email'], $_POST['pass
         }
     } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
+    } catch (Exception $e) {
+        $error = $e->getMessage();
     }
 }
 ?>
@@ -85,6 +87,9 @@ if (isset($_POST['firstname'], $_POST['lastname'], $_POST['email'], $_POST['pass
                         </div>
                     </div>
                 </div>
+                <?php if (isset($error)): ?>
+                    <p class="error"><?php echo $error; ?></p>
+                <?php endif; ?>
                 <div class="buttons">
                     <button type="submit" class="btn">Add employee</button>
                 </div>
@@ -93,3 +98,9 @@ if (isset($_POST['firstname'], $_POST['lastname'], $_POST['email'], $_POST['pass
     </div>
 </body>
 </html>
+
+<?php
+// Function to check if the string contains special characters
+function containsSpecialChars($str) {
+    return preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]/', $str);
+}
