@@ -1,9 +1,10 @@
 <?php
-include_once (__DIR__ . "../../classes/Db.php");
-include_once (__DIR__ . "../../classes/User.php");
-include_once (__DIR__ . "../../classes/Manager.php");
-include_once (__DIR__ . "../../classes/Employee.php");
-include_once (__DIR__ . "../../classes/Task.php");
+include_once(__DIR__ . "../../classes/Db.php");
+include_once(__DIR__ . "../../classes/User.php");
+include_once(__DIR__ . "../../classes/Manager.php");
+include_once(__DIR__ . "../../classes/Employee.php");
+include_once(__DIR__ . "../../classes/Task.php");
+
 session_start();
 
 error_reporting(E_ALL);
@@ -26,6 +27,27 @@ if ($manager["typeOfUser"] != "manager") {
 }
 
 $employee_id = isset($_GET["employee"]) ? intval($_GET["employee"]) : 0;
+var_dump($employee_id);
+
+// Fetch user details based on employee_id
+$user = User::getUserById($pdo, $employee_id);
+
+if (isset($_POST["firstname"])) {
+    try {
+        $user = new User();
+        $user->setFirstname($_POST['firstname']);
+        $user->setLastname($_POST['lastname']);
+        $user->setEmail($_POST['email']);
+        $user->updateUser($pdo, $_POST["user_id"], "employee");
+    } catch (Exception $e) {
+        error_log('Database error: ' . $e->getMessage());
+    }
+}
+
+if (!$user) {
+    header("Location: hubworkers.php?error=invalidEmployee");
+    exit();
+}
 
 $allTasks = Task::getAllTasks($pdo);
 
@@ -35,14 +57,13 @@ if (isset($_POST["submitTask"])) {
             $taskId = $task["id"];
             $isAssigned = isset($_POST["Task_$taskId"]) ? 1 : 0;
             Task::assignTaskToUser($pdo, $employee_id, $taskId, $isAssigned);
-
-            header("Location: hubworkers.php");
         }
+        header("Location: hubworkers.php");
+        exit();
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
     }
 }
-
 
 // Haal de taken op die de werknemer heeft
 $employeeTasks = Task::getTasksByEmployeeId($pdo, $employee_id);
@@ -65,19 +86,41 @@ $employeeTaskIds = array_column($employeeTasks, 'id');
 </head>
 
 <body>
-    <?php include_once ('../inc/nav.inc.php'); ?>
+    <?php include_once('../inc/nav.inc.php'); ?>
     <div id="hubworkerDetails">
-        <h1>Assign tasks</h1>
-        <div class="tasks">
-            <form action="" method="post">
-                <?php foreach ($allTasks as $task): ?>
-                    <div>
-                        <input type="checkbox" id="task_<?php echo $task["id"]; ?>" name="Task_<?php echo $task["id"]; ?>" value="<?php echo $task["id"]; ?>" <?php if (in_array($task["id"], $employeeTaskIds)) echo 'checked'; ?>>
-                        <label for="task_<?php echo $task["id"]; ?>"><?php echo htmlspecialchars($task["task"]); ?></label>
+        <h1>Edit hubworker</h1>
+        <div class="elements">
+            <div class="tasks">
+                <h2>Tasks</h2>
+                <form action="" method="post">
+                    <?php foreach ($allTasks as $task): ?>
+                        <div>
+                            <input type="checkbox" id="task_<?php echo $task["id"]; ?>" name="Task_<?php echo $task["id"]; ?>" value="<?php echo $task["id"]; ?>" <?php if (in_array($task["id"], $employeeTaskIds)) echo 'checked'; ?>>
+                            <label for="task_<?php echo $task["id"]; ?>"><?php echo htmlspecialchars($task["task"]); ?></label>
+                        </div>
+                    <?php endforeach; ?>
+                    <input type="submit" name="submitTask" class="btn" value="opslaan"></input>
+                </form>
+            </div>
+            <div class="editEmployee">
+                <h2>Edit Employee</h2>
+                <form action="" method="post">
+                    <div class="column">
+                        <label for="firstname">First Name:</label>
+                        <input type="text" name="firstname" id="firstname" value="<?php echo htmlspecialchars($user['firstname']); ?>">
                     </div>
-                <?php endforeach; ?>
-                <input type="submit" name="submitTask" class="btn" value="opslaan"></input>
-            </form>
+                    <div class="column">
+                        <label for="lastname">Last Name:</label>
+                        <input type="text" name="lastname" id="lastname" value="<?php echo htmlspecialchars($user['lastname']); ?>">
+                    </div>
+                    <div class="column">
+                        <label for="email">Email:</label>
+                        <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['email']); ?>">
+                    </div>
+                    <input type="hidden" name="user_id" id="user_id">
+                    <button type="submit" class="btn">Save</button>
+                </form>
+            </div>
         </div>
     </div>
 </body>

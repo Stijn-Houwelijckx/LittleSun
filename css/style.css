@@ -404,10 +404,33 @@ button {
   gap: 24px;
 }
 
-#hubworkerDetails .tasks {
+#hubworkerDetails .elements {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-right: 200px;
+}
+
+#hubworkerDetails .tasks,
+#hubworkerDetails .editEmployee {
   display: flex;
   flex-direction: column;
+  gap: 24px;
+}
+
+#hubworkerDetails .tasks form,
+#hubworkerDetails .editEmployee form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 16px;
+}
+
+#hubworkerDetails .editEmployee form .column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 #hubLocationsAdmin .row,
@@ -877,8 +900,6 @@ button {
   justify-content: space-between;
   align-items: center;
 }
-
-
 
 #calendar #top div {
   display: flex;

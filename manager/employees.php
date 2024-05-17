@@ -149,10 +149,6 @@ $users = Employee::getAllEmployeesByLocation($pdo, $manager["location_id"]);
 
 
     <script>
-        function submitUserForm() {
-            document.getElementById("userSelector").submit();
-        }
-
         function openPopup(id, firstname, lastname, email) {
             document.getElementById("user_id").value = id;
             document.getElementById("firstname").value = firstname;

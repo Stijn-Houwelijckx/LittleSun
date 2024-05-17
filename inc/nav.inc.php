@@ -89,7 +89,7 @@
                 <a href="hubworkers.php">
                     <div>
                         <img class="<?php echo ($current_page == 'hubworkers') ? 'usersItem active' : 'usersItem'; ?>"
-                            src="../assets/icons/employee.svg" alt="Employees">
+                            src="../assets/icons/users.svg" alt="users">
                         <p>Employees</p>
                     </div>
                 </a>
@@ -98,6 +98,13 @@
                         <img class="<?php echo ($current_page == 'calendar') ? 'usersItem active' : 'usersItem'; ?>"
                             src="../assets/icons/calendar.svg" alt="Calendar">
                         <p>Calendar</p>
+                    </div>
+                </a>
+                <a href="rapports.php">
+                    <div>
+                        <img class="<?php echo ($current_page == 'rapports') ? 'rapportsItem active' : 'rapportsItem'; ?>"
+                            src="../assets/icons/rapport.svg" alt="rapport">
+                        <p>Rapporten</p>
                     </div>
                 </a>
             <?php endif ?>
