@@ -147,10 +147,22 @@ document.addEventListener("DOMContentLoaded", function () {
         day
       ).padStart(2, "0")}`;
 
-      console.log(currentDayKey); // Output: "2024-05-11" (if currentDate is May 11, 2024)
+      // console.log(currentDayKey);
 
       // Clear the content of the day element before adding new calendar items
       dayElement.innerHTML = "";
+
+      const dateNow = new Date();
+      const year_now = dateNow.getFullYear().toString();
+      const month_now = String(dateNow.getMonth() + 1).padStart(2, "0");
+      const day_now = String(dateNow.getDate()).padStart(2, "0");
+      const formattedDateNow = `${year_now}-${month_now}-${day_now}`;
+
+      if (currentDayKey == formattedDateNow) {
+        dayElement.classList.add("current_day");
+      } else {
+        dayElement.classList.remove("current_day");
+      }
 
       // Update the text content of the day element with the day of the month
       const dayParagraph = document.createElement("p");
@@ -230,6 +242,18 @@ document.addEventListener("DOMContentLoaded", function () {
       const currentDayKey = `${month.getFullYear()}-${(month.getMonth() + 1)
         .toString()
         .padStart(2, "0")}-${i.toString().padStart(2, "0")}`;
+
+      const dateNow = new Date();
+      const year_now = dateNow.getFullYear().toString();
+      const month_now = String(dateNow.getMonth() + 1).padStart(2, "0");
+      const day_now = String(dateNow.getDate()).padStart(2, "0");
+      const formattedDateNow = `${year_now}-${month_now}-${day_now}`;
+
+      if (currentDayKey == formattedDateNow) {
+        dayElement.classList.add("current_day");
+      } else {
+        dayElement.classList.remove("current_day");
+      }
 
       // Voeg kalenderitems toe aan het dagelement voor de huidige dag
       if (

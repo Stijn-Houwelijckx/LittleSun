@@ -34,19 +34,15 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
 
 $selectedUser = User::getUserById($pdo, 1);
 
-if (isset($_POST['eventDatePicker'], $_POST['event_title'], $_POST['event_description'])) {
+if (isset($_POST['eventDatePicker'])) {
     $calendarItem = new CalendarItem;
     try {
         $event_date = $_POST['eventDatePicker'];
         $employeeId = $_POST['userSelector'];
         $taskId = $_POST['taskSelector'];
-        $event_title = $_POST['event_title'];
-        $event_description = $_POST['event_description'];
         
         $selectedTimeslots = $_POST['timeslots']; // Haal de geselecteerde tijdsloten op
         $calendarItem->setEvent_date($event_date);
-        $calendarItem->setEvent_title($event_title);
-        $calendarItem->setEvent_description($event_description);
         $calendarItem->setEvent_location($manager["location_id"]);
 
         $newCalendaritem = $calendarItem->addCalendarItem($pdo, $employeeId, $taskId, $selectedTimeslots);
@@ -235,7 +231,7 @@ $taskTypes = Task::getAllTasks($pdo);
                         $dayKey = $startDate->format('Y-m-d');
                         $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
                 ?>
-                        <div class="day" style="min-height: <?php echo $totalItems * 30 + 250 ?>px;">
+                        <div class="day <?php echo $dayKey == $today->format('Y-m-d')? "current_day" : "" ?>" style="min-height: <?php echo $totalItems * 30 + 250 ?>px;">
                             <p><?php echo $startDate->format('d'); ?></p>
                             <?php if (isset($groupedCalendarItems[$dayKey])): ?>
                                 <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
@@ -286,7 +282,7 @@ $taskTypes = Task::getAllTasks($pdo);
                         $dayKey = $date->format('Y-m-d');
                         $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
                     ?>
-                    <div class="day" style="min-height: <?php echo $totalItems * 30 + 100 ?>px;">
+                    <div class="day <?php echo $dayKey == $today->format('Y-m-d')? "current_day" : "" ?>" style="min-height: <?php echo $totalItems * 30 + 100 ?>px;">
                         <input type="hidden" class="currentDateInput" value="<?php echo $dayKey; ?>"> <!-- Gebruik een klasse in plaats van een id -->
                         <p><?php echo $date->format('d'); ?></p>
                         <?php if (isset($groupedCalendarItems[$dayKey])): ?>
@@ -399,14 +395,6 @@ $taskTypes = Task::getAllTasks($pdo);
                             <label for="timeslot_13">20:00 - 21:00</label>
                         </div>
                     </div>
-                </div>
-                <div class="column">
-                    <label for="event_title">Event_title:</label>
-                    <input type="text" name="event_title" id="event_title" placeholder="Event_title">
-                </div>
-                <div class="column">
-                    <label for="event_description">Event_description:</label>
-                    <textarea name="event_description" id="event_description" placeholder="Event_description"></textarea>
                 </div>
             </div>
             <div class="buttons">
