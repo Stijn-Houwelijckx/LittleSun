@@ -71,9 +71,11 @@ foreach ($employees as $employee) {
         <div class="hubs">
             <?php foreach ($employees as $employee) : ?>
                 <div class="hub">
-                    <img src="../assets/images/<?php echo $employee["profileImg"] ?>" alt="profileImg">
-                    <p><?php echo $employee["firstname"] ?></p>
-                    <p><?php echo $employee["lastname"] ?></p>
+                    <div class="name-container">
+                        <img src="../assets/images/<?php echo $employee["profileImg"] ?>" alt="profileImg">
+                        <p><?php echo $employee["firstname"] ?></p>
+                        <p><?php echo $employee["lastname"] ?></p>
+                    </div>
                     <?php
                     // Haal taken op voor deze werknemer
                     $employeeId = $employee["id"];
