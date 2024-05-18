@@ -155,20 +155,6 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
     btnApprove.addEventListener("click", function (e) {
         popupOverlay.style.display = "none";
     });
-
-    // Update the JavaScript code to send the selected user's ID to the report.php page
-    const userSelector = document.querySelector("#userSelector");
-    const reportBtn = document.querySelector(".report-btn");
-
-    reportBtn.addEventListener("click", function (e) {
-        const selectedUserId = userSelector.value;
-
-        if (selectedUserId) {
-            window.location.href = `report.php?userId=${selectedUserId}`;
-        } else {
-            window.location.href = `report.php`;
-        }
-    });
 </script>
 
 </html>
