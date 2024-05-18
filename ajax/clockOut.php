@@ -24,6 +24,10 @@ if (!isset($_SESSION["user_id"]) || $manager["typeOfUser"] != "employee") {
     exit();
 }
 
+// Initialize plannedWorkSeconds and totalWorkSeconds
+$plannedWorkSeconds = 0;
+$totalWorkSeconds = 0;
+
 // Check if the form is submitted
 if (isset($_POST)) {
     try {
@@ -47,26 +51,34 @@ if (isset($_POST)) {
         $workedTime = sprintf("%02d:%02d:%02d", $hours, $minutes, $seconds);
         
         $plannedWorkTime = CalendarItem::getPlannedWorkTimeByUserIdAndDate($pdo, $_SESSION["user_id"], date("Y-m-d"));
-        $plannedWorkHours = $plannedWorkTime['total_time']; // Assuming this is in the format HH:MM:SS
-        $plannedWorkSeconds = strtotime($plannedWorkHours) - strtotime('TODAY');
         
-        $totalWorkSeconds = strtotime($fullWorkedTime["worked_time"]) - strtotime('TODAY'); // Convert the time string to seconds
-        
+        // Check if plannedWorkTime is not null before using it
         if ($plannedWorkTime['total_time'] != null) {
+            // Convert the planned work time to seconds
+            $plannedWorkSeconds = strtotime($plannedWorkTime['total_time']) - strtotime('TODAY');
+
+            // Calculate total work time in seconds
+            $totalWorkSeconds = strtotime($fullWorkedTime["worked_time"]) - strtotime('TODAY');
+
+            // Check if total work time exceeds planned work time
             if ($totalWorkSeconds > $plannedWorkSeconds) {
+                // Calculate overtime
                 $overtimeSeconds = $totalWorkSeconds - $plannedWorkSeconds;
                 $overtimeHours = floor($overtimeSeconds / 3600);
                 $overtimeMinutes = floor(($overtimeSeconds % 3600) / 60);
                 $overtimeSeconds = $overtimeSeconds % 60;
                 $overtime = sprintf("%02d:%02d:%02d", $overtimeHours, $overtimeMinutes, $overtimeSeconds);
-            
+
+                // Save overtime
                 TimeTracker::saveOvertime($pdo, $_SESSION["user_id"], $lastTimeTracker["id"], $overtime);
             } else {
                 $overtime = "00:00:00"; // No overtime
-            
+
+                // Save zero overtime
                 TimeTracker::saveOvertime($pdo, $_SESSION["user_id"], $lastTimeTracker["id"], $overtime);
             }
         } else {
+            // If planned work time is null, set overtime to full worked time
             $overtime = $fullWorkedTime["worked_time"];
         }
 
@@ -94,4 +106,4 @@ if (isset($_POST)) {
     header('Content-Type: application/json');
     echo json_encode($response);
     exit();
-}
+} 
