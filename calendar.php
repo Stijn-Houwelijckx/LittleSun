@@ -193,7 +193,6 @@ $taskTypes = Task::getAllTasks($pdo);
             <div id="top">
                 <i class="fa fa-angle-left" id="prevMonth"></i>
                 <div>
-                    <h2 class="thisMonth"><?php echo date('F', strtotime('2000-' . $currentMonth . '-01')); ?> <?php echo $currentYear; ?></h2>
                     <h2 id="currentMonth"></h2>
                 </div>
                 <i class="fa fa-angle-right" id="nextMonth"></i>
