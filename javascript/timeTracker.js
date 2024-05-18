@@ -35,6 +35,11 @@ clockInButton.addEventListener("click", function () {
 
         // Hide the clock in button
         clockInButton.style.display = "none";
+
+        // Add a div with class "circle" in the parent from timeTrackerTitle
+        const circle = document.createElement("div");
+        circle.classList.add("circle");
+        timeTrackerTitle.parentNode.appendChild(circle);
       }
     })
     .catch((error) => {
@@ -86,6 +91,10 @@ clockOutButton.addEventListener("click", function () {
 
         // Show the clock in button
         clockInButton.style.display = "block";
+
+        // Remove the circle
+        const circle = document.querySelector(".circle");
+        circle.remove();
       }
     })
     .catch((error) => {
