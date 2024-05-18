@@ -677,6 +677,7 @@ button {
 
 .dashboard .bento-grid .bento-grid-row {
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   gap: 16px;
   height: fit-content;

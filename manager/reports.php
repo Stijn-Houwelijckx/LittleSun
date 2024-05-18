@@ -117,6 +117,10 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
 
                     <button class="report-btn btn">Generate report</button>
                 </div>
+
+                <div class="bento-item">
+                    <?php include_once ('report.php') ?>
+                </div>
             </div>
         </div>
     </div>

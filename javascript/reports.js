@@ -26,7 +26,7 @@ reportBtn.addEventListener("click", function (e) {
   // Remove the first "&" from the string
   $locationString = $locationString.substring(1);
 
-  window.location.href = `report.php?${$locationString}`;
+  window.location.href = `reports.php?${$locationString}`;
 });
 
 // Fetch months by year AJAX

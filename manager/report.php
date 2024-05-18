@@ -16,9 +16,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('error_log', 'error.log');
 
-session_start();
+// session_start();
 
-$current_page = '';
+// $current_page = '';
 
 $pdo = Db::getInstance();
 $manager = User::getUserById($pdo, $_SESSION["user_id"]);
@@ -76,7 +76,7 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
 }
 ?>
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -88,17 +88,17 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
     <link rel="icon" type="image/x-icon" href="../assets/images/favicon.png">
 </head>
 
-<body>
-    <?php include_once ('../inc/nav.inc.php'); ?>
+<body> -->
+    <?php //include_once ('../inc/nav.inc.php'); ?>
 
-    <div class="dashboard">
+    <!-- <div class="dashboard"> -->
         <div class="row">
             <h1>Generated report</h1>
             <h2>Report date: <?php echo $year; echo $month ? " - " . $monthName : ""; ?></h2>
             <h2>Report user: <?php echo isset($_GET['userId']) ? $employee["firstname"] . " " . $employee["lastname"] : "All users"; ?></h2>
         </div>
 
-        <div class="report-container">
+        <div class="report-container" style="padding-right: 0">
             <div class="table">
                 <div class="table-header">
                     <div class="header__item"><a id="employee" class="filter__link" href="#">Employee</a></div>
@@ -142,8 +142,8 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
                 </div>
             </div>
         </div>
-    </div>
+    <!-- </div> -->
 
     <script src="../javascript/report.js"></script>
-</body>
-</html>
+<!-- </body>
+</html> -->
