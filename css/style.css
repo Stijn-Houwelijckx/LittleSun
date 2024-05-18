@@ -170,6 +170,10 @@ button {
   width: 100%;
 }
 
+.desktopNav .column .top p {
+  text-align: center;
+}
+
 .desktopNav .column .top .logo {
   background-repeat: no-repeat;
   background-position: center;
@@ -698,6 +702,31 @@ button {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.dashboard .bento-item .row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.dashboard .bento-item .circle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  animation: circleAnimation 4s ease-in-out 1s infinite; /* Toevoeging van 'infinite' om de animatie continu te laten herhalen */
+}
+
+@keyframes circleAnimation {
+  0% {
+    background-color: red;
+  }
+  50% {
+    background-color: rgba(255, 0, 0, 0.2);
+  }
+  100% {
+    background-color: red;
+  }
 }
 
 .bento-grid .bento-item .btn {
