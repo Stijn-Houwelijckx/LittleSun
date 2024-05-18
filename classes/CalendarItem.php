@@ -194,35 +194,12 @@ class CalendarItem
             throw new Exception('Database error: Unable to retrieve users');
         }
     }
-
-    public static function getPlannedWorkTimeByUserId (PDO $pdo, $user_id)
-    {
-        try {
-            $stmt = $pdo->prepare("SELECT SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND, start_time, end_time))) as total_time
-            FROM calendar
-            WHERE user_id = :user_id
-            ");
-            $stmt->bindParam(':user_id', $user_id);
-            $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            // If there are no results, return 00:00:00 in total_time
-            if ($result['total_time'] == null) {
-                return ['total_time' => '00:00:00'];
-            } else {
-                return $result;
-            }
-        } catch (PDOException $e) {
-            error_log('Database error in getPlannedWorkHoursByUserId(): ' . $e->getMessage());
-            throw new Exception('Database error: Unable to retrieve hours');
-        }
-    }
     
     public static function getPlannedWorkTimeByUserIdAndDate(PDO $pdo, $user_id, $date)
     {
         try {
             $stmt = $pdo->prepare("
-                SELECT SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND, start_time, end_time))) as total_time
+                SELECT SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND, start_time, end_time))) AS total_time
                 FROM calendar
                 WHERE user_id = :user_id
                 AND event_date = :date
@@ -235,6 +212,35 @@ class CalendarItem
         } catch (PDOException $e) {
             error_log('Database error in getPlannedWorkHoursByUserIdAndDate(): ' . $e->getMessage());
             throw new Exception('Database error: Unable to retrieve hours');
+        }
+    }
+
+    public static function getDistinctYearsByLocation(PDO $pdo, $location_id)
+    {
+        try {
+            $stmt = $pdo->prepare("SELECT DISTINCT YEAR(event_date) AS year FROM calendar WHERE event_location = :location_id ORDER BY year ASC");
+            $stmt->bindParam(':location_id', $location_id);
+            $stmt->execute();
+            $years = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $years ?: [];
+        } catch (PDOException $e) {
+            error_log('Database error in getDistinctYears(): ' . $e->getMessage());
+            throw new Exception('Database error: Unable to retrieve years');
+        }
+    }
+
+    public static function getDistinctMonthsByLocation(PDO $pdo, $year, $location_id)
+    {
+        try {
+            $stmt = $pdo->prepare("SELECT DISTINCT LPAD(MONTH(event_date), 2, '0') AS month_number, MONTHNAME(event_date) AS month_name FROM calendar WHERE YEAR(event_date) = :year AND event_location = :location_id ORDER BY month_number ASC");
+            $stmt->bindParam(':year', $year);
+            $stmt->bindParam(':location_id', $location_id);
+            $stmt->execute();
+            $months = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $months ?: [];
+        } catch (PDOException $e) {
+            error_log('Database error in getDistinctMonths(): ' . $e->getMessage());
+            throw new Exception('Database error: Unable to retrieve months calendar items');
         }
     }
 }

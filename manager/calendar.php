@@ -7,7 +7,9 @@ include_once (__DIR__ . "../../classes/CalendarItem.php");
 include_once (__DIR__ . "../../classes/SickLeave.php");
 
 // Zet error reporting om ongewenste meldingen uit te schakelen
-error_reporting(0);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('error_log', 'error.log');
 
 // Fetch users by availability AJAX
 if (isset($_POST['eventDatePicker'])) {

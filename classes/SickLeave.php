@@ -100,21 +100,33 @@ class SickLeave {
         return $stmt->fetch();
     }
 
-    public static function getTotalSickTimeByUserId(PDO $pdo, $user_id)
+    // public static function getDistinctMonthsByLocation(PDO $pdo, $location_id)
+    // {
+    //     try {
+    //         $stmt = $pdo->prepare("SELECT DISTINCT LPAD(MONTH(start_time), 2, '0') AS month_number, MONTHNAME(start_time) AS month_name FROM time_tracker, users WHERE time_tracker.user_id = users.id AND users.location_id = :location_id ORDER BY month_number ASC");
+    //         $stmt->bindParam(':location_id', $location_id);
+    //         $stmt->execute();
+    //         $months = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //         return $months ?: [];
+    //     } catch (PDOException $e) {
+    //         error_log('Database error in getDistinctMonths(): ' . $e->getMessage());
+    //         throw new Exception('Database error: Unable to retrieve months');
+    //     }
+    // }
+
+    public static function getDistinctMonthsByLocation(PDO $pdo, $year, $location_id)
     {
-        $stmt = $pdo->prepare("SELECT SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND, start_date, end_date))) as total_time
-        FROM sick_leave
-        WHERE user_id = :user_id AND status = 1
-        ");
-        $stmt->bindParam(':user_id', $user_id);
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        // If there are no results, return 00:00:00 in total_time
-        if ($result['total_time'] == null) {
-            return ['total_time' => '00:00:00'];
-        } else {
-            return $result;
+        try {
+            // $stmt = $pdo->prepare("SELECT DISTINCT LPAD(MONTH(start_date), 2, '0') AS month_number, MONTHNAME(start_date) AS month_name FROM sick_leave, user_locations WHERE sick_leave.user_id = user_locations.user_id AND user_locations.location_id = :location_id ORDER BY month_number ASC");
+            $stmt = $pdo->prepare("SELECT DISTINCT LPAD(MONTH(start_date), 2, '0') AS month_number, MONTHNAME(start_date) AS month_name FROM sick_leave, user_locations WHERE sick_leave.user_id = user_locations.user_id AND user_locations.location_id = :location_id AND YEAR(start_date) = :year ORDER BY month_number ASC");
+            $stmt->bindParam(':year', $year);
+            $stmt->bindParam(':location_id', $location_id);
+            $stmt->execute();
+            $months = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $months ?: [];
+        } catch (PDOException $e) {
+            error_log('Database error in getDistinctMonths(): ' . $e->getMessage());
+            throw new Exception('Database error: Unable to retrieve months sick leave');
         }
     }
 }
