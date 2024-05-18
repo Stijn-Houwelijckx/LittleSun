@@ -68,6 +68,6 @@ yearSelector.addEventListener("change", function () {
       }
     })
     .catch((error) => {
-      console.error("Error retreiving the tasks:", error);
+      console.error("Error retreiving the months:", error);
     });
 });
