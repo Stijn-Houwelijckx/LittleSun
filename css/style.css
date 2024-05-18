@@ -969,6 +969,10 @@ div.day {
   border-radius: 8px;
 }
 
+div.day.opacity {
+  opacity: 0.4;
+}
+
 div.current_day {
   border: solid 2px var(--darkYellow);
 }
