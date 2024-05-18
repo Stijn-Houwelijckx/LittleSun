@@ -162,7 +162,7 @@ $taskTypes = Task::getAllTasks($pdo);
     <a href="calendar.php?view=daily" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "daily" ? "active" : ""; } ?> daily">Daily</a>
     <a href="calendar.php?view=weekly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "weekly" ? "active" : ""; } ?> weekly">Weekly</a>
     <a href="calendar.php?view=monthly" class="btn <?php if (isset($_GET["view"])) { echo $_GET["view"] === "monthly" ? "active" : ""; } ?> monthly">Monthly</a>
-    <a href="" class="btn big">+ Add agendaItem</a>  
+    <a href="" class="btn big">+ Add event</a>  
 
     <?php
     // Check if there are any errors to display
