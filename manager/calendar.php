@@ -83,9 +83,23 @@ if (isset($_POST['eventDatePicker'])) {
 function generateDaysForMonth($year, $month) {
     $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
     $days = [];
-    for ($day = 1; $day <= $daysInMonth; $day++) {
-        $days[] = sprintf('%04d-%02d-%02d', $year, $month, $day);
+    
+    // Start with the first day of the month
+    $firstDayOfMonth = new DateTime(sprintf('%04d-%02d-%02d', $year, $month, 1));
+    $dayOfWeek = $firstDayOfMonth->format('N'); // Get the day of the week (1 for Monday, 7 for Sunday)
+    
+    // Add days from the previous month to fill the beginning of the week
+    if ($dayOfWeek != 1) {
+        $firstDayOfMonth->modify('-' . ($dayOfWeek - 1) . ' days');
     }
+    
+    // Generate days for the current month including the days from the previous and next month to complete the weeks
+    $currentDay = clone $firstDayOfMonth;
+    while (count($days) < ($daysInMonth + ($dayOfWeek - 1) + (7 - (($daysInMonth + ($dayOfWeek - 1)) % 7)))) {
+        $days[] = $currentDay->format('Y-m-d');
+        $currentDay->modify('+1 day');
+    }
+
     return $days;
 }
 
@@ -96,8 +110,7 @@ $allDaysThisMonth = generateDaysForMonth($currentYear, $currentMonth);
 $date = new DateTime($allDaysThisMonth[0]);
 $dayOfWeek = $date->format('N');
 
-$emptyDays = array_fill(0, $dayOfWeek - 1, '');
-array_unshift($allDaysThisMonth, ...$emptyDays);
+// No need to add empty days manually, they are now included in $allDaysThisMonth
 
 $allCalendarItems = CalendarItem::getAllCalenderItems($pdo, $user["location_id"]);
 $allEmployeesByLocation = Employee::getAllEmployeesByLocation($pdo, $user["location_id"]);
@@ -109,7 +122,7 @@ foreach ($allDaysThisMonth as $day) {
     $groupedCalendarItems[$day] = [];
     foreach ($allEmployeesByLocation as $employee) {
         $userId = $employee["id"];
-        // Genereer een kleur voor de gebruiker
+        // Generate a color for the user
         $red = ($userId * 70) % 256;
         $green = ($userId * 120) % 256;
         $blue = ($userId * 170) % 256;
@@ -122,7 +135,6 @@ foreach ($allCalendarItems as $calendarItem) {
     $day = $date->format('Y-m-d');
     $groupedCalendarItems[$day][] = $calendarItem;
 }
-
 
 $taskTypes = Task::getAllTasks($pdo);
 
@@ -313,7 +325,6 @@ $taskTypes = Task::getAllTasks($pdo);
             <div id="top">
                 <i class="fa fa-angle-left" id="prevMonth"></i>
                 <div>
-                    <h2 class="thisMonth"><?php echo date('F', strtotime('2000-' . $currentMonth . '-01')); ?> <?php echo $currentYear; ?></h2>
                     <h2 id="currentMonth"></h2>
                 </div>
                 <i class="fa fa-angle-right" id="nextMonth"></i>

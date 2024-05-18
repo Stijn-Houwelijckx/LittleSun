@@ -106,7 +106,12 @@ $plannedWorkHours = CalendarItem::getPlannedWorkTimeByUserIdAndDate($pdo, $_SESS
                 <button class="btn bento-item-button">Request time off</button>
             </div>
             <div class="bento-item">
-                <h2 class="bento-item-title" id="time-tracker-title"><?php echo $timeTracker? "Clock Out" : "Clock In"; ?></h2>
+                <div class="row">
+                    <h2 class="bento-item-title" id="time-tracker-title"><?php echo $timeTracker? "Clock Out" : "Clock In"; ?></h2>
+                    <?php if ($timeTracker) : ?>
+                        <p class="circle"></p>
+                    <?php endif ?>
+                </div>
                 <?php if ($plannedWorkHours["total_time"]) : ?>
                     <p id="plannedWorkHours">Planned work hours today: <?php echo $plannedWorkHours["total_time"] ?></p>
                 <?php else : ?>

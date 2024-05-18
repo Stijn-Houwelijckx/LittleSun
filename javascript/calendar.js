@@ -200,16 +200,17 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentMonth = new Date();
 
   prevMonthBtn.addEventListener("click", function () {
-    document.querySelector(".thisMonth").style.display = "none";
-    currentMonth.setMonth(currentMonth.getMonth() - 1);
-    updateMonth(currentMonth);
+    navigateMonth(-1);
   });
 
   nextMonthBtn.addEventListener("click", function () {
-    document.querySelector(".thisMonth").style.display = "none";
-    currentMonth.setMonth(currentMonth.getMonth() + 1);
-    updateMonth(currentMonth);
+    navigateMonth(1);
   });
+
+  function navigateMonth(direction) {
+    currentMonth.setMonth(currentMonth.getMonth() + direction);
+    updateMonth(currentMonth);
+  }
 
   function updateMonth(month) {
     const formattedMonth = month.toLocaleDateString("en-GB", {
@@ -219,69 +220,97 @@ document.addEventListener("DOMContentLoaded", function () {
 
     currentMonthElement.textContent = formattedMonth;
 
-    const daysInMonth = getDaysInMonth(
-      month.getFullYear(),
-      month.getMonth() + 1
-    );
+    const monthStart = new Date(month.getFullYear(), month.getMonth(), 1);
+    const monthEnd = new Date(month.getFullYear(), month.getMonth() + 1, 0);
 
-    // Voeg hier de logica toe om de weergave van de maand te updaten
+    const startDay = getMondayBefore(monthStart);
+    const endDay = getSundayAfter(monthEnd);
+
     const monthContainer = document.getElementById("monthItems");
-    monthContainer.innerHTML = ""; // Wis de inhoud van de container voordat nieuwe items worden toegevoegd
+    monthContainer.innerHTML = ""; // Wis de inhoud van de container
 
-    for (let i = 1; i <= daysInMonth; i++) {
-      const dayElement = document.createElement("div");
-      dayElement.className = "day";
-
-      const dayNumber = document.createElement("p");
-      dayNumber.textContent = i < 10 ? "0" + i : i;
-      dayElement.appendChild(dayNumber);
-
-      const currentDayKey = `${month.getFullYear()}-${(month.getMonth() + 1)
-        .toString()
-        .padStart(2, "0")}-${i.toString().padStart(2, "0")}`;
-
-      const dateNow = new Date();
-      const year_now = dateNow.getFullYear().toString();
-      const month_now = String(dateNow.getMonth() + 1).padStart(2, "0");
-      const day_now = String(dateNow.getDate()).padStart(2, "0");
-      const formattedDateNow = `${year_now}-${month_now}-${day_now}`;
-
-      if (currentDayKey == formattedDateNow) {
-        dayElement.classList.add("current_day");
-      } else {
-        dayElement.classList.remove("current_day");
-      }
-
-      // Voeg kalenderitems toe aan het dagelement voor de huidige dag
-      if (
-        groupedCalendarItems[currentDayKey] &&
-        groupedCalendarItems[currentDayKey].length > 0
-      ) {
-        groupedCalendarItems[currentDayKey].forEach((item) => {
-          const userId = item.user_id; // Gebruik de gebruikers-ID om de kleur te bepalen
-          const red = (userId * 70) % 256;
-          const green = (userId * 120) % 256;
-          const blue = (userId * 170) % 256;
-          const itemColor = `rgb(${red}, ${green}, ${blue})`;
-
-          const p = document.createElement("p");
-          p.className = "calendarItem";
-          p.style.backgroundColor = itemColor;
-          p.textContent = `${item.start_time.slice(
-            0,
-            -3
-          )} - ${item.end_time.slice(0, -3)} : ${item.task}`;
-
-          dayElement.appendChild(p);
-        });
-      }
-
+    for (
+      let day = new Date(startDay);
+      day <= endDay;
+      day.setDate(day.getDate() + 1)
+    ) {
+      const dayElement = createDayElement(new Date(day), month);
       monthContainer.appendChild(dayElement);
     }
   }
 
-  // Functie om het aantal dagen in een maand te krijgen
-  function getDaysInMonth(year, month) {
-    return new Date(year, month, 0).getDate();
+  function getMondayBefore(date) {
+    const day = new Date(date);
+    const dayOfWeek = day.getDay();
+    const diff = (dayOfWeek + 6) % 7; // Zondag is 0, Maandag is 1, ..., Zaterdag is 6
+    day.setDate(day.getDate() - diff);
+    return day;
   }
+
+  function getSundayAfter(date) {
+    const day = new Date(date);
+    const dayOfWeek = day.getDay();
+    const diff = (7 - dayOfWeek) % 7; // Zondag is 0, Maandag is 1, ..., Zaterdag is 6
+    day.setDate(day.getDate() + diff);
+    return day;
+  }
+
+  function createDayElement(date, currentMonth) {
+    const dayElement = document.createElement("div");
+    dayElement.className = "day";
+
+    const dayNumber = document.createElement("p");
+    dayNumber.textContent = date.getDate().toString().padStart(2, "0");
+    dayElement.appendChild(dayNumber);
+
+    const currentDayKey = `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+    const formattedDateNow = getFormattedCurrentDate();
+
+    if (currentDayKey === formattedDateNow) {
+      dayElement.classList.add("current_day");
+    } else {
+      dayElement.classList.remove("current_day");
+    }
+
+    if (date.getMonth() !== currentMonth.getMonth()) {
+      dayElement.classList.add("opacity");
+    }
+
+    if (groupedCalendarItems[currentDayKey]) {
+      groupedCalendarItems[currentDayKey].forEach((item) => {
+        const itemColor = getItemColor(item.user_id);
+
+        const p = document.createElement("p");
+        p.className = "calendarItem";
+        p.style.backgroundColor = itemColor;
+        p.textContent = `${item.start_time.slice(
+          0,
+          -3
+        )} - ${item.end_time.slice(0, -3)} : ${item.task}`;
+
+        dayElement.appendChild(p);
+      });
+    }
+
+    return dayElement;
+  }
+
+  function getItemColor(userId) {
+    const red = (userId * 70) % 256;
+    const green = (userId * 120) % 256;
+    const blue = (userId * 170) % 256;
+    return `rgb(${red}, ${green}, ${blue})`;
+  }
+
+  function getFormattedCurrentDate() {
+    const dateNow = new Date();
+    const year_now = dateNow.getFullYear().toString();
+    const month_now = String(dateNow.getMonth() + 1).padStart(2, "0");
+    const day_now = String(dateNow.getDate()).padStart(2, "0");
+    return `${year_now}-${month_now}-${day_now}`;
+  }
+
+  updateMonth(currentMonth);
 });
