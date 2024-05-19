@@ -6,6 +6,7 @@ include_once (__DIR__ . "/classes/Task.php");
 include_once (__DIR__ . "/classes/TimeTracker.php");
 include_once (__DIR__ . "/classes/CalendarItem.php");
 include_once (__DIR__ . "/classes/SickLeave.php");
+include_once (__DIR__ . "/classes/WorkEntry.php");
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -52,6 +53,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sickLeave->setReason($_POST["reason"]);
 
         $sickLeave->submitSickLeave($pdo, $user["id"]);
+
+        // Retreive all planned tasks between the sick leave dates
+        $tasks = CalendarItem::getCalenderItemsByUserIdBetweenDates($pdo, $user["id"], $_POST["startdate"], $_POST["enddate"]);
+
+        // Set all tasks as sick
+        foreach ($tasks as $task) {
+            WorkEntry::setWorkEntrySick($pdo, $user["id"], $task["task_id"], $task["event_date"]);
+        }
 
         header("Location: dashboard.php");
     }

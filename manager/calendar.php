@@ -5,39 +5,42 @@ include_once (__DIR__ . "../../classes/Employee.php");
 include_once (__DIR__ . "../../classes/Task.php");
 include_once (__DIR__ . "../../classes/CalendarItem.php");
 include_once (__DIR__ . "../../classes/SickLeave.php");
+include_once (__DIR__ . "../../classes/WorkEntry.php");
 
 // Zet error reporting om ongewenste meldingen uit te schakelen
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('error_log', 'error.log');
 
-// Fetch users by availability AJAX
-if (isset($_POST['eventDatePicker'])) {
-    // Fetch users
-}
+date_default_timezone_set('Europe/Brussels');
 
-// Fetch tasks by user AJAX
-if (isset($_POST['userSelector'])) {
-    // Fetch tasks
-}
+// // Fetch users by availability AJAX
+// if (isset($_POST['eventDatePicker'])) {
+//     // Fetch users
+// }
 
-// Validate event form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $errors = [];
+// // Fetch tasks by user AJAX
+// if (isset($_POST['userSelector'])) {
+//     // Fetch tasks
+// }
 
-    // Check if the required fields are filled out
-    if (empty($_POST['eventDatePicker']) || empty($_POST['userSelector']) || empty($_POST['taskSelector']) || empty($_POST['timeslots'])) {
-        $errors[] = "You didn't fill out all the fields.";
-    }
+// // Validate event form submission
+// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//     $errors = [];
 
-    // If there are no errors, process the input
-    if (empty($errors)) {
-        // Process form submission
-    } else {
-        // Display errors
+//     // Check if the required fields are filled out
+//     if (empty($_POST['eventDatePicker']) || empty($_POST['userSelector']) || empty($_POST['taskSelector']) || empty($_POST['timeslots'])) {
+//         $errors[] = "You didn't fill out all the fields.";
+//     }
+
+//     // If there are no errors, process the input
+//     if (empty($errors)) {
+//         // Process form submission
+//     } else {
+//         // Display errors
         
-    }
-}
+//     }
+// }
 
 session_start();
 
@@ -75,6 +78,37 @@ if (isset($_POST['eventDatePicker'])) {
         $calendarItem->setEvent_location($manager["location_id"]) ?? null;
 
         $newCalendaritem = $calendarItem->addCalendarItem($pdo, $employeeId, $taskId, $selectedTimeslots);
+
+        // Add a work_entry
+
+        // Get the start time from the first timeslot
+        $start_time = explode(' - ', reset($selectedTimeslots))[0];
+
+        // Get the end time from the last timeslot
+        $end_time = explode(' - ', end($selectedTimeslots))[1];
+
+        // Convert start and end times to DateTime objects
+        $start_datetime = DateTime::createFromFormat('H:i', $start_time);
+        $end_datetime = DateTime::createFromFormat('H:i', $end_time);
+
+        // Calculate the difference between start and end times
+        $time_diff = $start_datetime->diff($end_datetime);
+
+        // Format the difference as HH:MM:SS
+        $time_planned = $time_diff->format('%H:%I:%S');
+
+        // Create a new work_entry
+        $workEntry = new WorkEntry;
+
+        // Set the user_id, task_id, event_date and time_planned
+        $workEntry->setUser_id($employeeId);
+        $workEntry->setTask_id($taskId);
+        $workEntry->setEvent_date($event_date);
+        $workEntry->setTimePlanned($time_planned);
+
+        // Add the work_entry to the database
+        $newWorkEntry = $workEntry->addWorkEntry($pdo);
+
     } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
     }

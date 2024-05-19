@@ -2,12 +2,14 @@
 const userSelector = document.getElementById("userSelector");
 const yearSelector = document.getElementById("yearSelector");
 const monthSelector = document.getElementById("monthSelector");
+const taskSelector = document.getElementById("taskSelector");
 const reportBtn = document.querySelector(".report-btn");
 
 reportBtn.addEventListener("click", function (e) {
   const selectedUserId = userSelector.value;
   const selectedYear = yearSelector.value;
   const selectedMonth = monthSelector.value;
+  const selectedTask = taskSelector.value;
 
   $locationString = "";
 
@@ -21,6 +23,10 @@ reportBtn.addEventListener("click", function (e) {
 
   if (selectedMonth) {
     $locationString += `&month=${selectedMonth}`;
+  }
+
+  if (selectedTask) {
+    $locationString += `&taskId=${selectedTask}`;
   }
 
   // Remove the first "&" from the string
@@ -69,5 +75,49 @@ yearSelector.addEventListener("change", function () {
     })
     .catch((error) => {
       console.error("Error retreiving the months:", error);
+    });
+});
+
+// Fetch tasks by user AJAX
+userSelector.addEventListener("change", function () {
+  var userId = this.value;
+  var formData = new FormData();
+  formData.append("userId", userId);
+  console.log("userId: " + userId);
+
+  // Fetch tasks by user
+
+  fetch("../ajax/fetchTasksByUser.php", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.status === "error") {
+        console.log("Error: ", result);
+        return;
+      } else {
+        console.log("Success: ", result);
+
+        // Enable the user selector
+        taskSelector.disabled = false;
+
+        taskSelector.innerHTML = "";
+
+        var option = document.createElement("option");
+        option.value = "";
+        option.text = "--- select task ---";
+        taskSelector.appendChild(option);
+
+        result.tasks.forEach((task) => {
+          var option = document.createElement("option");
+          option.value = task.id;
+          option.text = task.task;
+          taskSelector.appendChild(option);
+        });
+      }
+    })
+    .catch((error) => {
+      console.error("Error retreiving the tasks:", error);
     });
 });

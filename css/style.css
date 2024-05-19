@@ -1094,6 +1094,12 @@ div.day p.calendarItem {
 
 /* Reports */
 
+.reports-container {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
 .report-container {
   display: flex;
   padding-right: 16px;
@@ -1116,16 +1122,26 @@ div.day p.calendarItem {
 .report-container .table-row {
   display: flex;
   width: 100%;
-  padding: 18px 0;
+  padding: 12px 0;
 }
 .report-container .table-row:nth-of-type(odd) {
   background: #dfdfdf;
+}
+.report-container .table-row:has(.table-subheader) {
+  background: #939393;
 }
 
 .report-container .table-data,
 .header__item {
   flex: 1 1 20%;
   text-align: center;
+}
+
+.report-container .table-subheader {
+  text-align: left;
+  color: white;
+
+  padding-left: 24px;
 }
 
 .report-container .header__item {

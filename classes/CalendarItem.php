@@ -243,4 +243,20 @@ class CalendarItem
             throw new Exception('Database error: Unable to retrieve months calendar items');
         }
     }
+    
+    public static function getCalenderItemsByUserIdBetweenDates(PDO $pdo, $user_id, $start_date, $end_date)
+    {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM calendar WHERE user_id = :user_id AND event_date BETWEEN :start_date AND :end_date ORDER BY event_date ASC");
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':start_date', $start_date);
+            $stmt->bindParam(':end_date', $end_date);
+            $stmt->execute();
+            $calendarItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $calendarItems ?: [];
+        } catch (PDOException $e) {
+            error_log('Database error in getCalenderItemsByUserIdBetweenDates(): ' . $e->getMessage());
+            throw new Exception('Database error: Unable to retrieve calendar items');
+        }
+    }
 }

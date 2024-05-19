@@ -142,4 +142,48 @@ class Task {
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
+
+    public static function getTaskInfoById($pdo, $task_id) {
+        $stmt = $pdo->prepare("SELECT * FROM tasktypes WHERE id = :task_id");
+        $stmt->bindParam(":task_id", $task_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public static function getClosestTaskIdForUser($pdo, $user_id, $end_time)
+    {
+        // Fetch all tasks for the user
+        $sql = "SELECT * FROM calendar WHERE user_id = :user_id AND event_date = :event_date ORDER BY start_time ASC";
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->bindParam(':user_id', $user_id);
+        $event_date = $end_time->format('Y-m-d');
+        $stmt->bindParam(':event_date', $event_date);
+
+        $stmt->execute();
+        $user_tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Initialize variables to keep track of closest task and time difference
+        $closest_task_id = null;
+        $closest_time_diff = PHP_INT_MAX;
+
+        // Loop through each user task to find the closest one to the end time
+        foreach ($user_tasks as $user_task) {
+            // Get the task start and end times
+            $task_start_time = new DateTime($user_task['start_time']);
+            $task_end_time = new DateTime($user_task['end_time']);
+
+            // Calculate the time difference between the end time and task start time
+            $time_diff = abs($task_start_time->getTimestamp() - $task_end_time->getTimestamp());
+
+            // Check if this task's start time is closer to the end time than the current closest task
+            if ($time_diff < $closest_time_diff) {
+                $closest_time_diff = $time_diff;
+                $closest_task_id = $user_task['task_id'];
+            }
+        }
+
+        return $closest_task_id;
+    }
 }

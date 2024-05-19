@@ -31,6 +31,7 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
         $manager = User::getUserById($pdo, $_SESSION["user_id"]);
         
         $allEmployeesByLocation = Employee::getAllEmployeesByLocation($pdo, $manager["location_id"]);
+        $allTasksFilter = Task::getAllTasks($pdo);
     
         $allYears = CalendarItem::getDistinctYearsByLocation($pdo, $manager["location_id"]);
         // $allMonths = CalendarItem::getDistinctMonthsByLocation($pdo, date("Y"), $user["location_id"]);
@@ -59,7 +60,7 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
     
         $allMonths = array_values($uniqueMonths);
 
-        // Get the report data
+        // Get the user report data
 
         if(isset($_GET['userId'])){
             $employee = Employee::getEmployeeById($pdo, $_GET['userId']);
@@ -99,6 +100,21 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
             // Get sick time
             $sickTime = Report::getTotalSickTimeByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
         }
+
+        // Get the task report data
+
+        if(isset($_GET['taskId']) && isset($_GET['userId'])) {
+            $task = Task::getTaskInfoById($pdo, $_GET['taskId']);
+            $allTasks = array($task);           
+        } else if(isset($_GET['taskId']) && !isset($_GET['userId'])){
+            $task = Task::getTaskInfoById($pdo, $_GET['taskId']);
+            $allTasks = array($task);           
+        } else if(isset($_GET['userId'])) {
+            $allTasks = Task::getTasksByEmployeeId($pdo, $_GET['userId']);
+        } else {
+            $allTasks = Task::getAllTasks($pdo);
+        }
+
     } catch (Exception $e) {
         error_log('Database error: ' . $e->getMessage());
     }
@@ -127,7 +143,7 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
         <div class="bento-grid">
             <div class="bento-grid-row">
                 <div class="bento-item">
-                    <h2 class="bento-item-title">Reports</h2>
+                    <h2 class="bento-item-title">Report filters</h2>
                     <!-- <a href="report.php" class="btn">Generate report</a> -->
 
                     <div class="column">
@@ -154,64 +170,140 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
                         <select name="userSelector" id="userSelector">
                             <option value="" disabled selected>--- select user ---</option>
                             <?php foreach ($allEmployeesByLocation as $employeeByLoc) : ?>
-                                <option value="<?php echo $employeeByLoc["id"] ?>"><?php echo $employeeByLoc["firstname"] . " " . $employeeByLoc["lastname"] ?></option>
+                                <option value="<?php echo $employeeByLoc["id"]; ?>"><?php echo $employeeByLoc["firstname"] . " " . $employeeByLoc["lastname"]; ?></option>
                             <?php endforeach ?>
                         </select>
-                        <!-- <p>Select no user if you want to generate a report about all users.</p> -->
+                    </div>
+
+                    <div class="column">
+                        <label for="taskSelector">Select task (select no task for a report of all tasks):</label>
+                        <select name="taskSelector" id="taskSelector">
+                            <option value="" disabled selected>--- select task ---</option>
+                            <?php foreach ($allTasksFilter as $taskFilter) : ?>
+                                <option value="<?php echo $taskFilter["id"]; ?>"><?php echo $taskFilter["task"]; ?></option>
+                            <?php endforeach ?>
+                        </select>
                     </div>
 
                     <button class="report-btn btn">Generate report</button>
                 </div>
-
-                <div class="bento-item">
-                    <?php //include_once ('report.php') ?>
-                    <div class="row">
-                        <h1>Generated report</h1>
-                        <h2>Report date: <?php echo $yearReport; echo $monthReport ? " - " . $monthName : ""; ?></h2>
-                        <h2>Report user: <?php echo isset($_GET['userId']) ? $employee["firstname"] . " " . $employee["lastname"] : "All users"; ?></h2>
-                    </div>
-
-                    <div class="report-container" style="padding-right: 0">
-                        <div class="table">
-                            <div class="table-header">
-                                <div class="header__item"><a id="employee" class="filter__link" href="#">Employee</a></div>
-                                <div class="header__item"><a id="time_planned" class="filter__link filter__link--number" href="#">Time Planned</a></div>
-                                <div class="header__item"><a id="time_worked" class="filter__link filter__link--number" href="#">Time Worked</a></div>
-                                <div class="header__item"><a id="time_off" class="filter__link filter__link--number" href="#">Time Off</a></div>
-                                <div class="header__item"><a id="overtime" class="filter__link filter__link--number" href="#">Overtime</a></div>
-                                <div class="header__item"><a id="sick_time" class="filter__link filter__link--number" href="#">Sick Time</a></div>
-                            </div>
-                            <div class="table-content">
-                                <?php foreach($allEmployees as $employee) : ?>
-                                    <?php
-                                        $plannedTime = Report::getPlannedWorkTimeByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
-                                        $workedTime = Report::getWorkedTimeByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
-                                        $timeOff = Report::getTimeOffByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
-                            
-                                        // Calculate overtime
-                                        $plannedTimeInSeconds = strtotime($plannedTime["total_time"]);
-                                        $workedTimeInSeconds = strtotime($workedTime["total_time"]);
+                
+                <div class="reports-container">
+                    <!-- Employee report -->
+                    <div class="bento-item" style="width: 100%;">
+                        <div class="row">
+                            <h1>Generated user(s) report</h1>
+                            <h2>Report date: <?php echo $yearReport; echo $monthReport ? " - " . $monthName : ""; ?></h2>
+                            <h2>Report user: <?php echo isset($_GET['userId']) ? $employee["firstname"] . " " . $employee["lastname"] : "All users"; ?></h2>
+                        </div>
+    
+                        <div class="report-container" style="padding-right: 0">
+                            <div class="table">
+                                <div class="table-header">
+                                    <div class="header__item"><a id="employee" class="filter__link" href="#">Employee</a></div>
+                                    <div class="header__item"><a id="time_planned" class="filter__link filter__link--number" href="#">Time Planned</a></div>
+                                    <div class="header__item"><a id="time_worked" class="filter__link filter__link--number" href="#">Time Worked</a></div>
+                                    <div class="header__item"><a id="time_off" class="filter__link filter__link--number" href="#">Time Off</a></div>
+                                    <div class="header__item"><a id="overtime" class="filter__link filter__link--number" href="#">Overtime</a></div>
+                                    <div class="header__item"><a id="sick_time" class="filter__link filter__link--number" href="#">Sick Time</a></div>
+                                </div>
+                                <div class="table-content">
+                                    <?php foreach($allEmployees as $employee) : ?>
+                                        <?php
+                                            $plannedTime = Report::getPlannedWorkTimeByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
+                                            $workedTime = Report::getWorkedTimeByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
+                                            $timeOff = Report::getTimeOffByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
+                                
+                                            // Calculate overtime
+                                            $plannedTimeInSeconds = strtotime($plannedTime["total_time"]);
+                                            $workedTimeInSeconds = strtotime($workedTime["total_time"]);
+                                            
+                                            if ($workedTimeInSeconds > $plannedTimeInSeconds) {
+                                                $overtime = $workedTimeInSeconds - $plannedTimeInSeconds;
+                                            } else {
+                                                $overtime = 0;
+                                            }
+                                
+                                            // Get sick time
+                                            $sickTime = Report::getTotalSickTimeByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
+                                        ?>
                                         
-                                        if ($workedTimeInSeconds > $plannedTimeInSeconds) {
-                                            $overtime = $workedTimeInSeconds - $plannedTimeInSeconds;
-                                        } else {
-                                            $overtime = 0;
-                                        }
-                            
-                                        // Get sick time
-                                        $sickTime = Report::getTotalSickTimeByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
-                                    ?>
+                                        <div class="table-row">
+                                            <div class="table-data"><?php echo htmlspecialchars($employee["firstname"]) . " " . htmlspecialchars($employee["lastname"]); ?></div>
+                                            <div class="table-data"><?php echo htmlspecialchars($plannedTime["total_time"]); ?></div>
+                                            <div class="table-data"><?php echo htmlspecialchars($workedTime["total_time"]); ?></div>
+                                            <div class="table-data"><?php echo htmlspecialchars($timeOff["total_time"]); ?></div>
+                                            <div class="table-data"><?php echo date('H:i:s', $overtime); ?></div>
+                                            <div class="table-data"><?php echo htmlspecialchars($sickTime["total_time"]); ?></div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Task report -->
+                    <div class="bento-item" style="width: 100%;">
+                        <div class="row">
+                            <h1>Generated task(s) report</h1>
+                            <h2>Report date: <?php echo $yearReport; echo $monthReport ? " - " . $monthName : ""; ?></h2>
+                            <h2>Report task: <?php echo isset($_GET['taskId']) ? $task["task"] : "All tasks"; ?></h2>
+                        </div>
+    
+                        <div class="report-container" style="padding-right: 0">
+                            <div class="table">
+                                <div class="table-header">
+                                    <div class="header__item"><a id="task_employee" class="filter__link" href="#">Employee</a></div>
+                                    <div class="header__item"><a id="task_time_planned" class="filter__link filter__link--number" href="#">Time Planned</a></div>
+                                    <div class="header__item"><a id="task_time_worked" class="filter__link filter__link--number" href="#">Time Worked</a></div>
+                                    <div class="header__item"><a id="task_sick_time" class="filter__link filter__link--number" href="#">Sick Time</a></div>
+                                </div>
+                                <div class="table-content">
+                                    <?php foreach($allTasks as $task) : ?>
+                                        <?php
+                                            // $plannedTime = Report::getPlannedWorkTimeByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
+                                            // $workedTime = Report::getWorkedTimeByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
+                                            // $timeOff = Report::getTimeOffByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
+                                
+                                            // // Calculate overtime
+                                            // $plannedTimeInSeconds = strtotime($plannedTime["total_time"]);
+                                            // $workedTimeInSeconds = strtotime($workedTime["total_time"]);
+                                            
+                                            // if ($workedTimeInSeconds > $plannedTimeInSeconds) {
+                                            //     $overtime = $workedTimeInSeconds - $plannedTimeInSeconds;
+                                            // } else {
+                                            //     $overtime = 0;
+                                            // }
+                                
+                                            // // Get sick time
+                                            // $sickTime = Report::getTotalSickTimeByUserIdBetweenDate($pdo, $employee["id"], $yearReport, $monthReport);
+                                            
+                                            if(!isset($_GET['userId'])) {
+                                                $employeesByTask = Employee::getEmployeesByTaskForLocation($pdo, $task["id"], $manager["location_id"]);
+                                            } else {
+                                                $employeesByTask = array(Employee::getEmployeeById($pdo, $_GET['userId']));
+                                            }
+                                        ?>
+    
+                                        <div class="table-row">
+                                            <div class="table-data table-subheader"><?php echo htmlspecialchars($task["task"]) ?></div>
+                                        </div>
+                                        <?php foreach($employeesByTask as $employee) : ?>
+                                            <?php
+                                                $taskPlannedTime = Report::getPlannedWorkTimeForTaskByUserIdBetweenDate($pdo, $employee["id"], $task["id"], $yearReport, $monthReport);
+                                                $taskWorkedTime = Report::getWorkedTimeForTaskByUserIdBetweenDate($pdo, $employee["id"], $task["id"], $yearReport, $monthReport);
+                                                $taskSickTime = Report::getTotalSickTimeForTaskByUserIdBetweenDate($pdo, $employee["id"], $task["id"], $yearReport, $monthReport);
+                                            ?>
 
-
-                                    <div class="table-row">
-                                        <div class="table-data"><?php echo htmlspecialchars($employee["firstname"]) . " " . htmlspecialchars($employee["lastname"]); ?></div>
-                                        <div class="table-data"><?php echo htmlspecialchars($plannedTime["total_time"]); ?></div>
-                                        <div class="table-data"><?php echo htmlspecialchars($workedTime["total_time"]); ?></div>
-                                        <div class="table-data"><?php echo htmlspecialchars($timeOff["total_time"]); ?></div>
-                                        <div class="table-data"><?php echo date('H:i:s', $overtime); ?></div>
-                                        <div class="table-data"><?php echo htmlspecialchars($sickTime["total_time"]); ?></div>
-                                    </div>
-                                <?php endforeach; ?>
+                                            <div class="table-row">
+                                                <div class="table-data"><?php echo htmlspecialchars($employee["firstname"]) . " " . htmlspecialchars($employee["lastname"]); ?></div>
+                                                <div class="table-data"><?php echo htmlspecialchars($taskPlannedTime["total_time"]); ?></div>
+                                                <div class="table-data"><?php echo htmlspecialchars($taskWorkedTime["total_time"]); ?></div>
+                                                <div class="table-data"><?php echo htmlspecialchars($taskSickTime["total_time"]); ?></div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
                         </div>
                     </div>

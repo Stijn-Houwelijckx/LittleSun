@@ -5,6 +5,8 @@ include_once (__DIR__ . "/../classes/User.php");
 include_once (__DIR__ . "/../classes/Employee.php");
 include_once (__DIR__ . "/../classes/TimeTracker.php");
 include_once (__DIR__ . "/../classes/CalendarItem.php");
+include_once (__DIR__ . "/../classes/WorkEntry.php");
+include_once (__DIR__ . "/../classes/Task.php");
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -36,6 +38,9 @@ if (isset($_POST)) {
         // Calculate worked time
         $lastTimeTracker = TimeTracker::getLastTimeTrackerByUserId($pdo, $_SESSION["user_id"]);
         $fullWorkedTime = TimeTracker::getWorkedTimeByUserIdAndDate($pdo, $_SESSION["user_id"], date("Y-m-d"));
+
+        // Get the task ID for the closest task
+        $closestTaskId = Task::getClosestTaskIdForUser($pdo, $_SESSION["user_id"], new DateTime($lastTimeTracker["end_time"]));
         
         $start_time = strtotime($lastTimeTracker["start_time"]);
         $end_time = strtotime($lastTimeTracker["end_time"]);
@@ -51,6 +56,15 @@ if (isset($_POST)) {
         $workedTime = sprintf("%02d:%02d:%02d", $hours, $minutes, $seconds);
         
         $plannedWorkTime = CalendarItem::getPlannedWorkTimeByUserIdAndDate($pdo, $_SESSION["user_id"], date("Y-m-d"));
+
+        // Update the worked_time for work entry in the database
+        $workEntry = new WorkEntry();
+        $workEntry->setUser_id($_SESSION["user_id"]);
+        $workEntry->setTask_id($closestTaskId);
+        $workEntry->setEvent_date(date("Y-m-d"));
+        $workEntry->setTimeWorked($workedTime);
+
+        $workEntry->updateWorkEntryTimeWorked($pdo);
         
         // Check if plannedWorkTime is not null before using it
         if ($plannedWorkTime['total_time'] != null) {
@@ -68,14 +82,8 @@ if (isset($_POST)) {
                 $overtimeMinutes = floor(($overtimeSeconds % 3600) / 60);
                 $overtimeSeconds = $overtimeSeconds % 60;
                 $overtime = sprintf("%02d:%02d:%02d", $overtimeHours, $overtimeMinutes, $overtimeSeconds);
-
-                // Save overtime
-                TimeTracker::saveOvertime($pdo, $_SESSION["user_id"], $lastTimeTracker["id"], $overtime);
             } else {
                 $overtime = "00:00:00"; // No overtime
-
-                // Save zero overtime
-                TimeTracker::saveOvertime($pdo, $_SESSION["user_id"], $lastTimeTracker["id"], $overtime);
             }
         } else {
             // If planned work time is null, set overtime to full worked time

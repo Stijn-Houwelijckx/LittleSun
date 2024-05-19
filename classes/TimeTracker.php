@@ -3,7 +3,6 @@ class TimeTracker {
     private $date;
     private $start_time;
     private $end_time;
-    private $overtime;
 
         /**
      * Get the value of date
@@ -61,26 +60,6 @@ class TimeTracker {
     public function setEnd_time($end_time)
     {
         $this->end_time = $end_time;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of overtime
-     */ 
-    public function getOvertime()
-    {
-        return $this->overtime;
-    }
-
-    /**
-     * Set the value of overtime
-     *
-     * @return  self
-     */ 
-    public function setOvertime($overtime)
-    {
-        $this->overtime = $overtime;
 
         return $this;
     }
@@ -143,32 +122,6 @@ class TimeTracker {
             $stmt->execute();
 
             return date('Y-m-d H:i:s');
-        } catch (PDOException $e) {
-            return "Error: " . $e->getMessage();
-        }
-    }
-
-    public static function saveOvertime($pdo, $user_id, $timetracker_id, $overtime) {
-        try {
-            $stmt = $pdo->prepare("UPDATE time_tracker SET overtime = :overtime WHERE user_id = :user_id AND id = :timetracker_id");
-            $stmt->bindParam(':user_id', $user_id);
-            $stmt->bindParam(':timetracker_id', $timetracker_id);
-            $stmt->bindParam(':overtime', $overtime);
-
-            $stmt->execute();
-
-            return "Overtime set to: " . $overtime;
-        } catch (PDOException $e) {
-            return "Error: " . $e->getMessage();
-        }
-    }
-
-    public static function getOvertimeByUserId($pdo, $user_id) {
-        try {
-            $stmt = $pdo->prepare("SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(overtime))) AS total_overtime FROM time_tracker WHERE user_id = :user_id");
-            $stmt->bindParam(':user_id', $user_id);
-            $stmt->execute();
-            return $stmt->fetch();
         } catch (PDOException $e) {
             return "Error: " . $e->getMessage();
         }
