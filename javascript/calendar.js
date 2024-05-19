@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const nextDayBtn = document.getElementById("nextDay");
   const currentDateElement = document.getElementById("currentDate");
   const currentDayElement = document.getElementById("currentDay");
-  const currentDateInput = document.querySelector(".currentDateInput");
+  const currentDateInput = document.querySelector("#currentDateInput");
 
   let currentDate = new Date(currentDateInput.value);
 
@@ -30,6 +30,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Bijwerken van de hele 'day' div
     const dayNumber = date.getDate();
+    const newDayElement = document.querySelector(".day p");
+    newDayElement.textContent = dayNumber < 10 ? "0" + dayNumber : dayNumber;
     const dayKey = date.toISOString().split("T")[0]; // Converteer naar 'YYYY-MM-DD' formaat
     const dayContainer = document.getElementById("dayItems");
     // Verwijder bestaande items
