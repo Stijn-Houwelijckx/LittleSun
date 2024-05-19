@@ -110,7 +110,7 @@ $taskTypes = Task::getAllTasks($pdo);
                     $dayKey = $startDate->format('Y-m-d');
                     $totalItems = count($groupedCalendarItems[$dayKey] ?? []);
                 ?>
-                <div class="day" style="min-height: <?php echo $totfalItems * 30 + 250 ?>px;">
+                <div class="day" style="min-height: <?php echo $totalItems * 30 + 250 ?>px;">
                     <p><?php echo $startDate->format('d'); ?></p>
                     <div id="dayItems">
                         <?php if (isset($groupedCalendarItems[$dayKey]) && !empty($groupedCalendarItems[$dayKey])): ?>
@@ -176,7 +176,7 @@ $taskTypes = Task::getAllTasks($pdo);
                             <p><?php echo $startDate->format('d'); ?></p>
                             <?php if (isset($groupedCalendarItems[$dayKey])): ?>
                                 <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
-                                    <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
+                                    <p class="calendarItem">
                                         <?php $time = strtotime($item["start_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
                                         - 
                                         <?php $time = strtotime($item["end_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
@@ -211,7 +211,7 @@ $taskTypes = Task::getAllTasks($pdo);
                         <p><?php echo $date->format('d'); ?></p>
                         <?php if (isset($groupedCalendarItems[$dayKey])): ?>
                             <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
-                                <p class="calendarItem" style="background-color: <?php echo $itemColor; ?>">
+                                <p class="calendarItem">
                                     <?php $time = strtotime($item["start_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
                                     - 
                                     <?php $time = strtotime($item["end_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
