@@ -100,20 +100,6 @@ class SickLeave {
         return $stmt->fetch();
     }
 
-    // public static function getDistinctMonthsByLocation(PDO $pdo, $location_id)
-    // {
-    //     try {
-    //         $stmt = $pdo->prepare("SELECT DISTINCT LPAD(MONTH(start_time), 2, '0') AS month_number, MONTHNAME(start_time) AS month_name FROM time_tracker, users WHERE time_tracker.user_id = users.id AND users.location_id = :location_id ORDER BY month_number ASC");
-    //         $stmt->bindParam(':location_id', $location_id);
-    //         $stmt->execute();
-    //         $months = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    //         return $months ?: [];
-    //     } catch (PDOException $e) {
-    //         error_log('Database error in getDistinctMonths(): ' . $e->getMessage());
-    //         throw new Exception('Database error: Unable to retrieve months');
-    //     }
-    // }
-
     public static function getDistinctMonthsByLocation(PDO $pdo, $year, $location_id)
     {
         try {

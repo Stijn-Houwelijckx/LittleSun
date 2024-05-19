@@ -211,10 +211,16 @@ class Report {
             }
 
             // Select sick time for a user between two dates
-            $stmt = $pdo->prepare("SELECT SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND, start_date, end_date))) as total_time
-            FROM sick_leave
+            // $stmt = $pdo->prepare("SELECT SEC_TO_TIME(SUM(TIMESTAMPDIFF(SECOND, start_date, end_date))) as total_time
+            // FROM sick_leave
+            // WHERE user_id = :user_id
+            // AND DATE(start_date) BETWEEN :start_date AND :end_date
+            // ");
+            $stmt = $pdo->prepare("SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(time_planned))) AS total_time
+            FROM work_entries
             WHERE user_id = :user_id
-            AND DATE(start_date) BETWEEN :start_date AND :end_date
+            AND event_date BETWEEN :start_date AND :end_date
+            AND is_sick = 1
             ");
             $stmt->bindParam(':user_id', $user_id);
             $stmt->bindParam(':start_date', $startDate);
