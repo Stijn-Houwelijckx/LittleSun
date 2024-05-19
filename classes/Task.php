@@ -8,6 +8,16 @@ class Task {
     }
     public function setTask($task)
     {
+        if (empty(trim($task))) {
+            throw new Exception("Taskname cannot be empty.");
+        }
+
+        $reValid = '/^(?!.*\s\s)[A-Za-z]+([-\' ][A-Za-z]+)*$/';
+
+        if (!preg_match($reValid, $task)) {
+            throw new Exception("Taskname is not valid.");
+        }
+
         $this->task = $task;
         return $this;
     }

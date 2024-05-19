@@ -38,13 +38,13 @@
         </div>
         <div class="menu">
             <?php if ($role == "admin") : ?>
-                <a href="dashboard.php">
+                <!-- <a href="dashboard.php">
                     <div>
-                        <img class="<?php echo ($current_page == 'home') ? 'homeItem active' : 'homeItem'; ?>"
+                        <img class="<?php //echo ($current_page == 'home') ? 'homeItem active' : 'homeItem'; ?>"
                             src="../assets/icons/Home.svg" alt="home">
                         <p>Home</p>
                     </div>
-                </a>
+                </a> -->
                 <a href="hubLocations.php">
                     <div>
                         <img class="<?php echo ($current_page == 'locations') ? 'locationsItem active' : 'locationsItem'; ?>"

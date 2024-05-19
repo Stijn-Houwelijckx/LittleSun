@@ -89,7 +89,7 @@ if (isset($_POST['firstname'], $_POST['lastname'], $_POST['email'], $_POST['pass
                     </div>
                 </div>
                 <?php if (isset($error)): ?>
-                    <p class="error"><?php echo $error; ?></p>
+                    <p class="error-message"><?php echo $error; ?></p>
                 <?php endif; ?>
                 <div class="buttons">
                     <button type="submit" class="btn">Add employee</button>

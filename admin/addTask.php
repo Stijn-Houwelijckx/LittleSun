@@ -28,8 +28,10 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
             Task::addTaskToAllUsers($pdo, $addedTaskId);
             header("Location: tasks.php");
         }
-    } catch (Exception $e) {
+    } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
+    } catch (Exception $e) {
+        $error = $e->getMessage();
     }
 } else {
     header("Location: ../login.php?error=notLoggedIn");
@@ -54,6 +56,9 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
             <input type="text" name="taskName" id="taskName" required>
             <button type="submit" name="submit">Add Task</button>
         </form>
+        <?php if (isset($error)): ?>
+            <p class="error-message"><?php echo $error; ?></p>
+        <?php endif; ?>
     </div>
 </body>
 

@@ -14,34 +14,6 @@ ini_set('error_log', 'error.log');
 
 date_default_timezone_set('Europe/Brussels');
 
-// // Fetch users by availability AJAX
-// if (isset($_POST['eventDatePicker'])) {
-//     // Fetch users
-// }
-
-// // Fetch tasks by user AJAX
-// if (isset($_POST['userSelector'])) {
-//     // Fetch tasks
-// }
-
-// // Validate event form submission
-// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-//     $errors = [];
-
-//     // Check if the required fields are filled out
-//     if (empty($_POST['eventDatePicker']) || empty($_POST['userSelector']) || empty($_POST['taskSelector']) || empty($_POST['timeslots'])) {
-//         $errors[] = "You didn't fill out all the fields.";
-//     }
-
-//     // If there are no errors, process the input
-//     if (empty($errors)) {
-//         // Process form submission
-//     } else {
-//         // Display errors
-        
-//     }
-// }
-
 session_start();
 
 $current_page = 'calendar';
@@ -70,14 +42,24 @@ if (isset($_POST['eventDatePicker'])) {
     $calendarItem = new CalendarItem;
     try {
         $event_date = $_POST['eventDatePicker'];
-        $employeeId = $_POST['userSelector'];
-        $taskId = $_POST['taskSelector'];
-        
-        $selectedTimeslots = $_POST['timeslots'] ?? []; // Haal de geselecteerde tijdsloten op
-        $calendarItem->setEvent_date($event_date) ?? null;
-        $calendarItem->setEvent_location($manager["location_id"]) ?? null;
+        if (isset($_POST['userSelector'])) {
+            $employeeId = $_POST['userSelector'];
+        }
 
-        $newCalendaritem = $calendarItem->addCalendarItem($pdo, $employeeId, $taskId, $selectedTimeslots);
+        if (isset($_POST['taskSelector'])) {
+            $taskId = $_POST['taskSelector'];
+        }
+
+        if (isset($_POST['timeslots'])) {
+            $selectedTimeslots = $_POST['timeslots'];
+        }
+        
+        $calendarItem->setEvent_date($event_date);
+        $calendarItem->setEvent_location($manager["location_id"]);
+        $calendarItem->setUser_id($employeeId);
+        $calendarItem->setTask_id($taskId);
+
+        $newCalendaritem = $calendarItem->addCalendarItem($pdo, $selectedTimeslots);
 
         // Add a work_entry
 
@@ -111,6 +93,9 @@ if (isset($_POST['eventDatePicker'])) {
 
     } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
+    }
+    catch (Exception $e) {
+        $addEventError = $e->getMessage();
     }
 }
 
@@ -444,7 +429,7 @@ $taskTypes = Task::getAllTasks($pdo);
     <form action="" method="post" id="addCalendarItem">
         <div class="text">
             <div class="column">
-                <label for="eventDatePicker">Event_date:</label>
+                <label for="eventDatePicker">Event date:</label>
                 <input type="date" name="eventDatePicker" id="eventDatePicker" placeholder="Event_date">
             </div>
             <div class="column">
@@ -519,6 +504,9 @@ $taskTypes = Task::getAllTasks($pdo);
                 </div>
             </div>
         </div>
+        <?php if (isset($addEventError)): ?>
+            <p class="error-message"><?php echo $addEventError; ?></p>
+        <?php endif; ?>
         <div class="buttons">
             <button type="submit" class="btn">Save</button>
         </div>
@@ -529,6 +517,12 @@ $taskTypes = Task::getAllTasks($pdo);
 
 
     <input type="hidden" id="currentDateInput" value="<?php echo $today->format('Y-m-d'); ?>">
+
+    <?php if (isset($addEventError)): ?>
+        <script>
+            const addEventError = true;
+        </script>
+    <?php endif; ?>
 
     <script>    
         <?php if ($_GET["view"] == "daily"): ?>
@@ -553,6 +547,15 @@ $taskTypes = Task::getAllTasks($pdo);
                 document.querySelector(".popupAddCalendarItem").style.display = "none";
             });
         });
+
+        // if (typeof sickLeaveError !== "undefined" && sickLeaveError) {
+        //     popupOverlay_s_l.style.display = "block";
+        //     popup_s_l.style.display = "block";
+        // }
+
+        if (typeof addEventError !== "undefined" && addEventError) {
+            document.querySelector(".popupAddCalendarItem").style.display = "flex";
+        }
     </script>
 <script>
   const groupedCalendarItems = <?php echo json_encode($groupedCalendarItems); ?>;

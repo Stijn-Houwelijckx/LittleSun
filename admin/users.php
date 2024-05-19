@@ -147,12 +147,12 @@ $users = User::getAll($pdo);
             document.getElementById("userSelector").submit();
         }
 
-        document.querySelector(".users .remove").addEventListener("click", function (e) {
-            document.querySelector(".popupIsManager").style.display = "flex";
-            document.querySelector(".popupIsManager .close").addEventListener("click", function (e) {
-                document.querySelector(".popupIsManager").style.display = "none";
-            });
-        });
+        // document.querySelector(".users .remove").addEventListener("click", function (e) {
+        //     document.querySelector(".popupIsManager").style.display = "flex";
+        //     document.querySelector(".popupIsManager .close").addEventListener("click", function (e) {
+        //         document.querySelector(".popupIsManager").style.display = "none";
+        //     });
+        // });
 
         <?php if ($selectedUser != null): ?>
             document.querySelector("#checkboxTypeOfUser").addEventListener("change", function (e) {
@@ -165,9 +165,9 @@ $users = User::getAll($pdo);
             });
         <?php endif; ?>
             
-        document.querySelector(".deleteUser").addEventListener("click", function (e) {
-            document.querySelector("#changeTypeOfUser").submit();
-        });
+        // document.querySelector(".deleteUser").addEventListener("click", function (e) {
+        //     document.querySelector("#changeTypeOfUser").submit();
+        // });
 
         function openPopup(id, firstname, lastname, email, typeOfUser) {
             document.getElementById("user_id").value = id;

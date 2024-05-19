@@ -30,39 +30,51 @@ $userSickLeave = SickLeave::getActiveSickLeave($pdo, $user["id"]);
 
 // Process time off request form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if ($_POST["typeOfForm"] == "time-off" && isset($_POST["reason"]) && isset($_POST["startdate"]) && isset($_POST["enddate"])) {
-        $timeOffRequest = new TimeOffRequest();
+    try {
+        if ($_POST["typeOfForm"] == "time-off" && isset($_POST["reason"]) && isset($_POST["startdate"]) && isset($_POST["enddate"])) {
+            $timeOffRequest = new TimeOffRequest();
 
-        $timeOffRequest->setStart_date($_POST["startdate"]);
-        $timeOffRequest->setEnd_date($_POST["enddate"]);
-        $timeOffRequest->setReason($_POST["reason"]);
-        if (isset($_POST["description"])) {
-            $timeOffRequest->setDescription($_POST["description"]);
+            $timeOffRequest->setStart_date($_POST["startdate"]);
+            $timeOffRequest->setEnd_date($_POST["enddate"]);
+            $timeOffRequest->setReason($_POST["reason"]);
+            if (isset($_POST["description"])) {
+                $timeOffRequest->setDescription($_POST["description"]);
+            }
+
+            $timeOffRequest->submitRequest($pdo, $user["id"]);
+
+            header("Location: dashboard.php");
         }
-
-        $timeOffRequest->submitRequest($pdo, $user["id"]);
-
-        header("Location: dashboard.php");
+    } catch (PDOException $e) {
+        error_log('Database error: ' . $e->getMessage());
+    } catch (Exception $e) {
+        $timeOffError = $e->getMessage();
     }
 
-    if ($_POST["typeOfForm"] == "sick-leave" && isset($_POST["reason"]) && isset($_POST["startdate"]) && isset($_POST["enddate"])) {
-        $sickLeave = new SickLeave();
+    try {
+        if ($_POST["typeOfForm"] == "sick-leave" && isset($_POST["reason"]) && isset($_POST["startdate"]) && isset($_POST["enddate"])) {
+            $sickLeave = new SickLeave();
 
-        $sickLeave->setStart_date($_POST["startdate"]);
-        $sickLeave->setEnd_date($_POST["enddate"]);
-        $sickLeave->setReason($_POST["reason"]);
+            $sickLeave->setStart_date($_POST["startdate"]);
+            $sickLeave->setEnd_date($_POST["enddate"]);
+            $sickLeave->setReason($_POST["reason"]);
 
-        $sickLeave->submitSickLeave($pdo, $user["id"]);
+            $sickLeave->submitSickLeave($pdo, $user["id"]);
 
-        // Retreive all planned tasks between the sick leave dates
-        $tasks = CalendarItem::getCalenderItemsByUserIdBetweenDates($pdo, $user["id"], $_POST["startdate"], $_POST["enddate"]);
+            // Retreive all planned tasks between the sick leave dates
+            $tasks = CalendarItem::getCalenderItemsByUserIdBetweenDates($pdo, $user["id"], $_POST["startdate"], $_POST["enddate"]);
 
-        // Set all tasks as sick
-        foreach ($tasks as $task) {
-            WorkEntry::setWorkEntrySick($pdo, $user["id"], $task["task_id"], $task["event_date"]);
+            // Set all tasks as sick
+            foreach ($tasks as $task) {
+                WorkEntry::setWorkEntrySick($pdo, $user["id"], $task["task_id"], $task["event_date"]);
+            }
+
+            header("Location: dashboard.php");
         }
-
-        header("Location: dashboard.php");
+    } catch (PDOException $e) {
+        error_log('Database error: ' . $e->getMessage());
+    } catch (Exception $e) {
+        $sickLeaveError = $e->getMessage();
     }
 }
 
@@ -194,6 +206,9 @@ $plannedWorkHours = CalendarItem::getPlannedWorkTimeByUserIdAndDate($pdo, $_SESS
                         <label for="t-o-description">Description (not required):</label>
                         <textarea name="description" id="t-o-description" cols="30" rows="5" placeholder="Give more info if necessary."></textarea>
                     </div>
+                    <?php if (isset($timeOffError)): ?>
+                        <p class="error-message"><?php echo $timeOffError; ?></p>
+                    <?php endif; ?>
                     <button class="btn btn-submit">Submit request</button>
                 </form>
             </div>
@@ -215,11 +230,26 @@ $plannedWorkHours = CalendarItem::getPlannedWorkTimeByUserIdAndDate($pdo, $_SESS
                         <label for="s-l-enddate">End date and time:</label>
                         <input type="datetime-local" name="enddate" id="s-l-enddate" required>
                     </div>
+                    <?php if (isset($sickLeaveError)): ?>
+                        <p class="error-message"><?php echo $sickLeaveError; ?></p>
+                    <?php endif; ?>
                     <button class="btn btn-submit">Submit sick leave</button>
                 </form>
             </div>
         </div>
     </div>
+
+    <?php if (isset($timeOffError)): ?>
+        <script>
+            const timeOffError = true;
+        </script>
+    <?php endif; ?>
+
+    <?php if (isset($sickLeaveError)): ?>
+        <script>
+            const sickLeaveError = true;
+        </script>
+    <?php endif; ?>
 
     <script>
         const btnRequest_t_o = document.querySelector(".time-off .bento-item-button");
@@ -258,6 +288,18 @@ $plannedWorkHours = CalendarItem::getPlannedWorkTimeByUserIdAndDate($pdo, $_SESS
             popupOverlay_s_l.style.display = "none";
             popup_s_s.style.display = "none";
         });
+
+        document.addEventListener("DOMContentLoaded", () => {
+        if (typeof timeOffError !== "undefined" && timeOffError) {
+            popupOverlay_t_o.style.display = "block";
+            popup_t_o.style.display = "block";
+        }
+        
+        if (typeof sickLeaveError !== "undefined" && sickLeaveError) {
+            popupOverlay_s_l.style.display = "block";
+            popup_s_l.style.display = "block";
+        }
+    });
     </script>
     
     <script src="javascript/timeTracker.js"></script>

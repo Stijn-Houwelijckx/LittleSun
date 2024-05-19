@@ -48,8 +48,10 @@ if (isset($_POST["firstname"])) {
         $user->updateUser($pdo, $_POST["user_id"], "employee");
 
         $employee = User::getUserById($pdo, $employee_id);
-    } catch (Exception $e) {
+    } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
+    } catch (Exception $e) {
+        $error = $e->getMessage();
     }
 }
 
@@ -114,6 +116,9 @@ $employeeTaskIds = array_column($employeeTasks, 'id');
                         <label for="email">Email:</label>
                         <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($employee['email']); ?>">
                     </div>
+                    <?php if (isset($error)): ?>
+                        <p class="error-message"><?php echo $error; ?></p>
+                    <?php endif; ?>
                     <input type="hidden" name="user_id" id="user_id" value="<?php echo htmlspecialchars($employee['id']); ?>">
                     <button type="submit" class="btn">Save</button>
                 </form>

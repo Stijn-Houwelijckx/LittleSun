@@ -100,7 +100,7 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "manager") {
                 <div class="row">
                     <form class="form-btns" action="" method="post">
                         <input type="hidden" name="requestId" value="">
-                        <label for="managerComment">Comment:</label>
+                        <label for="managerComment">Comment (not required):</label>
                         <input type="text" name="managerComment" id="managerComment">
                         <div class="btn-container">
                             <button class="btn btn-decline" name="decline">Decline</button>

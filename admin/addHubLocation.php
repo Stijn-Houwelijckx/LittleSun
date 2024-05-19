@@ -17,7 +17,12 @@ $user = User::getUserById($pdo, $_SESSION["user_id"]);
 if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
     try {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $name = $_POST["name"];
+            $location = new Location();
+
+            $hubName = $_POST["name"];
+            $image = $_FILES["image"]["name"];
+
+            $name = $location->setName($hubName);
 
             if(!empty($_FILES["image"]["name"])) {
                 $target_dir = "../assets/images/locations/";
@@ -46,7 +51,11 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
                 }
                 if ($uploadOk == 1) {
                     if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-                        Location::addLocation($pdo, $_FILES["image"]["name"], $name);
+                        // Location::addLocation($pdo, $_FILES["image"]["name"], $name);
+                        $location->setImage($_FILES["image"]["name"]);
+
+                        $location->addLocation($pdo);
+
                         header("Location: hubLocations.php");
                         exit();
                     } else {
@@ -56,12 +65,18 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
                 }
             }
 
-            Location::addLocation($pdo, "005677_05_121513.jpg", $name);
+            // Location::addLocation($pdo, "005677_05_121513.jpg", $name);
+            $location->setImage("005677_05_121513.jpg");
+
+            $location->addLocation($pdo);
+
             header("Location: hubLocations.php");
             exit();
         }
-    } catch (Exception $e) {
+    } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
+    } catch (Exception $e) {
+        $error = $e->getMessage();
     }
 } else {
     header("Location: ../login.php?error=notLoggedIn");
@@ -87,12 +102,15 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
         <form action="" method="post" enctype="multipart/form-data">
             <div class="column">
                 <label for="name">Name</label>
-                <input type="text" name="name" required>
+                <input type="text" name="name" id="name" required>
             </div>
             <div class="column">
-                <label for="image">Image</label>
+                <label for="image">Image (not required)</label>
                 <input type="file" name="image" id="image">
             </div>
+            <?php if (isset($error)): ?>
+                <p class="error-message"><?php echo $error; ?></p>
+            <?php endif; ?>
             <button type="submit" class="btn">Submit</button>
         </form>
     </div>

@@ -39,6 +39,10 @@ class Location
      */ 
     public function setName($name)
     {
+        if (empty(trim($name))) {
+            throw new Exception("Hubname cannot be empty.");
+        }
+
         $this->name = $name;
 
         return $this;
@@ -70,12 +74,12 @@ class Location
         }
     }
 
-    public static function addLocation(PDO $pdo, $image, $name)
+    public function addLocation(PDO $pdo)
     {
         try {
             $stmt = $pdo->prepare("INSERT INTO locations (image, name) VALUES (:image, :name)");
-            $stmt->bindParam(':image', $image);
-            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':image', $this->image);
+            $stmt->bindParam(':name', $this->name);
             
             $stmt->execute();
             

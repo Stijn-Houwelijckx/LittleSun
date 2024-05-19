@@ -25,7 +25,7 @@ class User
     public function setFirstname($firstname)
     {
         if (empty(trim($firstname))) {
-            throw new Exception("Firstname is obligatory.");
+            throw new Exception("Firstname cannot be empty.");
         }
 
         $reValid = '/^(?!.*\s\s)[A-Za-z]+([-\' ][A-Za-z]+)*$/';
@@ -55,7 +55,7 @@ class User
     public function setLastname($lastname)
     {
         if (empty(trim($lastname))) {
-            throw new Exception("lastname is obligatory.");
+            throw new Exception("lastname cannot be empty.");
         }
 
         $reValid = '/^(?!.*\s\s)[A-Za-z]+([-\' ][A-Za-z]+)*$/';
@@ -105,7 +105,7 @@ class User
     public function setEmail($email)
     {
         if (empty(trim($email))) {
-            throw new Exception("email is obligatory.");
+            throw new Exception("email cannot be empty.");
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -176,14 +176,14 @@ class User
             throw new Exception("You must fill in a password.");
         }
 
-        if (strlen($password) < 8) {
-            throw new Exception("Password should be at least 8 characters long.");
+        if (strlen($password) < 5) {
+            throw new Exception("Password should be at least 5 characters long.");
         }
 
-        $reValid = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$/';
-        if (!preg_match($reValid, $password)) {
-            throw new Exception("Password must contain at least 1 capital, 1 lowercase letter, 1 number and 1 special character (!@#$%^&*).");
-        }
+        // $reValid = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$/';
+        // if (!preg_match($reValid, $password)) {
+        //     throw new Exception("Password must contain at least 1 capital, 1 lowercase letter, 1 number and 1 special character (!@#$%^&*).");
+        // }
 
         $this->password = password_hash($password, PASSWORD_DEFAULT);
         return $this;

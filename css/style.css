@@ -554,12 +554,11 @@ button {
   gap: 24px;
 } */
 
-/* #usersAdmin .users form .user,
 #usersAdmin .users form .user .text {
   display: flex;
   flex-direction: column;
   gap: 16px;
-} */
+}
 
 #usersAdmin .users form .user .text .column {
   display: flex;
@@ -572,7 +571,7 @@ button {
   display: none;
   flex-direction: column;
   gap: 16px;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgb(255, 255, 255);
   padding: 16px;
   border-radius: 16px;
   position: fixed;
@@ -580,6 +579,13 @@ button {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.popup .popup-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
 }
 
 .popup .btns,

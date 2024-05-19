@@ -2,6 +2,8 @@
 class CalendarItem
 {
     private $event_date;
+    private $user_id;
+    private $task_id;
     private $event_location;
     private $start_time;
     private $end_time;
@@ -23,7 +25,63 @@ class CalendarItem
      */ 
     public function setEvent_date($event_date)
     {
+        if (empty($event_date)) {
+            throw new Exception('Please select a date');
+        }
+
+        if (strtotime($event_date) < strtotime(date('Y-m-d'))) {
+            throw new Exception('Event date cannot be in the past');
+        }        
+
         $this->event_date = $event_date;
+
+        return $this;
+    }
+    
+    /**
+     * Get the value of user_id
+     */ 
+    public function getUser_id()
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * Set the value of user_id
+     *
+     * @return  self
+     */ 
+    public function setUser_id($user_id)
+    {
+        if (empty($user_id)) {
+            throw new Exception('Please select a user');
+        }
+
+        $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of task_id
+     */ 
+    public function getTask_id()
+    {
+        return $this->task_id;
+    }
+
+    /**
+     * Set the value of task_id
+     *
+     * @return  self
+     */ 
+    public function setTask_id($task_id)
+    {
+        if (empty($task_id)) {
+            throw new Exception('Please select a task');
+        }
+
+        $this->task_id = $task_id;
 
         return $this;
     }
@@ -107,7 +165,7 @@ class CalendarItem
         return $this;
     }    
 
-    public function addCalendarItem(PDO $pdo, $user_id, $task_id, $selectedTimeslots): int|bool
+    public function addCalendarItem(PDO $pdo, $selectedTimeslots): int|bool
     {
         try {
             
@@ -116,8 +174,8 @@ class CalendarItem
             $this->end_time = explode(' - ', end($selectedTimeslots))[1];
 
             $stmt = $pdo->prepare("INSERT INTO calendar (user_id, task_id, event_date, event_location, start_time, end_time) VALUES (:user_id, :task_id, :event_date, :event_location, :start_time, :end_time)");
-            $stmt->bindParam(':user_id', $user_id);
-            $stmt->bindParam(':task_id', $task_id);
+            $stmt->bindParam(':user_id', $this->user_id);
+            $stmt->bindParam(':task_id', $this->task_id);
             $stmt->bindParam(':event_date', $this->event_date);
             $stmt->bindParam(':event_location', $this->event_location);
             $stmt->bindParam(':start_time', $this->start_time);

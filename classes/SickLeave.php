@@ -19,6 +19,14 @@ class SickLeave {
      */ 
     public function setStart_date($start_date)
     {
+        if (empty($start_date)) {
+            throw new Exception('Start date cannot be empty');
+        }
+
+        if (strtotime($start_date) < strtotime(date('Y-m-d'))) {
+            throw new Exception('Start date cannot be in the past');
+        }
+        
         $this->start_date = $start_date;
 
         return $this;
@@ -39,6 +47,18 @@ class SickLeave {
      */ 
     public function setEnd_date($end_date)
     {
+        if (empty($end_date)) {
+            throw new Exception('End date cannot be empty');
+        }
+
+        if (strtotime($end_date) < strtotime(date('Y-m-d'))) {
+            throw new Exception('End date cannot be in the past');
+        }
+
+        if (strtotime($end_date) < strtotime($this->start_date)) {
+            throw new Exception('End date cannot be before start date');
+        }
+
         $this->end_date = $end_date;
 
         return $this;
@@ -59,6 +79,10 @@ class SickLeave {
      */ 
     public function setReason($reason)
     {
+        if (empty(trim($reason))) {
+            throw new Exception('Reason cannot be empty');
+        }
+
         $this->reason = $reason;
 
         return $this;

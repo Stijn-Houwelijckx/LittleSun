@@ -16,21 +16,23 @@ $user = User::getUserById($pdo, $_SESSION["user_id"]);
 
 if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
     if (isset($_GET["hubLocation"])) {
-        $location = Location::getLocationById($pdo, $_GET["hubLocation"]);
+        $hubLocation = Location::getLocationById($pdo, $_GET["hubLocation"]);
     }
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
             $location = new Location;
 
-            $location -> setName($_POST["name"]);
+            $location->setName($_POST["name"]);
 
-            $location -> updateLocation($pdo, $_GET["hubLocation"]);
+            $location->updateLocation($pdo, $_GET["hubLocation"]);
 
             header("Location: hubLocations.php");
             exit();
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
             error_log('Database error: ' . $e->getMessage());
+        } catch (Exception $e) {
+            $error = $e->getMessage();
         }
     }
 } else {
@@ -57,8 +59,11 @@ if (isset($_SESSION["user_id"]) && $user["typeOfUser"] == "admin") {
         <form action="" method="post" enctype="multipart/form-data">
             <div class="column">
                 <label for="name">Name</label>
-                <input type="text" name="name" value="<?php echo $location["name"] ?>" required>
+                <input type="text" name="name" id="name" value="<?php echo htmlspecialchars($hubLocation["name"]) ?>" required>
             </div>
+            <?php if (isset($error)): ?>
+                <p class="error-message"><?php echo $error; ?></p>
+            <?php endif; ?>
             <button type="submit" class="btn">Submit</button>
         </form>
     </div>

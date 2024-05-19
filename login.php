@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Gebruiker succesvol ingelogd
             $_SESSION['user_id'] = $user['id'];
             if ($user["typeOfUser"] == "admin") {
-                header("Location: admin/dashboard.php"); // Stuur door naar het dashboard of een andere pagina
+                header("Location: admin/hubLocations.php"); // Stuur door naar het dashboard of een andere pagina
                 exit();
             } 
             if($user["typeOfUser"] == "manager") {
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "Firstname or password is not correct.";
         }
     } else {
-        $error = "Vul alle velden in.";
+        $error = "Fill in all fields.";
     }
 }
 ?>
@@ -60,12 +60,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <h1>Sign in</h1>
             <p>We just need some information to log you in </p>
 
-            <?php if (isset($error)): ?>
-                <p class="alert">
-                    <?php echo $error ?>
-                </p>
-            <?php endif; ?>
-
             <form class="form form--login" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
                 <div class="column">
                     <label for="email">E-mail</label>
@@ -77,8 +71,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="password" id="password" name="password" placeholder="password">
                         <i class="fa fa-eye-slash"></i>
                     </div>
-
                 </div>
+                <?php if (isset($error)): ?>
+                <p class="error-message">
+                    <?php echo $error ?>
+                </p>
+            <?php endif; ?>
                 <button type="submit" class="btn" id="btnsignup">Sign in</button>
             </form>
             <div class="row">

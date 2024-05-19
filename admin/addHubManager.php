@@ -29,29 +29,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         $firstname = $_POST['firstname'];
         $lastname = $_POST['lastname'];
-        $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+        $email = $_POST['email'];
         $password = $_POST['password'];
         $location_id = $_POST['locations'];
 
-        // Validation for special characters in first name and last name
-        if (containsSpecialChars($firstname) || containsSpecialChars($lastname)) {
-            $error = "Special characters are not allowed in first name or last name.";
-        } elseif (!$email) {
-            $error = "Email should be a valid email address.";
-        } else {
-            $user->setFirstname($firstname);
-            $user->setLastname($lastname);
-            $user->setEmail($email);
-            $user->setPassword($password);
-            $user->setLocation_id($location_id);
+        $user->setFirstname($firstname);
+        $user->setLastname($lastname);
+        $user->setEmail($email);
+        $user->setPassword($password);
+        $user->setLocation_id($location_id);
 
-            $newUserId = $user->addUser($pdo, "manager");
+        $newUserId = $user->addUser($pdo, "manager");
 
-            if ($newUserId) {
-                $user->addToLocation($pdo, $newUserId);
-                header("Location: users.php");
-                exit();
-            }
+        if ($newUserId) {
+            $user->addToLocation($pdo, $newUserId);
+            header("Location: users.php");
+            exit();
         }
     } catch (PDOException $e) {
         error_log('Database error: ' . $e->getMessage());
@@ -59,12 +52,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = $e->getMessage();
     }
 }
-
-// Function to check if the string contains special characters
-function containsSpecialChars($str) {
-    return preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]/', $str);
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -117,7 +104,7 @@ function containsSpecialChars($str) {
                     </div>
                 </div>
                 <?php if (isset($error)): ?>
-                    <p class="error"><?php echo $error; ?></p>
+                    <p class="error-message"><?php echo $error; ?></p>
                 <?php endif; ?>
                 <div class="buttons">
                     <button type="submit" class="btn">Add manager</button>
