@@ -241,14 +241,14 @@ if (isset($_SESSION["user_id"]) && $manager["typeOfUser"] == "manager") {
                                             <div class="table-data"><?php echo htmlspecialchars($sickTime["total_time"]); ?></div>
                                         </div>
                                     <?php endforeach; ?>
-                                    <div class="table-row" style="background-color: #939393; color: white;">
-                                            <div class="table-data">Total:</div>
-                                            <div class="table-data">-</div>
-                                            <div class="table-data"><?php echo $totalWorkedTimeFormatted; ?></div>
-                                            <div class="table-data">-</div>
-                                            <div class="table-data">-</div>
-                                            <div class="table-data">-</div>
-                                        </div>
+                                </div>
+                                <div class="table-row" style="background-color: #939393; color: white;">
+                                    <div class="table-data">Total:</div>
+                                    <div class="table-data">-</div>
+                                    <div class="table-data"><?php echo $totalWorkedTimeFormatted; ?></div>
+                                    <div class="table-data">-</div>
+                                    <div class="table-data">-</div>
+                                    <div class="table-data">-</div>
                                 </div>
                             </div>
                         </div>
