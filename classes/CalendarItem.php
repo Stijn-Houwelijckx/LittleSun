@@ -197,9 +197,9 @@ class CalendarItem
     public static function getAllCalenderItems(PDO $pdo, $location_id)
     {
         try {
-            $stmt = $pdo->prepare("SELECT DISTINCT calendar.*, tasktypes.task
-            FROM calendar, users, user_locations, tasktypes
-            WHERE tasktypes.id = calendar.task_id
+            $stmt = $pdo->prepare("SELECT DISTINCT calendar.*, taskTypes.task
+            FROM calendar, users, user_locations, taskTypes
+            WHERE taskTypes.id = calendar.task_id
             AND calendar.user_id = users.id
             AND users.id = user_locations.user_id
             AND users.typeOfUser = 'employee'
@@ -218,9 +218,9 @@ class CalendarItem
 
     public static function getMyCalendarAsEmployee(PDO $pdo, $user_id){
         try {
-            $stmt = $pdo->prepare("SELECT DISTINCT calendar.*, tasktypes.task
-            FROM calendar, users, tasktypes
-            WHERE tasktypes.id = calendar.task_id
+            $stmt = $pdo->prepare("SELECT DISTINCT calendar.*, taskTypes.task
+            FROM calendar, users, taskTypes
+            WHERE taskTypes.id = calendar.task_id
             AND calendar.user_id = :user_id
             ");
             $stmt->bindParam(':user_id', $user_id);
@@ -237,10 +237,10 @@ class CalendarItem
         try {
             $stmt = $pdo->prepare("
                 SELECT DISTINCT users.firstname, users.lastname 
-                FROM user_tasks, tasktypes, users 
+                FROM user_tasks, taskTypes, users 
                 WHERE user_tasks.user_id = users.id 
-                AND user_tasks.task_id = tasktypes.id 
-                AND tasktypes.id = :selectedTask 
+                AND user_tasks.task_id = taskTypes.id 
+                AND taskTypes.id = :selectedTask 
                 AND users.typeOfUser = 'employee'");
             
             $stmt->bindParam(':selectedTask', $selectedTask);

@@ -54,7 +54,7 @@ class Task {
     public static function linkTasksToUser(PDO $pdo, $user_id)
     {
         try {
-            $stmt = $pdo->prepare("INSERT INTO user_tasks (user_id, task_id) SELECT :user_id, id FROM tasktypes WHERE status = 1");
+            $stmt = $pdo->prepare("INSERT INTO user_tasks (user_id, task_id) SELECT :user_id, id FROM taskTypes WHERE status = 1");
             $stmt->bindParam(':user_id', $user_id);
 
             // check if the query was successful
@@ -134,7 +134,7 @@ class Task {
 
     public static function mytasks(PDO $pdo, $user_id){
         try {
-            $stmt = $pdo->prepare("SELECT tasktypes.task FROM tasktypes, user_tasks WHERE tasktypes.id = user_tasks.task_id AND user_tasks.user_id = :user_id AND user_tasks.is_assigned = 1");
+            $stmt = $pdo->prepare("SELECT taskTypes.task FROM taskTypes, user_tasks WHERE taskTypes.id = user_tasks.task_id AND user_tasks.user_id = :user_id AND user_tasks.is_assigned = 1");
             $stmt->bindParam(":user_id", $user_id);
             $stmt->execute();
             $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -146,7 +146,7 @@ class Task {
     }
 
     public static function getTasksByEmployeeId($pdo, $employee_id) {
-        $stmt = $pdo->prepare("SELECT tasktypes.* FROM tasktypes, user_tasks WHERE user_tasks.user_id = :employee_id AND tasktypes.id = user_tasks.task_id AND user_tasks.is_assigned = 1");
+        $stmt = $pdo->prepare("SELECT taskTypes.* FROM taskTypes, user_tasks WHERE user_tasks.user_id = :employee_id AND taskTypes.id = user_tasks.task_id AND user_tasks.is_assigned = 1");
         $stmt->bindParam(":employee_id", $employee_id);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -154,7 +154,7 @@ class Task {
     }
 
     public static function getTaskInfoById($pdo, $task_id) {
-        $stmt = $pdo->prepare("SELECT * FROM tasktypes WHERE id = :task_id");
+        $stmt = $pdo->prepare("SELECT * FROM taskTypes WHERE id = :task_id");
         $stmt->bindParam(":task_id", $task_id, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
