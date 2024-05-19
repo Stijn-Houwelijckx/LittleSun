@@ -235,7 +235,7 @@ $taskTypes = Task::getAllTasks($pdo);
                     <p><?php echo $startDate->format('d'); ?></p>
                     <div id="dayItems">
                         <?php if (isset($groupedCalendarItems[$dayKey]) && !empty($groupedCalendarItems[$dayKey])): ?>
-                            <?php foreach ($groupedCalendarItems[$dayKey] as $item): ?>
+                            <?php foreach ($groupedCalendarItems[$dayKey] as $index => $item): ?>
                                 <?php 
                                     $userId = $item["user_id"];
                                     $itemColor = $userColors[$userId];
@@ -254,7 +254,11 @@ $taskTypes = Task::getAllTasks($pdo);
 
                                         $sickLeave = SickLeave::getSickLeaveByUserIdAndDate($pdo, $item["user_id"], $eventDateTime->format("Y-m-d H:i:s"));
                                         if ($sickLeave) {
-                                            echo "<span style='color: white;'> - Sick leave: " . $sickLeave["reason"] . "</span>";
+                                            echo "<span style='color: white;'> => Sick</span>";
+                                            // Add a push a sick boolean with true to the groupedCalendarItems array for the current daykey
+                                            $groupedCalendarItems[$dayKey][$index]["sick"] = true;
+                                        } else {
+                                            $groupedCalendarItems[$dayKey][$index]["sick"] = false;
                                         }
                                     ?>
                                 </p>
@@ -334,6 +338,21 @@ $taskTypes = Task::getAllTasks($pdo);
                                         <?php $time = strtotime($item["end_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
                                         :
                                         <?php echo $item["task"] ?>
+
+                                        <?php
+                                        // If sick, show the sick leave
+
+                                        $eventDateTime = new DateTime($item["event_date"] . " " . $item["start_time"]);
+
+                                        $sickLeave = SickLeave::getSickLeaveByUserIdAndDate($pdo, $item["user_id"], $eventDateTime->format("Y-m-d H:i:s"));
+                                        if ($sickLeave) {
+                                            echo "<span style='color: white;'> => Sick</span>";
+                                            // Add a push a sick boolean with true to the groupedCalendarItems array for the current daykey
+                                            $groupedCalendarItems[$dayKey][$index]["sick"] = true;
+                                        } else {
+                                            $groupedCalendarItems[$dayKey][$index]["sick"] = false;
+                                        }
+                                    ?>
                                     </p>
                                 <?php endforeach; ?>
                             <?php endif; ?>
@@ -384,7 +403,22 @@ $taskTypes = Task::getAllTasks($pdo);
                                     - 
                                     <?php $time = strtotime($item["end_time"]); $time_formatted = date('H:i', $time); echo $time_formatted; ?>
                                     :
-                                    <?php echo $item["task"] ?>
+                                    <?php echo $item["task"]; ?>
+
+                                    <?php
+                                        // If sick, show the sick leave
+
+                                        $eventDateTime = new DateTime($item["event_date"] . " " . $item["start_time"]);
+
+                                        $sickLeave = SickLeave::getSickLeaveByUserIdAndDate($pdo, $item["user_id"], $eventDateTime->format("Y-m-d H:i:s"));
+                                        if ($sickLeave) {
+                                            echo "<span style='color: white;'> => Sick</span>";
+                                            // Add a push a sick boolean with true to the groupedCalendarItems array for the current daykey
+                                            $groupedCalendarItems[$dayKey][$index]["sick"] = true;
+                                        } else {
+                                            $groupedCalendarItems[$dayKey][$index]["sick"] = false;
+                                        }
+                                    ?>
                                 </p>
                             <?php endforeach; ?>
                         <?php endif; ?>

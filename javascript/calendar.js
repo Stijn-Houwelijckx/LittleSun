@@ -57,7 +57,11 @@ document.addEventListener("DOMContentLoaded", function () {
         p.textContent = `${item.start_time.slice(
           0,
           -3
-        )} - ${item.end_time.slice(0, -3)} : ${item.task}`;
+        )} - ${item.end_time.slice(0, -3)} : ${item.task} `;
+
+        if (item.sick == true) {
+          p.textContent += " => Sick";
+        }
 
         dayContainer.appendChild(p);
       });
@@ -184,6 +188,10 @@ document.addEventListener("DOMContentLoaded", function () {
             -3
           )} - ${item.end_time.slice(0, -3)} : ${item.task}`;
 
+          if (item.sick == true) {
+            calendarItemElement.textContent += " => Sick";
+          }
+
           dayElement.appendChild(calendarItemElement);
         });
       }
@@ -291,6 +299,10 @@ document.addEventListener("DOMContentLoaded", function () {
           0,
           -3
         )} - ${item.end_time.slice(0, -3)} : ${item.task}`;
+
+        if (item.sick == true) {
+          p.textContent += " => Sick";
+        }
 
         dayElement.appendChild(p);
       });
