@@ -52,6 +52,8 @@ if (isset($_POST['eventDatePicker'])) {
 
         if (isset($_POST['timeslots'])) {
             $selectedTimeslots = $_POST['timeslots'];
+        } else  {
+            throw new Exception("Please select at least one timeslot.");
         }
         
         $calendarItem->setEvent_date($event_date);
